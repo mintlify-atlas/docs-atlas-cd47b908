@@ -1,0 +1,123 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "Tiny Slider",
+  "projectDescription": "Vanilla JavaScript slider for all purposes with carousel, gallery modes, responsive options, and touch support.",
+  "theme": "palm",
+  "primaryColor": "#848c8e",
+  "lightColor": "#11161e",
+  "darkColor": "#cfd0d2",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/modes",
+              "concepts/responsive",
+              "concepts/events"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/configuration",
+              "guides/styling",
+              "guides/methods",
+              "guides/accessibility",
+              "guides/migration"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API",
+            "pages": [
+              "api/initialization",
+              "api/options",
+              "api/methods",
+              "api/events",
+              "api/info-object"
+            ]
+          },
+          {
+            "group": "Options Reference",
+            "pages": [
+              "api/options/layout",
+              "api/options/controls",
+              "api/options/navigation",
+              "api/options/autoplay",
+              "api/options/interaction",
+              "api/options/advanced"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Examples",
+        "groups": [
+          {
+            "group": "Examples",
+            "pages": [
+              "examples/basic-carousel",
+              "examples/gallery-mode",
+              "examples/responsive-slider",
+              "examples/vertical-slider",
+              "examples/autoplay",
+              "examples/lazy-loading",
+              "examples/nested-sliders",
+              "examples/custom-controls"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Carousel and gallery modes with smooth animations",
+    "Responsive breakpoints with customizable options",
+    "Autoplay with hover pause and directional control",
+    "Touch and mouse drag support with swipe detection",
+    "Lazy loading for optimized image loading",
+    "Custom events for lifecycle hooks",
+    "Vertical and horizontal orientation support",
+    "Loop and rewind navigation modes",
+    "Accessibility with ARIA attributes and keyboard navigation",
+    "Fixed width, auto width, and percentage-based layouts",
+    "Edge padding and gutter spacing",
+    "Center mode for active slide positioning",
+    "Nested slider support",
+    "IE8+ browser support with polyfills"
+  ],
+  "publicApiSurface": [
+    "tns(options) - Initialize slider",
+    "slider.getInfo() - Get slider information",
+    "slider.goTo(target) - Navigate to slide",
+    "slider.play() - Start autoplay",
+    "slider.pause() - Stop autoplay",
+    "slider.destroy() - Destroy slider",
+    "slider.rebuild() - Rebuild slider",
+    "slider.updateSliderHeight() - Update height",
+    "slider.refresh() - Refresh slider",
+    "slider.events.on(event, callback) - Subscribe to event",
+    "slider.events.off(event, callback) - Unsubscribe from event",
+    "Event: indexChanged - Fires when slide index changes",
+    "Event: transitionStart - Fires when transition starts",
+    "Event: transitionEnd - Fires when transition ends",
+    "Event: touchStart/touchMove/touchEnd - Touch events",
+    "Event: dragStart/dragMove/dragEnd - Drag events",
+    "Event: newBreakpointStart/newBreakpointEnd - Breakpoint events"
+  ]
+}
