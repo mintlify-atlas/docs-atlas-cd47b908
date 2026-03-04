@@ -1,0 +1,681 @@
+---
+title: 'Accessibility Guide'
+description: 'Make your slider accessible to all users with ARIA attributes and keyboard navigation'
+---
+
+## Overview
+
+Tiny Slider includes built-in accessibility features including ARIA attributes, keyboard navigation, focus management, and screen reader support. This guide covers best practices for creating accessible sliders.
+
+<Info>
+  Accessibility is enabled by default in Tiny Slider. All features mentioned are automatically added to your sliders.
+</Info>
+
+## ARIA Attributes
+
+Tiny Slider automatically adds appropriate ARIA attributes to make sliders understandable to assistive technologies.
+
+### Container Attributes
+
+```html
+<!-- Slider container with ARIA role -->
+<div id="slider-id" class="tns-slider tns-carousel">
+  <!-- Slides with ARIA attributes -->
+  <div id="slider-id-item0" class="tns-item" aria-hidden="false" tabindex="0">
+    <!-- Visible slide -->
+  </div>
+  <div id="slider-id-item1" class="tns-item" aria-hidden="true" tabindex="-1">
+    <!-- Hidden slide -->
+  </div>
+</div>
+```
+
+### Slide Status
+
+Tiny Slider manages `aria-hidden` and `tabindex` attributes automatically:
+
+<Steps>
+  <Step title="Visible Slides">
+    ```html
+    <div class="tns-item tns-slide-active" 
+         aria-hidden="false" 
+         tabindex="0">
+      <!-- Content is accessible -->
+    </div>
+    ```
+    
+    - `aria-hidden="false"`: Slide is visible to screen readers
+    - `tabindex="0"`: Focusable in natural tab order
+    - `.tns-slide-active`: Visual indicator class
+  </Step>
+  
+  <Step title="Hidden Slides">
+    ```html
+    <div class="tns-item" 
+         aria-hidden="true" 
+         tabindex="-1">
+      <!-- Content is hidden -->
+    </div>
+    ```
+    
+    - `aria-hidden="true"`: Slide is hidden from screen readers
+    - `tabindex="-1"`: Not focusable via keyboard
+  </Step>
+</Steps>
+
+### Live Region
+
+A live region announces slide changes to screen readers:
+
+```html
+<div class="tns-liveregion tns-visually-hidden" 
+     aria-live="polite" 
+     aria-atomic="true">
+  slide <span class="current">1</span> of 5
+</div>
+```
+
+<Info>
+  The live region updates automatically as users navigate through slides, announcing the current position.
+</Info>
+
+### Controls Attributes
+
+```html
+<!-- Controls container -->
+<div class="tns-controls" 
+     aria-label="Carousel Navigation" 
+     tabindex="0">
+  <button type="button" 
+          data-controls="prev" 
+          tabindex="-1" 
+          aria-controls="slider-id">
+    prev
+  </button>
+  <button type="button" 
+          data-controls="next" 
+          tabindex="-1" 
+          aria-controls="slider-id">
+    next
+  </button>
+</div>
+```
+
+**Key attributes:**
+- `aria-label`: Describes the control group
+- `aria-controls`: Links buttons to the slider
+- `tabindex`: Manages focus order
+- `type="button"`: Prevents form submission
+
+### Navigation Attributes
+
+```html
+<!-- Navigation container -->
+<div class="tns-nav" aria-label="Carousel Pagination">
+  <button type="button" 
+          data-nav="0" 
+          tabindex="0" 
+          aria-label="Carousel Page 1 (Current Slide)" 
+          aria-controls="slider-id" 
+          class="tns-nav-active">
+  </button>
+  <button type="button" 
+          data-nav="1" 
+          tabindex="-1" 
+          aria-label="Carousel Page 2" 
+          aria-controls="slider-id">
+  </button>
+</div>
+```
+
+**Navigation features:**
+- `aria-label="Carousel Pagination"`: Describes navigation purpose
+- Per-button labels: "Carousel Page 1 (Current Slide)"
+- Active button: `tabindex="0"`, inactive: `tabindex="-1"`
+- `.tns-nav-active`: Visual active state
+
+### Autoplay Button Attributes
+
+```html
+<button type="button" 
+        data-action="stop" 
+        aria-label="stop animation">
+  <span class="tns-visually-hidden">stop</span> animation
+</button>
+```
+
+## Keyboard Navigation
+
+Tiny Slider supports comprehensive keyboard navigation when enabled.
+
+### Enabling Arrow Keys
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  arrowKeys: true  // Enable keyboard navigation
+});
+```
+
+<Warning>
+  `arrowKeys` is `false` by default. You must explicitly enable it for keyboard navigation.
+</Warning>
+
+### Supported Keys
+
+When `arrowKeys: true`:
+
+| Key | Action |
+|-----|--------|
+| <kbd>Left Arrow</kbd> | Go to previous slide |
+| <kbd>Right Arrow</kbd> | Go to next slide |
+
+### Controls Focus Keyboard Support
+
+<Info>
+  When a prev/next button is focused, users can control the slider using arrow keys regardless of the `arrowKeys` setting.
+</Info>
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  controls: true  // Controls get automatic keyboard support
+});
+```
+
+When controls are focused:
+- <kbd>Left Arrow</kbd>: Previous slide
+- <kbd>Right Arrow</kbd>: Next slide
+- <kbd>Tab</kbd>: Move focus to next control
+- <kbd>Shift</kbd> + <kbd>Tab</kbd>: Move focus to previous control
+
+### Navigation Keyboard Support
+
+Navigation dots support full keyboard interaction:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  nav: true
+});
+```
+
+When nav is focused:
+- <kbd>Left Arrow</kbd>: Focus previous dot
+- <kbd>Right Arrow</kbd>: Focus next dot
+- <kbd>Enter</kbd> or <kbd>Space</kbd>: Activate focused dot
+- <kbd>Tab</kbd>: Exit navigation
+
+### Complete Keyboard Example
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  controls: true,
+  nav: true,
+  arrowKeys: true,  // Global arrow key support
+  autoplay: false   // Avoid auto-advancing during keyboard navigation
+});
+```
+
+## Focus Management
+
+Tiny Slider manages focus states to ensure keyboard users can navigate effectively.
+
+### Tabindex Management
+
+<Steps>
+  <Step title="Visible Content">
+    ```javascript
+    // Visible slides: tabindex="0" or natural tabindex
+    // Users can tab into slide content
+    ```
+  </Step>
+  
+  <Step title="Hidden Content">
+    ```javascript
+    // Hidden slides: tabindex="-1"
+    // Content is skipped in tab order
+    ```
+  </Step>
+  
+  <Step title="Controls">
+    ```javascript
+    // Active control: tabindex="0"
+    // Inactive controls: tabindex="-1"
+    ```
+  </Step>
+</Steps>
+
+### Focus Indicators
+
+Ensure visible focus indicators for keyboard users:
+
+```css
+/* Focus styles for controls */
+.tns-controls button:focus {
+  outline: 2px solid #4A90E2;
+  outline-offset: 2px;
+}
+
+/* Focus styles for navigation */
+.tns-nav button:focus {
+  outline: 2px solid #4A90E2;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.2);
+}
+
+/* Never remove focus indicators */
+/* Bad: button:focus { outline: none; } */
+```
+
+### Focus Trap Prevention
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Ensure focusable elements in hidden slides are properly hidden
+slider.events.on('indexChanged', function(info) {
+  // Hidden slides already have tabindex="-1"
+  // Additional interactive elements are automatically handled
+});
+```
+
+## Screen Reader Considerations
+
+### Meaningful Labels
+
+Provide descriptive labels for better screen reader experience:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  controlsText: [
+    '<span aria-hidden="true">❮</span><span class="sr-only">Previous slide</span>',
+    '<span aria-hidden="true">❯</span><span class="sr-only">Next slide</span>'
+  ],
+  autoplayText: [
+    '<span class="sr-only">Start automatic slideshow</span>',
+    '<span class="sr-only">Stop automatic slideshow</span>'
+  ]
+});
+```
+
+```css
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+```
+
+### Descriptive Slide Content
+
+Add semantic meaning to slides:
+
+```html
+<div class="my-slider">
+  <div>
+    <img src="product1.jpg" alt="Red running shoes with white stripes">
+    <h3>Running Shoes</h3>
+    <p>Lightweight and comfortable for daily runs.</p>
+  </div>
+  <div>
+    <img src="product2.jpg" alt="Blue hiking boots with yellow laces">
+    <h3>Hiking Boots</h3>
+    <p>Durable boots for mountain trails.</p>
+  </div>
+</div>
+```
+
+<Warning>
+  Always provide meaningful `alt` text for images. Decorative images should use `alt=""`.
+</Warning>
+
+### Announce Slide Changes
+
+The built-in live region announces changes:
+
+```html
+<!-- Automatically updated by Tiny Slider -->
+<div class="tns-liveregion tns-visually-hidden" 
+     aria-live="polite" 
+     aria-atomic="true">
+  slide <span class="current">3</span> of 5
+</div>
+```
+
+**Live region behavior:**
+- `aria-live="polite"`: Announces after current speech
+- `aria-atomic="true"`: Reads entire message
+- Updates on every slide change
+
+## Autoplay Accessibility
+
+### Pause Control Requirement
+
+<Warning>
+  WCAG 2.1 requires that any moving, blinking, or auto-updating content that lasts more than 5 seconds must have a mechanism to pause, stop, or hide it.
+</Warning>
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  autoplay: true,
+  autoplayButtonOutput: true,  // Required for accessibility
+  autoplayTimeout: 5000
+});
+```
+
+### Pause on Hover
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  autoplay: true,
+  autoplayHoverPause: true  // Pause when user hovers
+});
+```
+
+### Pause on Focus
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  autoplay: true
+});
+
+// Pause autoplay when any slide element receives focus
+var sliderContainer = document.querySelector('.my-slider');
+sliderContainer.addEventListener('focusin', function() {
+  slider.pause();
+});
+```
+
+### Visibility-Based Pause
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  autoplay: true,
+  autoplayResetOnVisibility: true  // Pause when tab is hidden (default: true)
+});
+```
+
+<Info>
+  This uses the Page Visibility API to pause when users switch tabs, improving performance and accessibility.
+</Info>
+
+## Best Practices
+
+### 1. Semantic HTML
+
+```html
+<!-- Good: Semantic structure -->
+<section aria-label="Featured Products">
+  <h2>Featured Products</h2>
+  <div class="my-slider">
+    <article>
+      <img src="product.jpg" alt="Product description">
+      <h3>Product Name</h3>
+      <p>Product description</p>
+      <a href="/product">View Details</a>
+    </article>
+  </div>
+</section>
+```
+
+### 2. Sufficient Color Contrast
+
+```css
+/* Ensure WCAG AA compliance (4.5:1 for normal text) */
+.tns-controls button {
+  background: #333;  /* Dark background */
+  color: #fff;       /* White text */
+}
+
+.tns-nav .tns-nav-active {
+  background: #0066cc;  /* Sufficient contrast with surroundings */
+}
+```
+
+### 3. Clear Visual Indicators
+
+```css
+/* Show current slide clearly */
+.tns-slide-active {
+  border: 3px solid #0066cc;
+}
+
+/* Indicate disabled controls */
+.tns-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Clear focus indicators */
+button:focus {
+  outline: 2px solid #4A90E2;
+  outline-offset: 2px;
+}
+```
+
+### 4. Respect Motion Preferences
+
+```css
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .tns-slider,
+  .tns-item {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+```
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  speed: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 300
+});
+```
+
+### 5. Responsive Touch Targets
+
+<Info>
+  WCAG 2.1 Level AAA requires touch targets to be at least 44×44 CSS pixels.
+</Info>
+
+```css
+/* Ensure adequate touch target size */
+.tns-controls button,
+.tns-nav button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 12px;
+}
+
+/* Add spacing between touch targets */
+.tns-nav button {
+  margin: 0 8px;
+}
+```
+
+### 6. Alternative Navigation
+
+Provide multiple ways to navigate:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  controls: true,      // Prev/next buttons
+  nav: true,          // Dot navigation
+  arrowKeys: true,    // Keyboard arrows
+  mouseDrag: true,    // Mouse dragging
+  touch: true         // Touch swiping
+});
+```
+
+### 7. Avoid Autoplay When Possible
+
+```javascript
+// Prefer manual control
+var slider = tns({
+  container: '.my-slider',
+  autoplay: false  // Let users control navigation
+});
+
+// If autoplay is required:
+var slider = tns({
+  container: '.my-slider',
+  autoplay: true,
+  autoplayButtonOutput: true,  // Must provide pause control
+  autoplayHoverPause: true,    // Pause on hover
+  autoplayTimeout: 7000        // Longer intervals
+});
+```
+
+## Testing Accessibility
+
+### Keyboard Testing
+
+<Steps>
+  <Step title="Tab Navigation">
+    - Press <kbd>Tab</kbd> to navigate through controls
+    - Verify visible focus indicators
+    - Ensure hidden slides are skipped
+  </Step>
+  
+  <Step title="Arrow Key Navigation">
+    - Test <kbd>Left</kbd> and <kbd>Right</kbd> arrow keys
+    - Verify slides change appropriately
+  </Step>
+  
+  <Step title="Enter/Space Activation">
+    - Focus navigation dots
+    - Press <kbd>Enter</kbd> or <kbd>Space</kbd>
+    - Verify correct slide is shown
+  </Step>
+</Steps>
+
+### Screen Reader Testing
+
+<Steps>
+  <Step title="Test with NVDA/JAWS (Windows)">
+    - Verify slide content is announced
+    - Check live region announcements
+    - Confirm hidden content is skipped
+  </Step>
+  
+  <Step title="Test with VoiceOver (macOS/iOS)">
+    - Navigate with VoiceOver rotor
+    - Verify control labels
+    - Test mobile touch gestures
+  </Step>
+  
+  <Step title="Test with TalkBack (Android)">
+    - Swipe to navigate
+    - Verify all interactive elements
+    - Check announcement order
+  </Step>
+</Steps>
+
+### Automated Testing Tools
+
+```bash
+# Install accessibility testing tools
+npm install --save-dev axe-core pa11y
+```
+
+```javascript
+// Example: Automated accessibility test
+const { AxePuppeteer } = require('@axe-core/puppeteer');
+const puppeteer = require('puppeteer');
+
+(async () => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('http://localhost:3000/slider-page');
+  
+  const results = await new AxePuppeteer(page).analyze();
+  console.log(results.violations);
+  
+  await browser.close();
+})();
+```
+
+## WCAG Compliance Checklist
+
+<AccordionGroup>
+  <Accordion title="Level A Requirements">
+    - ✓ Keyboard accessible (2.1.1)
+    - ✓ No keyboard trap (2.1.2)
+    - ✓ Sufficient time to interact (2.2.1)
+    - ✓ Bypass blocks via skip links (2.4.1)
+    - ✓ Link/button purpose from text (2.4.4)
+    - ✓ Valid HTML markup (4.1.1)
+    - ✓ Name, role, value available (4.1.2)
+  </Accordion>
+  
+  <Accordion title="Level AA Requirements">
+    - ✓ Multiple ways to navigate (2.4.5)
+    - ✓ Descriptive headings/labels (2.4.6)
+    - ✓ Visible focus indicator (2.4.7)
+    - ✓ Color contrast 4.5:1 (1.4.3)
+    - ✓ Text resize up to 200% (1.4.4)
+    - ✓ Pause/stop/hide controls (2.2.2)
+  </Accordion>
+  
+  <Accordion title="Level AAA Requirements (Recommended)">
+    - ◯ Touch target size 44×44px (2.5.5)
+    - ◯ Color contrast 7:1 (1.4.6)
+    - ◯ Section headings (2.4.10)
+    - ◯ Extended time limits (2.2.3)
+    - ◯ No interruptions (2.2.4)
+  </Accordion>
+</AccordionGroup>
+
+## Resources
+
+<CardGroup cols={2}>
+  <Card title="WCAG 2.1 Guidelines" icon="universal-access" href="https://www.w3.org/WAI/WCAG21/quickref/">
+    Official Web Content Accessibility Guidelines
+  </Card>
+  <Card title="ARIA Practices" icon="book" href="https://www.w3.org/WAI/ARIA/apg/patterns/carousel/">
+    W3C Carousel Pattern documentation
+  </Card>
+  <Card title="WebAIM" icon="graduation-cap" href="https://webaim.org/">
+    Comprehensive accessibility resources
+  </Card>
+  <Card title="a11y Project" icon="heart" href="https://www.a11yproject.com/">
+    Community-driven accessibility checklist
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/guides/configuration">
+    Configure accessible sliders
+  </Card>
+  <Card title="Keyboard Navigation" icon="keyboard" href="/guides/configuration#keyboard-navigation">
+    Enable arrow key support
+  </Card>
+  <Card title="Configuration" icon="gear" href="/guides/configuration">
+    Configure accessibility options
+  </Card>
+  <Card title="Examples" icon="image" href="/examples/basic-carousel">
+    View accessible implementations
+  </Card>
+</CardGroup>

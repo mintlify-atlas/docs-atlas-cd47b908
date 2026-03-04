@@ -1,0 +1,547 @@
+---
+title: 'Responsive Options'
+description: 'Configure breakpoint-specific behavior in tiny-slider'
+---
+
+# Responsive Options
+
+Tiny-slider provides powerful responsive capabilities that allow you to adjust slider behavior at different viewport widths. This enables you to create adaptive experiences that work perfectly on any device.
+
+## How Responsive Options Work
+
+Responsive options use a breakpoint-based system similar to CSS media queries. Each breakpoint defines a minimum viewport width where specific options take effect.
+
+### Breakpoint Behavior
+
+<Info>
+  Breakpoints work like `(min-width: breakpoint)` in CSS. Options are inherited from smaller breakpoints unless explicitly overridden.
+</Info>
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1,  // Default: mobile-first
+  responsive: {
+    640: {
+      items: 2  // At 640px and above
+    },
+    900: {
+      items: 3  // At 900px and above
+    }
+  }
+});
+```
+
+In this example:
+- **0-639px**: Shows 1 item
+- **640-899px**: Shows 2 items
+- **900px+**: Shows 3 items
+
+## Basic Configuration
+
+### Simple Responsive Setup
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  mode: 'carousel',
+  items: 1,
+  slideBy: 1,
+  gutter: 0,
+  
+  responsive: {
+    640: {
+      items: 2,
+      gutter: 10
+    },
+    768: {
+      items: 3,
+      gutter: 20
+    },
+    1024: {
+      items: 4,
+      gutter: 30
+    }
+  }
+});
+```
+
+### Shorthand Syntax
+
+For simple item count changes, you can use shorthand:
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  responsive: {
+    640: 2,     // Shorthand for { items: 2 }
+    900: 3,     // Shorthand for { items: 3 }
+    1200: 4     // Shorthand for { items: 4 }
+  }
+});
+```
+
+<Note>
+  The shorthand syntax is converted to `{items: value}` internally. Use the full object syntax for configuring multiple options.
+</Note>
+
+## Available Responsive Options
+
+The following options can be defined per breakpoint:
+
+<Accordion title="Layout Options">
+  - `items` - Number of visible slides
+  - `fixedWidth` - Fixed width per slide (px)
+  - `edgePadding` - Space on outside (px)
+  - `gutter` - Space between slides (px)
+  - `center` - Center active slide
+</Accordion>
+
+<Accordion title="Behavior Options">
+  - `slideBy` - Number of slides to advance
+  - `speed` - Animation speed (ms)
+  - `autoHeight` - Adjust height per slide
+  - `disable` - Disable slider at breakpoint
+</Accordion>
+
+<Accordion title="UI Controls">
+  - `controls` - Show/hide prev/next buttons
+  - `controlsText` - Button text/markup
+  - `nav` - Show/hide dots navigation
+</Accordion>
+
+<Accordion title="Interaction Options">
+  - `touch` - Enable touch/swipe
+  - `mouseDrag` - Enable mouse dragging
+  - `arrowKeys` - Enable keyboard navigation
+</Accordion>
+
+<Accordion title="Autoplay Options">
+  - `autoplay` - Enable autoplay
+  - `autoplayTimeout` - Time between slides (ms)
+  - `autoplayText` - Button text/markup
+  - `autoplayHoverPause` - Pause on hover
+  - `autoplayResetOnVisibility` - Reset on tab visibility
+</Accordion>
+
+<Accordion title="Advanced Options">
+  - `startIndex` - Initial slide index
+</Accordion>
+
+## Inheritance Behavior
+
+### Standard Inheritance
+
+Options cascade from smaller to larger breakpoints:
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  gutter: 10,
+  speed: 300,
+  
+  responsive: {
+    640: {
+      items: 2,
+      gutter: 20
+      // speed: 300 inherited from base
+    },
+    1024: {
+      items: 4
+      // gutter: 20 inherited from 640
+      // speed: 300 inherited from base
+    }
+  }
+});
+```
+
+### Fixed Width Inheritance
+
+<Warning>
+  `fixedWidth` has special inheritance rules: it can only be changed to other positive integers, not to `false`, `0`, or other data types.
+</Warning>
+
+```javascript
+// Correct: changing to another fixed width
+const slider = tns({
+  container: '.my-slider',
+  fixedWidth: 200,
+  responsive: {
+    768: {
+      fixedWidth: 250  // ✓ Valid
+    },
+    1024: {
+      fixedWidth: 300  // ✓ Valid
+    }
+  }
+});
+
+// Incorrect: trying to disable fixed width
+const slider = tns({
+  container: '.my-slider',
+  fixedWidth: 200,
+  responsive: {
+    768: {
+      fixedWidth: false  // ✗ Not allowed!
+    }
+  }
+});
+```
+
+## Practical Examples
+
+### E-Commerce Product Grid
+
+```javascript
+const productSlider = tns({
+  container: '.products',
+  mode: 'carousel',
+  
+  // Mobile: 1 product, small gaps
+  items: 1,
+  slideBy: 1,
+  gutter: 15,
+  edgePadding: 20,
+  controls: true,
+  nav: true,
+  
+  responsive: {
+    // Tablet: 2 products, larger gaps
+    640: {
+      items: 2,
+      gutter: 20,
+      edgePadding: 30,
+      slideBy: 2
+    },
+    // Desktop: 3 products
+    900: {
+      items: 3,
+      gutter: 30,
+      edgePadding: 40
+    },
+    // Large desktop: 4 products
+    1200: {
+      items: 4,
+      gutter: 40,
+      edgePadding: 50
+    }
+  }
+});
+```
+
+### Content Slider with Progressive Enhancement
+
+```javascript
+const contentSlider = tns({
+  container: '.content-slider',
+  mode: 'carousel',
+  
+  // Mobile: basic slider
+  items: 1,
+  slideBy: 1,
+  controls: true,
+  nav: false,
+  autoplay: false,
+  touch: true,
+  mouseDrag: false,
+  
+  responsive: {
+    // Tablet: add navigation dots
+    640: {
+      items: 2,
+      nav: true,
+      gutter: 20
+    },
+    // Desktop: enable autoplay and mouse drag
+    1024: {
+      items: 3,
+      autoplay: true,
+      autoplayTimeout: 5000,
+      autoplayHoverPause: true,
+      mouseDrag: true,
+      gutter: 30
+    }
+  }
+});
+```
+
+### Adaptive Control Visibility
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  
+  // Mobile: controls but no nav
+  controls: true,
+  nav: false,
+  
+  responsive: {
+    // Tablet: add nav dots
+    768: {
+      items: 2,
+      nav: true
+    },
+    // Desktop: enable keyboard controls
+    1024: {
+      items: 3,
+      arrowKeys: true
+    },
+    // Large desktop: disable slider (show static grid)
+    1400: {
+      disable: true  // Slider becomes static
+    }
+  }
+});
+```
+
+### Speed and Timing Adjustments
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  
+  // Mobile: slower, manual navigation
+  speed: 400,
+  autoplay: false,
+  
+  responsive: {
+    // Tablet: enable autoplay
+    768: {
+      items: 2,
+      autoplay: true,
+      autoplayTimeout: 4000,
+      speed: 350
+    },
+    // Desktop: faster transitions, longer intervals
+    1024: {
+      items: 3,
+      autoplayTimeout: 6000,
+      speed: 300
+    }
+  }
+});
+```
+
+## Advanced Patterns
+
+### Fixed Width with Responsive Adjustments
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  mode: 'carousel',
+  
+  // Base: auto-calculate items from fixed width
+  fixedWidth: 280,
+  gutter: 15,
+  loop: true,
+  
+  responsive: {
+    // Tablet: slightly larger slides
+    768: {
+      fixedWidth: 320,
+      gutter: 20
+    },
+    // Desktop: larger slides
+    1024: {
+      fixedWidth: 360,
+      gutter: 30
+    }
+  }
+});
+```
+
+### Mobile-First Progressive Controls
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  
+  // Mobile: minimal UI
+  items: 1,
+  controls: false,  // No arrow buttons
+  nav: false,       // No dots
+  touch: true,      // Swipe only
+  
+  responsive: {
+    // Small tablet: add basic controls
+    640: {
+      controls: true,
+      nav: true
+    },
+    // Desktop: full experience
+    1024: {
+      items: 3,
+      autoplay: true,
+      autoplayTimeout: 5000,
+      autoplayHoverPause: true,
+      mouseDrag: true,
+      arrowKeys: true
+    }
+  }
+});
+```
+
+### Center Mode Responsive
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  mode: 'carousel',
+  
+  // Mobile: standard layout
+  items: 1,
+  center: false,
+  edgePadding: 20,
+  
+  responsive: {
+    // Desktop: center active slide
+    1024: {
+      items: 3,
+      center: true,
+      edgePadding: 100
+    }
+  }
+});
+```
+
+## Responsive Events
+
+You can listen to breakpoint changes:
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  responsive: {
+    640: { items: 2 },
+    900: { items: 3 }
+  }
+});
+
+// Listen for breakpoint changes
+slider.events.on('newBreakpointStart', function(info) {
+  console.log('Breakpoint changing...');
+  console.log('Current items:', info.items);
+});
+
+slider.events.on('newBreakpointEnd', function(info) {
+  console.log('Breakpoint changed!');
+  console.log('New items:', info.items);
+  console.log('New slideBy:', info.slideBy);
+});
+```
+
+## Debugging Responsive Behavior
+
+### Check Current Settings
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  responsive: {
+    640: { items: 2, gutter: 20 },
+    900: { items: 3, gutter: 30 }
+  }
+});
+
+// Get current configuration
+const info = slider.getInfo();
+console.log('Current items:', info.items);
+console.log('Current slideBy:', info.slideBy);
+console.log('Current index:', info.index);
+console.log('Total slides:', info.slideCount);
+```
+
+### Responsive Testing
+
+```javascript
+// Log on breakpoint changes
+slider.events.on('newBreakpointEnd', function(info) {
+  console.table({
+    'Items': info.items,
+    'SlideBy': info.slideBy,
+    'Index': info.index,
+    'Display Index': info.displayIndex
+  });
+});
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Mobile-First Approach" icon="mobile">
+    Start with mobile configuration as the base, then progressively enhance for larger screens.
+  </Card>
+  
+  <Card title="Consistent Breakpoints" icon="ruler">
+    Use standard breakpoints (640, 768, 1024, 1280) that align with common CSS frameworks.
+  </Card>
+  
+  <Card title="Test Inheritance" icon="arrow-down">
+    Remember that options cascade down. Test at each breakpoint to ensure expected behavior.
+  </Card>
+  
+  <Card title="Performance" icon="gauge">
+    Avoid defining too many breakpoints. 3-4 breakpoints are usually sufficient.
+  </Card>
+</CardGroup>
+
+<Warning>
+  Responsive options only apply when the browser window is resized or on initial load. They don't dynamically respond to container size changes unless the window resizes.
+</Warning>
+
+## Common Patterns
+
+### Stack to Grid
+
+```javascript
+// Mobile: vertical stack (1 item)
+// Tablet+: horizontal grid (multiple items)
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  gutter: 10,
+  responsive: {
+    768: { items: 3, gutter: 20 }
+  }
+});
+```
+
+### Disable at Desktop
+
+```javascript
+// Show as slider on mobile, static grid on desktop
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  responsive: {
+    1200: {
+      disable: true  // No slider needed on large screens
+    }
+  }
+});
+```
+
+### Touch to Mouse
+
+```javascript
+// Touch on mobile, mouse drag on desktop
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  touch: true,
+  mouseDrag: false,
+  responsive: {
+    1024: {
+      items: 3,
+      mouseDrag: true  // Enable mouse drag on desktop
+    }
+  }
+});
+```

@@ -1,0 +1,406 @@
+---
+title: 'Configuration Guide'
+description: 'Best practices and patterns for configuring Tiny Slider'
+---
+
+## Overview
+
+Tiny Slider offers extensive configuration options to customize slider behavior. This guide covers best practices, common patterns, and performance considerations when configuring your slider.
+
+## Container Requirements
+
+<Warning>
+  Tiny slider works with static content in the browser only. If HTML is loaded dynamically, make sure to call `tns()` after loading completes.
+</Warning>
+
+### Basic HTML Structure
+
+```html
+<div class="my-slider">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+<!-- or ul.my-slider > li -->
+```
+
+<Note>
+  The slider container must have at least 1 slide. If there are no slides, the slider won't initialize.
+</Note>
+
+## Default Configuration
+
+Here are the default values from the source code:
+
+```javascript
+var slider = tns({
+  container: '.slider',        // Default container selector
+  mode: 'carousel',            // 'carousel' or 'gallery'
+  axis: 'horizontal',          // 'horizontal' or 'vertical'
+  items: 1,                    // Number of slides visible
+  gutter: 0,                   // Space between slides (px)
+  edgePadding: 0,             // Space on the outside (px)
+  fixedWidth: false,          // Fixed slide width
+  autoWidth: false,           // Natural slide width
+  viewportMax: false,         // Max viewport for fixedWidth/autoWidth
+  slideBy: 1,                 // Slides to move per action
+  center: false,              // Center active slide
+  controls: true,             // Show prev/next buttons
+  controlsPosition: 'top',    // 'top' or 'bottom'
+  controlsText: ['prev', 'next'],
+  nav: true,                  // Show navigation dots
+  navPosition: 'top',         // 'top' or 'bottom'
+  arrowKeys: false,           // Enable keyboard navigation
+  speed: 300,                 // Animation speed (ms)
+  autoplay: false,            // Auto-advance slides
+  autoplayTimeout: 5000,      // Time between slides (ms)
+  autoplayDirection: 'forward', // 'forward' or 'backward'
+  autoplayText: ['start', 'stop'],
+  autoplayHoverPause: false,  // Pause on hover
+  autoplayResetOnVisibility: true, // Pause when tab hidden
+  loop: true,                 // Infinite loop
+  rewind: false,              // Jump to opposite edge
+  autoHeight: false,          // Adjust height per slide
+  lazyload: false,            // Lazy load images
+  lazyloadSelector: '.tns-lazy-img',
+  touch: true,                // Touch/swipe enabled
+  mouseDrag: false,           // Mouse drag enabled
+  swipeAngle: 15,             // Swipe angle threshold
+  preventActionWhenRunning: false,
+  preventScrollOnTouch: false, // 'auto', 'force', or false
+  nested: false,              // 'inner', 'outer', or false
+  freezable: true,            // Freeze when all slides visible
+  disable: false,             // Disable slider
+  startIndex: 0,              // Initial slide index
+  useLocalStorage: true,      // Cache browser capabilities
+  nonce: false                // CSP nonce for inline styles
+});
+```
+
+## Common Configuration Patterns
+
+### Responsive Slider
+
+<Steps>
+  <Step title="Define Base Configuration">
+    Start with mobile-first settings:
+    
+    ```javascript
+    var slider = tns({
+      container: '.my-slider',
+      items: 1,
+      slideBy: 'page',
+      autoplay: true
+    });
+    ```
+  </Step>
+  
+  <Step title="Add Responsive Breakpoints">
+    Use the `responsive` object to override options at different viewport widths:
+    
+    ```javascript
+    var slider = tns({
+      container: '.my-slider',
+      items: 1,
+      responsive: {
+        640: {
+          edgePadding: 20,
+          gutter: 20,
+          items: 2
+        },
+        700: {
+          gutter: 30
+        },
+        900: {
+          items: 3
+        }
+      }
+    });
+    ```
+  </Step>
+  
+  <Step title="Understand Inheritance">
+    <Info>
+      Breakpoints behave like `(min-width: breakpoint)` in CSS. Undefined options are inherited from smaller breakpoints.
+    </Info>
+  </Step>
+</Steps>
+
+### Responsive Options
+
+These options can be redefined in the `responsive` field:
+- `startIndex`
+- `items`
+- `slideBy`
+- `speed`
+- `autoHeight`
+- `fixedWidth`
+- `edgePadding`
+- `gutter`
+- `center`
+- `controls`
+- `controlsText`
+- `nav`
+- `autoplay`
+- `autoplayHoverPause`
+- `autoplayResetOnVisibility`
+- `autoplayText`
+- `autoplayTimeout`
+- `touch`
+- `mouseDrag`
+- `arrowKeys`
+- `disable`
+
+### Fixed Width Slider
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  fixedWidth: 300,
+  gutter: 20,
+  viewportMax: 1200
+});
+```
+
+<Note>
+  `fixedWidth` can only be changed to other positive integers in responsive options. It cannot be changed to negative, 0, or other data types.
+</Note>
+
+### Auto Width Slider
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  autoWidth: true,
+  gutter: 10
+});
+```
+
+<Info>
+  With `autoWidth: true`, each slide's width will be its natural width as an `inline-block` box. The `width` attribute is required for every image when using lazyload with autoWidth.
+</Info>
+
+### Gallery Mode
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  mode: 'gallery',
+  animateIn: 'tns-fadeIn',
+  animateOut: 'tns-fadeOut',
+  animateDelay: 1000,
+  speed: 500
+});
+```
+
+<Note>
+  In gallery mode, `slideBy` is automatically set to 'page', and `edgePadding` and `autoHeight` are disabled.
+</Note>
+
+### Centered Active Slide (v2.9.2+)
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  center: true,
+  gutter: 20
+});
+```
+
+## Performance Considerations
+
+### Local Storage Optimization
+
+<Info>
+  Browser capability detection results are saved to localStorage by default to avoid rechecking on every page load.
+</Info>
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  useLocalStorage: true  // Default: true
+});
+```
+
+The following capabilities are cached:
+- CSS Calc support
+- Percentage Layout support
+- CSS Media Queries support
+- Transform support
+- 3D Transforms support
+- Transition Duration/Delay support
+- Animation Duration/Delay support
+- Transition/Animation End events
+
+### Percentage vs Fixed Width
+
+<Steps>
+  <Step title="Percentage Width (Default)">
+    Uses `%` units for slide widths - no recalculation needed on window resize.
+    
+    ```javascript
+    var slider = tns({
+      container: '.my-slider',
+      items: 3  // Each slide is 33.33% wide
+    });
+    ```
+    
+    ✅ Better performance on resize
+  </Step>
+  
+  <Step title="Fixed Width">
+    Uses fixed pixel widths for slides.
+    
+    ```javascript
+    var slider = tns({
+      container: '.my-slider',
+      fixedWidth: 300
+    });
+    ```
+    
+    ✅ Precise control over slide dimensions
+  </Step>
+</Steps>
+
+### Freezable Option
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  freezable: true  // Default: true
+});
+```
+
+<Info>
+  When `freezable: true`, the slider will be frozen (controls, nav, autoplay disabled) when all slides can be displayed in one page. This improves performance and UX.
+</Info>
+
+## Advanced Configuration
+
+### Nested Sliders
+
+```javascript
+// Initialize inner slider first
+var innerSlider = tns({
+  container: '.inner-slider',
+  nested: 'inner'
+});
+
+// Then initialize outer slider
+var outerSlider = tns({
+  container: '.outer-slider',
+  nested: 'outer'
+});
+```
+
+<Warning>
+  Always initialize the inner slider before the outer slider, otherwise the height of the inner slider container will be incorrect.
+</Warning>
+
+### Content Security Policy
+
+If you need to comply with CSP without `unsafe-inline`:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  nonce: 'your-nonce-value'
+});
+```
+
+### Prevent Actions During Transitions
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  preventActionWhenRunning: true  // v2.9.1+
+});
+```
+
+<Info>
+  Prevents the next transition from starting while the slider is currently transforming.
+</Info>
+
+### Scroll Prevention on Touch
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  touch: true,
+  preventScrollOnTouch: 'auto'  // 'auto', 'force', or false
+});
+```
+
+- `'auto'`: Checks if touch direction matches slider axis, then decides whether to prevent scrolling
+- `'force'`: Always prevents page scrolling on touch
+- `false`: Never prevents scrolling
+
+## Configuration Validation
+
+<Warning>
+  Prior to v2.0.2, options `container`, `controlsContainer`, `navContainer`, and `autoplayButton` needed to be DOM elements. From v2.0.2+, you can use CSS selectors as strings.
+</Warning>
+
+```javascript
+// Modern way (v2.0.2+)
+var slider = tns({
+  container: '.my-slider',
+  controlsContainer: '.controls',
+  navContainer: '.nav'
+});
+
+// Legacy way (before v2.0.2)
+var slider = tns({
+  container: document.querySelector('.my-slider'),
+  controlsContainer: document.querySelector('.controls')
+});
+```
+
+## Best Practices
+
+<Steps>
+  <Step title="Start Simple">
+    Begin with minimal configuration and add options as needed:
+    
+    ```javascript
+    var slider = tns({
+      container: '.my-slider',
+      items: 3,
+      slideBy: 'page'
+    });
+    ```
+  </Step>
+  
+  <Step title="Use Responsive Settings">
+    Define mobile-first, then add responsive breakpoints for larger screens.
+  </Step>
+  
+  <Step title="Consider Performance">
+    - Keep `useLocalStorage: true` for better performance
+    - Use percentage widths when possible
+    - Enable `freezable` to disable unnecessary features
+  </Step>
+  
+  <Step title="Test Across Devices">
+    Configure `touch`, `mouseDrag`, and `arrowKeys` based on your target devices.
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Styling Guide" icon="palette" href="/guides/styling">
+    Learn how to customize the visual appearance
+  </Card>
+  <Card title="Methods" icon="code" href="/guides/methods">
+    Explore programmatic control methods
+  </Card>
+  <Card title="API Reference" icon="book" href="/api/options">
+    Complete options reference
+  </Card>
+  <Card title="Accessibility" icon="universal-access" href="/guides/accessibility">
+    Ensure your slider is accessible
+  </Card>
+</CardGroup>

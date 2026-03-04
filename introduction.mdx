@@ -1,0 +1,186 @@
+---
+title: Introduction
+description: A lightweight, responsive slider library for all purposes with no dependencies
+---
+
+## What is Tiny Slider?
+
+Tiny Slider is a lightweight, vanilla JavaScript slider library inspired by Owl Carousel. It provides a powerful and flexible solution for creating responsive carousels and galleries with zero dependencies. At its core, Tiny Slider is designed to be fast, accessible, and easy to use while supporting both modern and legacy browsers.
+
+<Note>
+  Tiny Slider works with static content and runs in the browser only. If your HTML is loaded dynamically, make sure to call `tns()` after the content has finished loading.
+</Note>
+
+## Key Features
+
+Tiny Slider offers a comprehensive set of features that make it suitable for various use cases:
+
+<CardGroup cols={2}>
+  <Card title="Multiple Modes" icon="sliders">
+    Support for carousel (sliding) and gallery (fade) modes with horizontal and vertical orientations
+  </Card>
+  
+  <Card title="Responsive Design" icon="mobile-screen">
+    Built-in responsive options with breakpoint-based configuration for mobile-first development
+  </Card>
+  
+  <Card title="Touch & Drag" icon="hand-pointer">
+    Native touch support for mobile devices and optional mouse drag for desktop browsers
+  </Card>
+  
+  <Card title="Autoplay & Controls" icon="play">
+    Autoplay with customizable direction, speed, and hover pause functionality
+  </Card>
+  
+  <Card title="Lazy Loading" icon="image">
+    Built-in image lazy loading to improve performance and reduce bandwidth
+  </Card>
+  
+  <Card title="Accessibility" icon="universal-access">
+    Full keyboard navigation support (arrow keys) and ARIA attributes for screen readers
+  </Card>
+</CardGroup>
+
+### Advanced Capabilities
+
+- **Loop or Rewind**: Seamlessly loop through slides or rewind to the beginning
+- **Auto Height**: Container height automatically adjusts to each slide's content
+- **Fixed/Auto Width**: Support for fixed-width slides or auto-width based on content
+- **Center Mode**: Center the active slide in the viewport (v2.9.2+)
+- **Edge Padding & Gutter**: Fine-tune spacing between slides and viewport edges
+- **Custom Events**: Hook into lifecycle events like `transitionStart`, `transitionEnd`, and more
+- **Nested Sliders**: Support for sliders within sliders
+- **localStorage Caching**: Browser capability detection results are cached for better performance
+
+## Browser Support
+
+Tiny Slider offers extensive browser support, including legacy browsers:
+
+**Desktop Browsers:**
+- Firefox 8+
+- Chrome 15+ (likely works on Chrome 4-14 as well)
+- Safari 4+
+- Opera 12.1+
+- Internet Explorer 8+
+
+**Mobile Browsers:**
+- Android Browser 4.2+
+- Chrome Mobile 63+
+- Firefox Mobile 28+
+- Maxthon 4+
+
+<Info>
+  For IE8 support, you'll need to include the IE8 polyfills helper file. See the [Installation](/installation) page for details.
+</Info>
+
+## Why Choose Tiny Slider?
+
+### Lightweight & Fast
+
+Tiny Slider is built with performance in mind. It uses percentage-based widths instead of pixels, eliminating the need to recalculate slide widths on window resize. Browser capability values are saved to localStorage, so they don't need to be rechecked until the browser is upgraded.
+
+### No Dependencies
+
+Unlike many slider libraries that require jQuery or other frameworks, Tiny Slider is pure vanilla JavaScript. This means:
+- Smaller bundle size
+- Fewer HTTP requests
+- Better performance
+- No conflicting library versions
+
+### Modern Web Standards
+
+Tiny Slider leverages modern CSS features when available:
+- CSS transforms with 3D transform support detection
+- CSS Media Queries for responsive behavior
+- CSS `calc()` function for layout calculations
+- Graceful fallbacks for older browsers
+
+### Flexible Configuration
+
+With over 40 configuration options, you can customize virtually every aspect of the slider:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  slideBy: 'page',
+  autoplay: true,
+  controls: true,
+  nav: true,
+  responsive: {
+    640: {
+      items: 4,
+      gutter: 20
+    },
+    900: {
+      items: 5
+    }
+  }
+});
+```
+
+## Comparison with Other Sliders
+
+<AccordionGroup>
+  <Accordion title="Tiny Slider vs Owl Carousel">
+    While Tiny Slider was inspired by Owl Carousel, it offers several advantages:
+    
+    - **No jQuery dependency**: Pure vanilla JS vs jQuery requirement
+    - **Better browser support**: IE8+ vs IE9+
+    - **Smaller size**: Lighter weight with no framework overhead
+    - **Modern approach**: Uses CSS transforms and modern web APIs
+    - **localStorage caching**: Performance optimization not available in Owl Carousel
+  </Accordion>
+  
+  <Accordion title="Tiny Slider vs Slick">
+    - **No dependencies**: Zero dependencies vs jQuery requirement
+    - **Better performance**: Percentage-based layout, localStorage caching
+    - **IE8 support**: Full IE8 support with polyfills
+    - **Smaller footprint**: Lighter weight overall
+  </Accordion>
+  
+  <Accordion title="Tiny Slider vs Swiper">
+    - **Simpler API**: Easier to learn and configure
+    - **Better legacy support**: IE8+ vs IE11+
+    - **Lightweight**: Smaller bundle size for basic use cases
+    - **Swiper advantages**: More advanced features, better touch gestures, virtual slides
+  </Accordion>
+</AccordionGroup>
+
+## Use Cases
+
+Tiny Slider is perfect for:
+
+- Product carousels in e-commerce sites
+- Image galleries and portfolios
+- Testimonial sliders
+- Content carousels on marketing pages
+- Mobile-friendly navigation components
+- Banner rotators
+- Any scenario requiring a lightweight, accessible slider
+
+## Getting Started
+
+Ready to start using Tiny Slider? Here's what to do next:
+
+<Steps>
+  <Step title="Install the library">
+    Choose your preferred installation method: npm, yarn, pnpm, or CDN.
+    
+    [Go to Installation →](/installation)
+  </Step>
+  
+  <Step title="Follow the quickstart guide">
+    Get your first slider up and running in minutes with our step-by-step guide.
+    
+    [Go to Quickstart →](/quickstart)
+  </Step>
+</Steps>
+
+## Version Information
+
+<Info>
+  **Current Version**: 2.9.4
+  
+  This documentation covers Tiny Slider v2. Previous versions (v1 and v0) are available on GitHub but are no longer actively maintained.
+</Info>

@@ -1,0 +1,327 @@
+---
+title: 'Gallery Mode'
+description: 'Create a gallery slider with fade animations and single item display'
+icon: 'images'
+---
+
+## Overview
+
+Gallery mode uses fade animations instead of sliding, displaying one item at a time. This mode is perfect for image galleries, testimonials, or any content where you want focus on a single item with smooth fade transitions.
+
+## Complete Example
+
+<CodeGroup>
+
+```html HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    .gallery-slider {
+      margin: 0 auto;
+      max-width: 800px;
+    }
+    .gallery-slide {
+      text-align: center;
+      padding: 40px;
+    }
+    .gallery-slide img {
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .gallery-slide h2 {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+    .gallery-slide p {
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="gallery-slider">
+    <div class="gallery-slide">
+      <img src="gallery1.jpg" alt="Image 1">
+      <h2>Beautiful Landscape</h2>
+      <p>A stunning view of nature</p>
+    </div>
+    <div class="gallery-slide">
+      <img src="gallery2.jpg" alt="Image 2">
+      <h2>City Lights</h2>
+      <p>Urban photography at night</p>
+    </div>
+    <div class="gallery-slide">
+      <img src="gallery3.jpg" alt="Image 3">
+      <h2>Ocean Waves</h2>
+      <p>Peaceful coastal scenery</p>
+    </div>
+    <div class="gallery-slide">
+      <img src="gallery4.jpg" alt="Image 4">
+      <h2>Mountain Peak</h2>
+      <p>Adventure awaits</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+</body>
+</html>
+```
+
+```javascript JavaScript
+var slider = tns({
+  container: '.gallery-slider',
+  mode: 'gallery',
+  items: 1,
+  slideBy: 1,
+  controls: true,
+  controlsPosition: 'bottom',
+  nav: true,
+  navPosition: 'bottom',
+  speed: 500,
+  animateIn: 'tns-fadeIn',
+  animateOut: 'tns-fadeOut',
+  animateNormal: 'tns-normal',
+  animateDelay: 1000,
+  loop: true,
+  mouseDrag: true
+});
+```
+
+```markdown Result
+The gallery displays one slide at a time with:
+- Fade in/out animations between slides
+- Previous/Next buttons at the bottom
+- Navigation dots for direct access
+- 1 second delay between animations
+- 500ms transition speed
+- Infinite looping through images
+- Mouse drag support for navigation
+```
+
+</CodeGroup>
+
+## Key Options Explained
+
+### mode
+```javascript
+mode: 'gallery'
+```
+Switches from carousel sliding to gallery fade mode. Default is `'carousel'`. This is the most important option for gallery mode.
+
+### Animation Classes
+```javascript
+animateIn: 'tns-fadeIn',
+animateOut: 'tns-fadeOut',
+animateNormal: 'tns-normal'
+```
+Defines CSS classes for animations:
+- `animateIn`: Class added to incoming slide (default: `'tns-fadeIn'`)
+- `animateOut`: Class added to outgoing slide (default: `'tns-fadeOut'`)
+- `animateNormal`: Class for slides in normal state (default: `'tns-normal'`)
+
+### animateDelay
+```javascript
+animateDelay: 1000
+```
+Time between animations in milliseconds. Default is `false` (no delay).
+
+<Note>
+`animateDelay` is only applicable in gallery mode. It adds a pause between the fade-out of one slide and fade-in of the next.
+</Note>
+
+## Custom Animations
+
+You can create custom fade effects by defining your own CSS classes:
+
+```css
+@keyframes customFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes customFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+.custom-fade-in {
+  animation: customFadeIn 0.6s ease;
+}
+
+.custom-fade-out {
+  animation: customFadeOut 0.6s ease;
+}
+```
+
+Then use these classes in your slider:
+
+```javascript
+var slider = tns({
+  container: '.gallery-slider',
+  mode: 'gallery',
+  animateIn: 'custom-fade-in',
+  animateOut: 'custom-fade-out',
+  speed: 600
+});
+```
+
+## Gallery with Autoplay
+
+Combine gallery mode with autoplay for an automatic slideshow:
+
+```javascript
+var slider = tns({
+  container: '.gallery-slider',
+  mode: 'gallery',
+  items: 1,
+  autoplay: true,
+  autoplayTimeout: 4000,
+  autoplayHoverPause: true,
+  autoplayButtonOutput: false,
+  controls: true,
+  nav: true,
+  speed: 600
+});
+```
+
+<Tip>
+Set `autoplayHoverPause: true` to pause the slideshow when users hover over it, improving user experience.
+</Tip>
+
+## Fullscreen Gallery
+
+```html
+<style>
+  .fullscreen-gallery {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background: #000;
+  }
+  .fullscreen-gallery .gallery-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  .fullscreen-gallery img {
+    max-width: 90%;
+    max-height: 90vh;
+    object-fit: contain;
+  }
+</style>
+
+<div class="fullscreen-gallery">
+  <div class="gallery-slide"><img src="img1.jpg" alt=""></div>
+  <div class="gallery-slide"><img src="img2.jpg" alt=""></div>
+  <div class="gallery-slide"><img src="img3.jpg" alt=""></div>
+</div>
+```
+
+```javascript
+var fullscreenGallery = tns({
+  container: '.fullscreen-gallery',
+  mode: 'gallery',
+  items: 1,
+  controls: true,
+  controlsText: ['◄', '►'],
+  nav: true,
+  navPosition: 'bottom',
+  arrowKeys: true,
+  speed: 400
+});
+```
+
+## Gallery Mode Limitations
+
+<Warning>
+In gallery mode:
+- Only `items: 1` is supported (one slide at a time)
+- `slideBy` should be `1`
+- `gutter` and `edgePadding` have no effect
+- `center` option is not applicable
+- All slides change at once with fade animation
+</Warning>
+
+## Gallery with Thumbnails Navigation
+
+```html
+<div class="gallery-main"></div>
+
+<div class="thumbnail-nav">
+  <button data-nav="0"><img src="thumb1.jpg" alt=""></button>
+  <button data-nav="1"><img src="thumb2.jpg" alt=""></button>
+  <button data-nav="2"><img src="thumb3.jpg" alt=""></button>
+  <button data-nav="3"><img src="thumb4.jpg" alt=""></button>
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.gallery-main',
+  mode: 'gallery',
+  items: 1,
+  nav: false,
+  controls: true
+});
+
+// Custom thumbnail navigation
+var thumbButtons = document.querySelectorAll('[data-nav]');
+thumbButtons.forEach(function(button) {
+  button.addEventListener('click', function() {
+    var index = parseInt(this.getAttribute('data-nav'));
+    slider.goTo(index);
+  });
+});
+
+// Update active thumbnail
+slider.events.on('indexChanged', function(info) {
+  thumbButtons.forEach(function(btn, i) {
+    btn.classList.toggle('active', i === info.index);
+  });
+});
+```
+
+## Performance Tips
+
+<Tip>
+- Optimize images before using them in gallery mode
+- Use appropriate image dimensions for your container
+- Consider lazy loading for galleries with many images
+- Preload the first 2-3 images for faster initial display
+</Tip>
+
+## Related Examples
+
+<CardGroup cols={2}>
+  <Card title="Lazy Loading" icon="image" href="/examples/lazy-loading">
+    Load gallery images as needed
+  </Card>
+  <Card title="Autoplay" icon="play" href="/examples/autoplay">
+    Automatic slideshow functionality
+  </Card>
+  <Card title="Custom Controls" icon="gamepad" href="/examples/custom-controls">
+    Create custom navigation buttons
+  </Card>
+  <Card title="Basic Carousel" icon="circle-play" href="/examples/basic-carousel">
+    Standard carousel with sliding
+  </Card>
+</CardGroup>

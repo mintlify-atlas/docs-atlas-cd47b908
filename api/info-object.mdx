@@ -1,0 +1,603 @@
+---
+title: "Info Object"
+description: "Complete reference for the TinySliderInfo object containing slider state"
+---
+
+## Overview
+
+The `TinySliderInfo` object contains comprehensive information about the current state of the slider. You can access it via:
+
+1. The `getInfo()` method
+2. Event callback parameters
+
+```javascript
+const slider = tns({ container: '.my-slider' });
+
+// Method 1: Using getInfo()
+const info = slider.getInfo();
+console.log('Current index:', info.index);
+
+// Method 2: Event callbacks
+slider.events.on('indexChanged', function(info) {
+  console.log('Current index:', info.index);
+});
+```
+
+## Interface Definition
+
+```typescript
+interface TinySliderInfo {
+  event: Event | {};
+  cloneCount: number;
+  container: HTMLElement;
+  controlsContainer?: boolean;
+  hasControls: boolean;
+  index: number;
+  indexCached: number;
+  items: number;
+  navContainer?: HTMLElement;
+  navCurrentIndex?: number;
+  navCurrentIndexCached?: number;
+  navItems?: HTMLCollection;
+  nextButton?: HTMLElement;
+  prevButton?: HTMLElement;
+  slideBy: number;
+  slideCount: number;
+  slideCountNew: number;
+  slideItems: HTMLCollection;
+  visibleNavIndexes?: number;
+  visibleNavIndexesCached?: number;
+}
+```
+
+## Properties
+
+### event
+
+<ResponseField name="event" type="Event | {}">
+  The browser event object that triggered this info update, or an empty object if not triggered by an event.
+  
+  ```javascript
+  slider.events.on('indexChanged', function(info) {
+    console.log('Event type:', info.event.type);
+  });
+  ```
+</ResponseField>
+
+---
+
+### container
+
+<ResponseField name="container" type="HTMLElement" required>
+  The main slider container element.
+  
+  ```javascript
+  const info = slider.getInfo();
+  console.log('Container ID:', info.container.id);
+  console.log('Container width:', info.container.offsetWidth);
+  ```
+</ResponseField>
+
+---
+
+### slideItems
+
+<ResponseField name="slideItems" type="HTMLCollection" required>
+  A live HTMLCollection of all slide elements (including clones in carousel mode).
+  
+  ```javascript
+  const info = slider.getInfo();
+  console.log('Total slides:', info.slideItems.length);
+  
+  // Access current slide
+  const currentSlide = info.slideItems[info.index];
+  console.log('Current slide HTML:', currentSlide.innerHTML);
+  ```
+</ResponseField>
+
+---
+
+### index
+
+<ResponseField name="index" type="number" required>
+  The current slide index (zero-based). This is the index of the first visible slide.
+  
+  ```javascript
+  const info = slider.getInfo();
+  console.log('Current slide index:', info.index);
+  console.log('Current slide (1-based):', info.index + 1);
+  
+  // Check if at first slide
+  if (info.index === 0) {
+    console.log('At first slide');
+  }
+  
+  // Check if at last slide
+  if (info.index === info.slideCount - 1) {
+    console.log('At last slide');
+  }
+  ```
+</ResponseField>
+
+---
+
+### indexCached
+
+<ResponseField name="indexCached" type="number" required>
+  The previous slide index (before the current transition). Useful for comparing before/after states.
+  
+  ```javascript
+  slider.events.on('indexChanged', function(info) {
+    console.log('Moved from slide', info.indexCached, 'to slide', info.index);
+    
+    const direction = info.index > info.indexCached ? 'forward' : 'backward';
+    console.log('Direction:', direction);
+  });
+  ```
+</ResponseField>
+
+---
+
+### slideCount
+
+<ResponseField name="slideCount" type="number" required>
+  The original number of slides (before cloning for carousel mode).
+  
+  ```javascript
+  const info = slider.getInfo();
+  console.log('Total slides:', info.slideCount);
+  console.log('Progress:', `${info.index + 1} / ${info.slideCount}`);
+  ```
+</ResponseField>
+
+---
+
+### slideCountNew
+
+<ResponseField name="slideCountNew" type="number" required>
+  The total number of slides after initialization, including clones created for carousel mode.
+  
+  ```javascript
+  const info = slider.getInfo();
+  console.log('Original slides:', info.slideCount);
+  console.log('Total slides (with clones):', info.slideCountNew);
+  console.log('Cloned slides:', info.cloneCount);
+  ```
+</ResponseField>
+
+---
+
+### cloneCount
+
+<ResponseField name="cloneCount" type="number" required>
+  The number of cloned slides created for seamless looping in carousel mode.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.cloneCount > 0) {
+    console.log('Carousel mode with', info.cloneCount, 'clones');
+  }
+  ```
+</ResponseField>
+
+---
+
+### items
+
+<ResponseField name="items" type="number" required>
+  The number of slides currently visible in the viewport.
+  
+  ```javascript
+  const info = slider.getInfo();
+  console.log('Visible slides:', info.items);
+  
+  // Calculate how many pages
+  const totalPages = Math.ceil(info.slideCount / info.items);
+  console.log('Total pages:', totalPages);
+  ```
+</ResponseField>
+
+---
+
+### slideBy
+
+<ResponseField name="slideBy" type="number" required>
+  The number of slides that move on each navigation action.
+  
+  ```javascript
+  const info = slider.getInfo();
+  console.log('Slides per action:', info.slideBy);
+  
+  if (info.slideBy === info.items) {
+    console.log('Moving one full page at a time');
+  }
+  ```
+</ResponseField>
+
+---
+
+### hasControls
+
+<ResponseField name="hasControls" type="boolean" required>
+  Indicates whether the slider has prev/next control buttons.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.hasControls) {
+    console.log('Controls are enabled');
+  }
+  ```
+</ResponseField>
+
+---
+
+### controlsContainer
+
+<ResponseField name="controlsContainer" type="boolean | undefined">
+  Information about the controls container. Value may be boolean or undefined.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.controlsContainer) {
+    console.log('Using custom controls container');
+  }
+  ```
+</ResponseField>
+
+---
+
+### prevButton
+
+<ResponseField name="prevButton" type="HTMLElement | undefined">
+  The previous button element, if controls are enabled.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.prevButton) {
+    console.log('Prev button:', info.prevButton);
+    
+    // Check if disabled
+    if (info.prevButton.disabled) {
+      console.log('Prev button is disabled');
+    }
+  }
+  ```
+</ResponseField>
+
+---
+
+### nextButton
+
+<ResponseField name="nextButton" type="HTMLElement | undefined">
+  The next button element, if controls are enabled.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.nextButton) {
+    console.log('Next button:', info.nextButton);
+    
+    // Add custom event
+    info.nextButton.addEventListener('click', () => {
+      console.log('Next button clicked');
+    });
+  }
+  ```
+</ResponseField>
+
+---
+
+### navContainer
+
+<ResponseField name="navContainer" type="HTMLElement | undefined">
+  The navigation dots container element, if nav is enabled.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.navContainer) {
+    console.log('Nav container:', info.navContainer);
+  }
+  ```
+</ResponseField>
+
+---
+
+### navItems
+
+<ResponseField name="navItems" type="HTMLCollection | undefined">
+  A live HTMLCollection of navigation dot elements.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.navItems) {
+    console.log('Number of nav dots:', info.navItems.length);
+    
+    // Find active dot
+    Array.from(info.navItems).forEach((dot, index) => {
+      if (dot.classList.contains('tns-nav-active')) {
+        console.log('Active dot index:', index);
+      }
+    });
+  }
+  ```
+</ResponseField>
+
+---
+
+### navCurrentIndex
+
+<ResponseField name="navCurrentIndex" type="number | undefined">
+  The current active navigation dot index.
+  
+  ```javascript
+  slider.events.on('indexChanged', function(info) {
+    if (info.navCurrentIndex !== undefined) {
+      console.log('Active nav dot:', info.navCurrentIndex);
+    }
+  });
+  ```
+</ResponseField>
+
+---
+
+### navCurrentIndexCached
+
+<ResponseField name="navCurrentIndexCached" type="number | undefined">
+  The previous active navigation dot index.
+  
+  ```javascript
+  slider.events.on('indexChanged', function(info) {
+    console.log('Nav changed from', info.navCurrentIndexCached, 'to', info.navCurrentIndex);
+  });
+  ```
+</ResponseField>
+
+---
+
+### visibleNavIndexes
+
+<ResponseField name="visibleNavIndexes" type="number | undefined">
+  The number of visible navigation dots.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.visibleNavIndexes !== undefined) {
+    console.log('Visible nav dots:', info.visibleNavIndexes);
+  }
+  ```
+</ResponseField>
+
+---
+
+### visibleNavIndexesCached
+
+<ResponseField name="visibleNavIndexesCached" type="number | undefined">
+  The previous number of visible navigation dots.
+  
+  ```javascript
+  const info = slider.getInfo();
+  console.log('Previous visible nav dots:', info.visibleNavIndexesCached);
+  ```
+</ResponseField>
+
+---
+
+## Usage Examples
+
+<CodeGroup>
+```javascript Basic Info Access
+const slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+const info = slider.getInfo();
+
+console.log('Current slide:', info.index + 1);
+console.log('Total slides:', info.slideCount);
+console.log('Visible items:', info.items);
+console.log('Slide by:', info.slideBy);
+```
+
+```javascript Custom Counter
+function updateCounter() {
+  const info = slider.getInfo();
+  
+  const current = info.index + 1;
+  const total = info.slideCount;
+  
+  document.querySelector('.counter').textContent = `${current} / ${total}`;
+}
+
+slider.events.on('indexChanged', updateCounter);
+updateCounter(); // Initialize
+```
+
+```javascript Progress Bar
+function updateProgress() {
+  const info = slider.getInfo();
+  
+  const progress = ((info.index + 1) / info.slideCount) * 100;
+  document.querySelector('.progress-bar').style.width = `${progress}%`;
+}
+
+slider.events.on('indexChanged', updateProgress);
+updateProgress();
+```
+
+```javascript Detect Direction
+slider.events.on('indexChanged', function(info) {
+  if (info.index > info.indexCached) {
+    console.log('Moving forward');
+  } else if (info.index < info.indexCached) {
+    console.log('Moving backward');
+  }
+});
+```
+
+```javascript Access Current Slide
+slider.events.on('indexChanged', function(info) {
+  const currentSlide = info.slideItems[info.index];
+  const slideTitle = currentSlide.querySelector('h2').textContent;
+  
+  console.log('Current slide title:', slideTitle);
+  
+  // Update page title
+  document.title = `${slideTitle} - My Slider`;
+});
+```
+
+```javascript Disable Nav at Boundaries
+slider.events.on('indexChanged', function(info) {
+  if (info.prevButton) {
+    info.prevButton.disabled = info.index === 0;
+  }
+  
+  if (info.nextButton) {
+    info.nextButton.disabled = info.index === info.slideCount - 1;
+  }
+});
+```
+
+```javascript Custom Thumbnails
+function updateThumbnails() {
+  const info = slider.getInfo();
+  
+  document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+    thumb.classList.toggle('active', i === info.index);
+  });
+}
+
+slider.events.on('indexChanged', updateThumbnails);
+updateThumbnails();
+```
+
+```javascript Conditional Content Loading
+const loaded = new Set();
+
+slider.events.on('indexChanged', function(info) {
+  // Load current slide content if not loaded
+  if (!loaded.has(info.index)) {
+    const slide = info.slideItems[info.index];
+    const img = slide.querySelector('img[data-src]');
+    
+    if (img) {
+      img.src = img.dataset.src;
+      loaded.add(info.index);
+    }
+  }
+  
+  // Preload next slide
+  const nextIndex = info.index + 1;
+  if (nextIndex < info.slideCount && !loaded.has(nextIndex)) {
+    const slide = info.slideItems[nextIndex];
+    const img = slide.querySelector('img[data-src]');
+    
+    if (img) {
+      img.src = img.dataset.src;
+      loaded.add(nextIndex);
+    }
+  }
+});
+```
+
+```javascript Keyboard Navigation Feedback
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') {
+    slider.goTo('prev');
+  } else if (e.key === 'ArrowRight') {
+    slider.goTo('next');
+  }
+  
+  // Show current position
+  const info = slider.getInfo();
+  showToast(`Slide ${info.index + 1} of ${info.slideCount}`);
+});
+```
+
+```javascript Responsive Info
+slider.events.on('newBreakpointEnd', function(info) {
+  console.log('New breakpoint:');
+  console.log('- Items per page:', info.items);
+  console.log('- Slide by:', info.slideBy);
+  console.log('- Container width:', info.container.offsetWidth);
+  
+  // Adjust UI based on new layout
+  if (info.items >= 3) {
+    document.body.classList.add('wide-layout');
+  } else {
+    document.body.classList.remove('wide-layout');
+  }
+});
+```
+</CodeGroup>
+
+## Common Patterns
+
+### Display Current Position
+
+```javascript
+function displayPosition() {
+  const info = slider.getInfo();
+  return `${info.index + 1} / ${info.slideCount}`;
+}
+```
+
+### Calculate Pages
+
+```javascript
+function getTotalPages() {
+  const info = slider.getInfo();
+  return Math.ceil(info.slideCount / info.items);
+}
+
+function getCurrentPage() {
+  const info = slider.getInfo();
+  return Math.floor(info.index / info.items) + 1;
+}
+```
+
+### Check Boundaries
+
+```javascript
+function isAtStart() {
+  const info = slider.getInfo();
+  return info.index === 0;
+}
+
+function isAtEnd() {
+  const info = slider.getInfo();
+  return info.index >= info.slideCount - info.items;
+}
+```
+
+### Get Visible Slides
+
+```javascript
+function getVisibleSlides() {
+  const info = slider.getInfo();
+  const visible = [];
+  
+  for (let i = 0; i < info.items; i++) {
+    const slideIndex = info.index + i;
+    if (slideIndex < info.slideCount) {
+      visible.push(info.slideItems[slideIndex]);
+    }
+  }
+  
+  return visible;
+}
+```
+
+## Tips
+
+<Note>
+  The info object is always current and reflects the latest slider state. You don't need to cache it - just call `getInfo()` whenever you need fresh data.
+</Note>
+
+<Warning>
+  `slideItems` is a live HTMLCollection. If you modify the DOM, the collection updates automatically. Convert to an array if you need a static snapshot: `Array.from(info.slideItems)`.
+</Warning>
+
+<Tip>
+  When working with events, always use the `info` parameter passed to your callback instead of calling `getInfo()` separately - it's more efficient and guaranteed to match the event state.
+</Tip>

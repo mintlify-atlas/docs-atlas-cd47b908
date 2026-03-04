@@ -1,0 +1,315 @@
+---
+title: 'Navigation Options'
+description: 'Configure navigation dots and keyboard navigation'
+---
+
+## Overview
+
+Navigation options control the display and behavior of navigation dots (pagination) and keyboard arrow key navigation.
+
+## Options
+
+<ParamField path="nav" type="boolean" default="true">
+  Controls the display and functionalities of nav components (dots).
+  
+  If `true`, display the nav and add all functionalities.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    nav: true
+  });
+  ```
+</ParamField>
+
+<ParamField path="navPosition" type="'top' | 'bottom'" default="'top'">
+  Controls `nav` position.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    nav: true,
+    navPosition: 'bottom'
+  });
+  ```
+</ParamField>
+
+<ParamField path="navContainer" type="HTMLElement | string | false" default="false">
+  The container element/selector around the dots.
+  
+  `navContainer` must have at least same number of children as the slides.
+  
+  ```html
+  <div class="my-slider">
+    <div>Slide 1</div>
+    <div>Slide 2</div>
+    <div>Slide 3</div>
+  </div>
+  <ul class="thumbnails">
+    <li><img src="thumb1.jpg"></li>
+    <li><img src="thumb2.jpg"></li>
+    <li><img src="thumb3.jpg"></li>
+  </ul>
+  ```
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    navContainer: '.thumbnails',
+    navAsThumbnails: true
+  });
+  ```
+</ParamField>
+
+<ParamField path="navAsThumbnails" type="boolean" default="false">
+  Indicate if the dots are thumbnails.
+  
+  If `true`, they will always be visible even when more than 1 slide is displayed in the viewport.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    navContainer: '.thumbnails',
+    navAsThumbnails: true
+  });
+  ```
+</ParamField>
+
+<ParamField path="arrowKeys" type="boolean" default="false">
+  Allows using arrow keys to switch slides.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    arrowKeys: true
+  });
+  ```
+  
+  <Info>
+    When a control button is focused, arrow keys will work regardless of this option setting.
+  </Info>
+</ParamField>
+
+## Customizing Navigation Dots
+
+### Basic Custom Styling
+
+```css
+/* Nav container */
+.tns-nav {
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* Nav buttons */
+.tns-nav button {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  margin: 0 5px;
+  border-radius: 50%;
+  background: #ddd;
+  border: 0;
+}
+
+/* Active nav button */
+.tns-nav button.tns-nav-active {
+  background: #999;
+}
+```
+
+### Custom Navigation Container
+
+```html
+<div class="my-slider">
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+</div>
+
+<div class="custom-nav">
+  <button class="nav-item"></button>
+  <button class="nav-item"></button>
+  <button class="nav-item"></button>
+</div>
+```
+
+```javascript
+tns({
+  container: '.my-slider',
+  navContainer: '.custom-nav'
+});
+```
+
+### Thumbnail Navigation
+
+Use images as navigation:
+
+```html
+<div class="slider">
+  <div><img src="slide1.jpg" alt="Slide 1"></div>
+  <div><img src="slide2.jpg" alt="Slide 2"></div>
+  <div><img src="slide3.jpg" alt="Slide 3"></div>
+</div>
+
+<div class="thumbnail-nav">
+  <button><img src="thumb1.jpg" alt="Thumbnail 1"></button>
+  <button><img src="thumb2.jpg" alt="Thumbnail 2"></button>
+  <button><img src="thumb3.jpg" alt="Thumbnail 3"></button>
+</div>
+```
+
+```javascript
+tns({
+  container: '.slider',
+  navContainer: '.thumbnail-nav',
+  navAsThumbnails: true
+});
+```
+
+```css
+.thumbnail-nav button {
+  border: 2px solid transparent;
+  padding: 0;
+  opacity: 0.7;
+  transition: all 0.3s;
+}
+
+.thumbnail-nav button.tns-nav-active {
+  border-color: #3399CC;
+  opacity: 1;
+}
+
+.thumbnail-nav img {
+  display: block;
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+}
+```
+
+## Examples
+
+### Navigation with Arrow Keys
+
+```javascript
+tns({
+  container: '.my-slider',
+  nav: true,
+  navPosition: 'bottom',
+  arrowKeys: true
+});
+```
+
+### Disable Navigation on Mobile
+
+```javascript
+tns({
+  container: '.my-slider',
+  nav: false,
+  responsive: {
+    768: {
+      nav: true
+    }
+  }
+});
+```
+
+### Text-Based Navigation
+
+```html
+<div class="my-slider">
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+</div>
+
+<div class="text-nav">
+  <button>First</button>
+  <button>Second</button>
+  <button>Third</button>
+</div>
+```
+
+```javascript
+tns({
+  container: '.my-slider',
+  navContainer: '.text-nav'
+});
+```
+
+```css
+.text-nav button {
+  padding: 8px 16px;
+  margin: 0 4px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.text-nav button.tns-nav-active {
+  background: #3399CC;
+  color: white;
+}
+```
+
+## Accessibility
+
+Tiny Slider automatically adds appropriate ARIA attributes to navigation:
+
+```html
+<!-- Generated markup -->
+<div class="tns-nav" aria-label="Carousel Pagination">
+  <button type="button" 
+          data-nav="0" 
+          tabindex="-1" 
+          aria-controls="tns1" 
+          aria-label="Carousel Page 1">
+  </button>
+  <button type="button" 
+          data-nav="1" 
+          aria-controls="tns1" 
+          aria-label="Carousel Page 2 (Current Slide)" 
+          class="tns-nav-active">
+  </button>
+</div>
+```
+
+Navigation dots include:
+- `aria-label` indicating the page number
+- `aria-controls` pointing to the slider
+- Current slide indication in the label
+- `tabindex` management for keyboard navigation
+
+## Responsive Configuration
+
+Navigation options can be adjusted at different breakpoints:
+
+```javascript
+tns({
+  container: '.my-slider',
+  items: 1,
+  nav: true,
+  arrowKeys: false,
+  responsive: {
+    640: {
+      items: 2,
+      nav: true
+    },
+    900: {
+      items: 3,
+      nav: false,
+      arrowKeys: true
+    }
+  }
+});
+```
+
+## Best Practices
+
+1. **Always provide navigation**: Either dots, arrows, or both for better UX
+2. **Consider mobile users**: Touch swipe may be enough on mobile, hide dots to save space
+3. **Thumbnails**: Use `navAsThumbnails` for image galleries to provide visual preview
+4. **Keyboard navigation**: Enable `arrowKeys` for accessibility
+5. **Contrast**: Ensure nav dots have sufficient contrast against the background

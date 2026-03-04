@@ -1,0 +1,253 @@
+---
+title: 'Basic Carousel'
+description: 'Create a simple carousel with multiple items, navigation controls, and dots'
+icon: 'circle-play'
+---
+
+## Overview
+
+The basic carousel is the most common use case for Tiny Slider. It displays multiple items in a row, allows users to navigate through slides using prev/next buttons and navigation dots, and supports keyboard navigation.
+
+## Complete Example
+
+<CodeGroup>
+
+```html HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    .my-slider {
+      margin: 0 auto;
+      max-width: 900px;
+    }
+    .my-slider img {
+      width: 100%;
+      height: auto;
+    }
+    .slide-item {
+      padding: 10px;
+      background: #f5f5f5;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="my-slider">
+    <div class="slide-item">
+      <img src="slide1.jpg" alt="Slide 1">
+      <h3>Slide 1</h3>
+    </div>
+    <div class="slide-item">
+      <img src="slide2.jpg" alt="Slide 2">
+      <h3>Slide 2</h3>
+    </div>
+    <div class="slide-item">
+      <img src="slide3.jpg" alt="Slide 3">
+      <h3>Slide 3</h3>
+    </div>
+    <div class="slide-item">
+      <img src="slide4.jpg" alt="Slide 4">
+      <h3>Slide 4</h3>
+    </div>
+    <div class="slide-item">
+      <img src="slide5.jpg" alt="Slide 5">
+      <h3>Slide 5</h3>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+</body>
+</html>
+```
+
+```javascript JavaScript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  slideBy: 'page',
+  autoplay: false,
+  controls: true,
+  controlsText: ['←', '→'],
+  nav: true,
+  navPosition: 'bottom',
+  speed: 400,
+  gutter: 20,
+  loop: true,
+  rewind: false,
+  mouseDrag: true,
+  arrowKeys: true
+});
+```
+
+```markdown Result
+The carousel displays 3 slides at a time with:
+- Previous/Next buttons (← →) for navigation
+- Navigation dots at the bottom
+- 20px spacing between slides
+- Smooth transitions at 400ms
+- Infinite looping
+- Mouse drag support
+- Keyboard arrow key navigation
+```
+
+</CodeGroup>
+
+## Key Options Explained
+
+### items
+```javascript
+items: 3
+```
+Number of slides visible in the viewport at once. Default is `1`.
+
+### slideBy
+```javascript
+slideBy: 'page'
+```
+Moves all visible items at once. Can also be a number like `slideBy: 1` to move one slide at a time.
+
+### controls
+```javascript
+controls: true,
+controlsText: ['←', '→']
+```
+Enables prev/next buttons. Customize button text with `controlsText` array.
+
+### nav
+```javascript
+nav: true,
+navPosition: 'bottom'
+```
+Enables navigation dots. Position can be `'top'` or `'bottom'` (default: `'top'`).
+
+### gutter
+```javascript
+gutter: 20
+```
+Adds space between slides in pixels. Default is `0`.
+
+### loop
+```javascript
+loop: true
+```
+Enables infinite looping. Seamlessly moves from last slide to first. Default is `true`.
+
+### speed
+```javascript
+speed: 400
+```
+Transition speed in milliseconds. Default is `300`.
+
+<Note>
+When `loop: true`, the slider clones slides to create a seamless infinite effect. If you prefer to stop at the edges, use `rewind: true` instead.
+</Note>
+
+## Interactive Features
+
+### Mouse Drag
+```javascript
+mouseDrag: true
+```
+Enables dragging slides with mouse. Works great for desktop users. Default is `false`.
+
+### Touch Support
+```javascript
+touch: true
+```
+Touch/swipe support is enabled by default for mobile devices.
+
+### Arrow Keys
+```javascript
+arrowKeys: true
+```
+Allows users to navigate with keyboard arrow keys. Default is `false`.
+
+<Tip>
+For better accessibility, enable `arrowKeys: true`. When a control button is focused, users can navigate using arrow keys.
+</Tip>
+
+## Customization Options
+
+### Edge Padding
+```javascript
+edgePadding: 50
+```
+Adds space on the outside of the slider in pixels.
+
+### Start Index
+```javascript
+startIndex: 2
+```
+Start at a specific slide (0-based index).
+
+### Rewind Mode
+```javascript
+loop: false,
+rewind: true
+```
+Instead of looping, jump back to the opposite edge when reaching the end.
+
+## Working with Slider Methods
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Get slider information
+var info = slider.getInfo();
+console.log(info.index); // current slide index
+console.log(info.slideCount); // total slides
+
+// Navigate programmatically
+slider.goTo(5);        // Go to slide 5
+slider.goTo('next');   // Next slide
+slider.goTo('prev');   // Previous slide
+slider.goTo('first');  // First slide
+slider.goTo('last');   // Last slide
+
+// Destroy slider
+slider.destroy();
+
+// Rebuild slider
+slider = slider.rebuild();
+```
+
+## Events
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Listen to index change
+slider.events.on('indexChanged', function(info) {
+  console.log('Current slide:', info.index);
+});
+
+// Listen to transition end
+slider.events.on('transitionEnd', function(info) {
+  console.log('Transition finished');
+});
+```
+
+## Related Examples
+
+<CardGroup cols={2}>
+  <Card title="Responsive Slider" icon="mobile" href="/examples/responsive-slider">
+    Adapt items count for different screen sizes
+  </Card>
+  <Card title="Autoplay" icon="play" href="/examples/autoplay">
+    Automatically advance slides
+  </Card>
+  <Card title="Custom Controls" icon="gamepad" href="/examples/custom-controls">
+    Use your own buttons and navigation
+  </Card>
+  <Card title="Lazy Loading" icon="image" href="/examples/lazy-loading">
+    Load images as they come into view
+  </Card>
+</CardGroup>

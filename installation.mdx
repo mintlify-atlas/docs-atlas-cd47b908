@@ -1,0 +1,265 @@
+---
+title: Installation
+description: Install Tiny Slider using npm, yarn, pnpm, or CDN
+---
+
+## Package Manager Installation
+
+Install Tiny Slider using your preferred package manager:
+
+<CodeGroup>
+
+```bash npm
+npm install tiny-slider
+```
+
+```bash yarn
+yarn add tiny-slider
+```
+
+```bash pnpm
+pnpm add tiny-slider
+```
+
+</CodeGroup>
+
+<Note>
+  The package includes both source files (in `src/`) and built distribution files (in `dist/`).
+</Note>
+
+## CDN Installation
+
+For quick prototyping or simple projects, you can use a CDN to include Tiny Slider:
+
+### CSS
+
+Add the Tiny Slider stylesheet to your page:
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+```
+
+### JavaScript
+
+Add the Tiny Slider JavaScript file:
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+```
+
+<Info>
+  Prior to v2.2.1, the `tiny-slider.js` script needed to be placed inside the `<body>` tag. From v2.2.1 onwards, you can include it in the `<head>` or `<body>`.
+</Info>
+
+### Alternative CDN
+
+Tiny Slider is also available on jsDelivr:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tiny-slider@2.9.4/dist/tiny-slider.css">
+<script src="https://cdn.jsdelivr.net/npm/tiny-slider@2.9.4/dist/min/tiny-slider.js"></script>
+```
+
+## Manual Installation
+
+You can also download the files directly from the GitHub repository:
+
+<Steps>
+  <Step title="Download the repository">
+    Download from [github.com/ganlanyuan/tiny-slider](https://github.com/ganlanyuan/tiny-slider/releases)
+  </Step>
+  
+  <Step title="Copy the files">
+    Copy the `dist/tiny-slider.css` and `dist/min/tiny-slider.js` files to your project
+  </Step>
+  
+  <Step title="Link the files">
+    Include them in your HTML:
+    
+    ```html
+    <link rel="stylesheet" href="path/to/tiny-slider.css">
+    <script src="path/to/tiny-slider.js"></script>
+    ```
+  </Step>
+</Steps>
+
+## Required Files
+
+### CSS File
+
+The CSS file is **required** for Tiny Slider to work correctly. It includes styles for:
+
+- Slide positioning and transitions
+- Controls (prev/next buttons)
+- Navigation dots
+- Autoplay button
+- Responsive behavior
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+```
+
+<Warning>
+  Do not skip the CSS file! Without it, the slider will not display or function correctly.
+</Warning>
+
+## Internet Explorer 8 Support
+
+If you need to support IE8, you must include the IE8 polyfills helper file:
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+
+<!--[if (lt IE 9)]>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.helper.ie8.js"></script>
+<![endif]-->
+```
+
+The IE8 helper file includes polyfills for:
+
+- `Object.keys`
+- `ChildNode.remove`
+- `addEventListener`
+- `Array.prototype.forEach`
+- `Array.prototype.map`
+- `Array.prototype.filter`
+- `Array.prototype.indexOf`
+- `Array.isArray`
+- `Element.prototype.firstElementChild`
+- `Element.prototype.lastElementChild`
+- `Element.prototype.nextElementSibling`
+- `Element.prototype.previousElementSibling`
+- `window.getComputedStyle`
+
+<Info>
+  The conditional comment syntax `<!--[if (lt IE 9)]>` ensures that the polyfills are only loaded in IE8 and below, avoiding unnecessary downloads for modern browsers.
+</Info>
+
+## TypeScript Definitions
+
+Tiny Slider includes TypeScript type definitions out of the box:
+
+```json package.json
+{
+  "types": "src/tiny-slider.d.ts"
+}
+```
+
+When you install via npm/yarn/pnpm, TypeScript will automatically find the type definitions. You can use it in your TypeScript projects:
+
+```typescript
+import { tns, TinySliderSettings, TinySliderInstance } from 'tiny-slider';
+
+const options: TinySliderSettings = {
+  container: '.my-slider',
+  items: 3,
+  slideBy: 'page',
+  autoplay: true
+};
+
+const slider: TinySliderInstance = tns(options);
+```
+
+<Tip>
+  The type definitions include detailed JSDoc comments with default values and descriptions for all options.
+</Tip>
+
+## Import Methods
+
+There are several ways to import and use Tiny Slider depending on your project setup:
+
+### ES6 Module Import (Webpack/Rollup)
+
+If you're using a module bundler like Webpack or Rollup:
+
+```javascript
+import { tns } from 'tiny-slider/src/tiny-slider';
+
+const slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+```
+
+### Direct ES6 Module Import (v2.8.2+)
+
+Modern browsers support ES6 modules natively:
+
+```html
+<script type="module">
+  import { tns } from './node_modules/tiny-slider/src/tiny-slider.js';
+  
+  const slider = tns({
+    container: '.my-slider',
+    items: 3
+  });
+</script>
+```
+
+### CommonJS Require
+
+For Node.js or older bundler setups:
+
+```javascript
+const { tns } = require('tiny-slider');
+
+const slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+```
+
+### Global Variable (CDN)
+
+When using the CDN version, `tns` is available as a global variable:
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+<script>
+  var slider = tns({
+    container: '.my-slider',
+    items: 3
+  });
+</script>
+```
+
+## Verification
+
+To verify that Tiny Slider is installed correctly, you can check the version:
+
+```javascript
+import { tns } from 'tiny-slider/src/tiny-slider';
+
+const slider = tns({
+  container: '.my-slider',
+  items: 1
+});
+
+console.log(slider.version); // Should output: 2.9.4 (or your installed version)
+```
+
+## Content Security Policy (CSP)
+
+If your site uses Content Security Policy and disallows `unsafe-inline`, you can use the `nonce` option:
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3,
+  nonce: 'your-nonce-value'
+});
+```
+
+This adds the nonce attribute to inline style tags created by Tiny Slider, allowing them to execute under strict CSP policies.
+
+<Note>
+  The nonce value should match the nonce in your CSP header or meta tag.
+</Note>
+
+## Next Steps
+
+Now that you have Tiny Slider installed, learn how to create your first slider:
+
+<Card title="Quickstart Guide" icon="rocket" href="/quickstart">
+  Follow our step-by-step guide to create your first slider in minutes
+</Card>

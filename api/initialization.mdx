@@ -1,0 +1,289 @@
+---
+title: "Initialization"
+description: "Initialize a tiny-slider instance with the tns() function"
+---
+
+## Function Signature
+
+The `tns()` function is the main entry point for creating a tiny-slider instance.
+
+```typescript
+function tns(options: TinySliderSettings): TinySliderInstance
+```
+
+### Parameters
+
+<ParamField path="options" type="TinySliderSettings" required>
+  Configuration object for the slider. See [Options](/api/options) for detailed documentation of all available settings.
+  
+  The only required property is `container`, which specifies the slider container element.
+</ParamField>
+
+### Returns
+
+<ResponseField name="TinySliderInstance" type="object">
+  Returns a slider instance object with methods and properties for controlling the slider.
+  
+  See [Methods](/api/methods) and [Info Object](/api/info-object) for details.
+</ResponseField>
+
+## Basic Usage
+
+<CodeGroup>
+```javascript Basic Initialization
+import { tns } from 'tiny-slider';
+
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  slideBy: 'page',
+  autoplay: true
+});
+```
+
+```javascript With Element Reference
+const sliderElement = document.querySelector('.my-slider');
+
+const slider = tns({
+  container: sliderElement,
+  items: 3,
+  gutter: 10,
+  controls: true,
+  nav: true
+});
+```
+
+```javascript Multiple Slides
+const slider = tns({
+  container: '.my-slider',
+  mode: 'carousel',
+  items: 3,
+  slideBy: 1,
+  gutter: 20,
+  edgePadding: 20,
+  controls: true,
+  nav: true,
+  loop: true
+});
+```
+
+```javascript Responsive Configuration
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  responsive: {
+    640: {
+      edgePadding: 20,
+      gutter: 20,
+      items: 2
+    },
+    700: {
+      gutter: 30
+    },
+    900: {
+      items: 3
+    }
+  }
+});
+```
+</CodeGroup>
+
+## TinySliderSettings Interface
+
+The settings object extends `CommonOptions` and includes slider-specific configuration:
+
+```typescript
+interface TinySliderSettings extends CommonOptions {
+  container?: HTMLElement | Element | string;
+  mode?: "carousel" | "gallery";
+  axis?: "horizontal" | "vertical";
+  controlsContainer?: HTMLElement | Element | string | false;
+  navPosition?: "top" | "bottom";
+  navContainer?: HTMLElement | Element | string | false;
+  navAsThumbnails?: boolean;
+  autoplayDirection?: "forward" | "backward";
+  autoplayButton?: HTMLElement | string | false;
+  autoplayButtonOutput?: boolean;
+  animateIn?: string;
+  animateOut?: string;
+  animateNormal?: string;
+  animateDelay?: number | false;
+  nextButton?: HTMLElement | string | false;
+  prevButton?: HTMLElement | string | false;
+  loop?: boolean;
+  rewind?: boolean;
+  responsive?: ResponsiveOptions | false;
+  lazyload?: boolean;
+  lazyloadSelector?: string;
+  swipeAngle?: number | boolean;
+  preventActionWhenRunning?: boolean;
+  preventScrollOnTouch?: "auto" | "force" | false;
+  nested?: "inner" | "outer" | false;
+  freezable?: boolean;
+  nonce?: string | false;
+  onInit?: () => void | false;
+  useLocalStorage?: boolean;
+}
+```
+
+## Return Type: TinySliderInstance
+
+The `tns()` function returns a `TinySliderInstance` object:
+
+```typescript
+interface TinySliderInstance {
+  version: number;
+  getInfo(): TinySliderInfo;
+  events: {
+    on(event: SilderEvent, cb: (info: TinySliderInfo) => any): void;
+    off(event: SilderEvent, cb: (info: TinySliderInfo) => any): void;
+  };
+  goTo(target: number | 'next' | 'prev' | 'first' | 'last'): void;
+  play(): void;
+  pause(): void;
+  isOn: boolean;
+  updateSliderHeight(): void;
+  refresh(): void;
+  destroy(): void;
+  rebuild(): TinySliderInstance;
+}
+```
+
+## Initialization Behavior
+
+### Successful Initialization
+
+The slider will initialize successfully when:
+- A valid container element exists
+- The container has at least one child element (slide)
+- The number of slides is greater than the `items` setting
+
+### Failed Initialization
+
+The slider will **not initialize** in the following cases:
+
+<Warning>
+  **No Initialization**: If the number of slides is less than or equal to the `items` setting, the slider will not initialize. This prevents unnecessary slider functionality when all slides can be displayed at once (unless `freezable` is set to `false`).
+</Warning>
+
+```javascript
+// This will NOT initialize if there are only 2 slides
+const slider = tns({
+  container: '.my-slider', // has 2 slides
+  items: 3  // wants to show 3 items
+});
+// Result: slider will not be created
+```
+
+```javascript
+// This will NOT initialize - equal number
+const slider = tns({
+  container: '.my-slider', // has 3 slides
+  items: 3  // wants to show 3 items
+});
+// Result: slider will be frozen (controls disabled)
+```
+
+### No Slides Warning
+
+If the container has no child elements, a console warning will be displayed:
+
+```
+No slides found in [container]
+```
+
+### Invalid Selector Warning
+
+If a string selector cannot be found in the DOM:
+
+```
+Can't find [selector]
+```
+
+## Dynamic Content
+
+<Warning>
+  **Important**: Tiny-slider works with static content in the browser only. If HTML is loaded dynamically, make sure to call `tns()` after the content has finished loading.
+</Warning>
+
+```javascript
+// Bad: Calling before content loads
+const slider = tns({ container: '.my-slider' });
+fetchSlides().then(html => {
+  document.querySelector('.my-slider').innerHTML = html;
+});
+
+// Good: Calling after content loads
+let slider;
+fetchSlides().then(html => {
+  document.querySelector('.my-slider').innerHTML = html;
+  slider = tns({ container: '.my-slider' });
+});
+```
+
+## Module Import
+
+<Tabs>
+  <Tab title="ES6 Module">
+    ```javascript
+    import { tns } from 'tiny-slider';
+    
+    const slider = tns({
+      container: '.my-slider',
+      items: 3
+    });
+    ```
+  </Tab>
+  
+  <Tab title="Script Tag">
+    ```html
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+    <script>
+      var slider = tns({
+        container: '.my-slider',
+        items: 3
+      });
+    </script>
+    ```
+  </Tab>
+  
+  <Tab title="ES Module (Browser)">
+    ```html
+    <script type="module">
+      import { tns } from './src/tiny-slider.js';
+      
+      const slider = tns({
+        container: '.my-slider',
+        items: 3
+      });
+    </script>
+    ```
+  </Tab>
+  
+  <Tab title="CommonJS">
+    ```javascript
+    const { tns } = require('tiny-slider');
+    
+    const slider = tns({
+      container: '.my-slider',
+      items: 3
+    });
+    ```
+  </Tab>
+</Tabs>
+
+## TypeScript Support
+
+Tiny-slider includes TypeScript definitions. Import types for full type safety:
+
+```typescript
+import { tns, TinySliderSettings, TinySliderInstance } from 'tiny-slider';
+
+const config: TinySliderSettings = {
+  container: '.my-slider',
+  items: 3,
+  slideBy: 'page'
+};
+
+const slider: TinySliderInstance = tns(config);
+```

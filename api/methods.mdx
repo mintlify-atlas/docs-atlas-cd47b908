@@ -1,0 +1,661 @@
+---
+title: "Methods"
+description: "Control your slider programmatically with instance methods"
+---
+
+## Overview
+
+When you initialize a slider with `tns()`, it returns a `TinySliderInstance` object with methods and properties to control the slider programmatically.
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Use methods
+slider.goTo(5);
+slider.play();
+const info = slider.getInfo();
+```
+
+## Instance Methods
+
+### getInfo()
+
+Get information about the current slider state.
+
+```typescript
+getInfo(): TinySliderInfo
+```
+
+**Returns:** [TinySliderInfo](/api/info-object) object containing all slider state information.
+
+**Example:**
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+const info = slider.getInfo();
+console.log('Current index:', info.index);
+console.log('Total slides:', info.slideCount);
+console.log('Items per page:', info.items);
+```
+
+**Practical Usage:**
+
+<CodeGroup>
+```javascript Update Active Slide Style
+document.querySelector('.next-button').onclick = function () {
+  const info = slider.getInfo();
+  const indexPrev = info.indexCached;
+  const indexCurrent = info.index;
+
+  // Update style based on index
+  info.slideItems[indexPrev].classList.remove('active');
+  info.slideItems[indexCurrent].classList.add('active');
+};
+```
+
+```javascript Display Current Position
+slider.events.on('indexChanged', function(info) {
+  const current = info.index + 1;
+  const total = info.slideCount;
+  document.querySelector('.counter').textContent = `${current} / ${total}`;
+});
+```
+
+```javascript Conditional Navigation
+function goToNextSlide() {
+  const info = slider.getInfo();
+  
+  // Check if we're at the last slide
+  if (info.index < info.slideCount - 1) {
+    slider.goTo('next');
+  } else {
+    console.log('Already at last slide');
+  }
+}
+```
+</CodeGroup>
+
+---
+
+### goTo()
+
+Navigate to a specific slide by number or keyword.
+
+```typescript
+goTo(target: number | 'next' | 'prev' | 'first' | 'last'): void
+```
+
+**Parameters:**
+
+<ParamField path="target" type="number | 'next' | 'prev' | 'first' | 'last'" required>
+  The slide to navigate to:
+  - `number`: Zero-based slide index
+  - `'next'`: Next slide
+  - `'prev'`: Previous slide
+  - `'first'`: First slide
+  - `'last'`: Last slide
+</ParamField>
+
+**Examples:**
+
+<CodeGroup>
+```javascript By Index
+slider.goTo(3);  // Go to 4th slide (zero-based)
+slider.goTo(0);  // Go to first slide
+```
+
+```javascript By Keyword
+slider.goTo('next');   // Next slide
+slider.goTo('prev');   // Previous slide
+slider.goTo('first');  // First slide
+slider.goTo('last');   // Last slide
+```
+
+```javascript With Button Click
+document.querySelector('.goto-button').onclick = function () {
+  slider.goTo(3);
+};
+
+document.querySelector('.next-btn').onclick = () => slider.goTo('next');
+document.querySelector('.prev-btn').onclick = () => slider.goTo('prev');
+```
+
+```javascript With Custom Navigation
+// Create custom thumbnail navigation
+const thumbnails = document.querySelectorAll('.thumbnail');
+thumbnails.forEach((thumb, index) => {
+  thumb.addEventListener('click', () => {
+    slider.goTo(index);
+  });
+});
+```
+</CodeGroup>
+
+---
+
+### play()
+
+Programmatically start slider autoplay.
+
+```typescript
+play(): void
+```
+
+<Note>
+  Only works when the slider is initialized with `autoplay: true`.
+</Note>
+
+**Example:**
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3,
+  autoplay: true
+});
+
+// Start autoplay
+slider.play();
+```
+
+**Practical Usage:**
+
+<CodeGroup>
+```javascript Custom Play Button
+const playButton = document.querySelector('.custom-play');
+const pauseButton = document.querySelector('.custom-pause');
+
+playButton.addEventListener('click', () => {
+  slider.play();
+  playButton.style.display = 'none';
+  pauseButton.style.display = 'block';
+});
+```
+
+```javascript Auto-resume After Interaction
+let isPaused = false;
+
+slider.events.on('dragEnd', () => {
+  if (!isPaused) {
+    setTimeout(() => slider.play(), 1000);
+  }
+});
+```
+
+```javascript Play on Scroll Into View
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      slider.play();
+    } else {
+      slider.pause();
+    }
+  });
+});
+
+observer.observe(document.querySelector('.my-slider'));
+```
+</CodeGroup>
+
+---
+
+### pause()
+
+Programmatically stop slider autoplay.
+
+```typescript
+pause(): void
+```
+
+<Note>
+  Only works when the slider is initialized with `autoplay: true`.
+</Note>
+
+**Example:**
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3,
+  autoplay: true
+});
+
+// Stop autoplay
+slider.pause();
+```
+
+**Practical Usage:**
+
+<CodeGroup>
+```javascript Custom Pause Button
+const pauseButton = document.querySelector('.custom-pause');
+
+pauseButton.addEventListener('click', () => {
+  slider.pause();
+});
+```
+
+```javascript Pause on User Interaction
+document.querySelector('.my-slider').addEventListener('mouseenter', () => {
+  slider.pause();
+});
+
+document.querySelector('.my-slider').addEventListener('mouseleave', () => {
+  slider.play();
+});
+```
+
+```javascript Pause on Video Play
+const video = document.querySelector('.slide-video');
+
+video.addEventListener('play', () => {
+  slider.pause();
+});
+
+video.addEventListener('ended', () => {
+  slider.play();
+});
+```
+</CodeGroup>
+
+---
+
+### updateSliderHeight()
+
+Manually adjust slider height when using `autoHeight: true`.
+
+```typescript
+updateSliderHeight(): void
+```
+
+<Note>
+  Only useful when the slider is initialized with `autoHeight: true`.
+</Note>
+
+**Example:**
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  autoHeight: true
+});
+
+// Manually update height
+slider.updateSliderHeight();
+```
+
+**Practical Usage:**
+
+<CodeGroup>
+```javascript After Dynamic Content Change
+// Load dynamic content into slide
+fetch('/api/slide-content')
+  .then(response => response.text())
+  .then(html => {
+    document.querySelector('.current-slide').innerHTML = html;
+    // Update slider height to accommodate new content
+    slider.updateSliderHeight();
+  });
+```
+
+```javascript After Image Load
+const images = document.querySelectorAll('.slide img');
+images.forEach(img => {
+  img.addEventListener('load', () => {
+    slider.updateSliderHeight();
+  });
+});
+```
+
+```javascript After Expand/Collapse
+const expandButton = document.querySelector('.expand-btn');
+const content = document.querySelector('.expandable-content');
+
+expandButton.addEventListener('click', () => {
+  content.classList.toggle('expanded');
+  // Update height after animation
+  setTimeout(() => slider.updateSliderHeight(), 300);
+});
+```
+</CodeGroup>
+
+---
+
+### refresh()
+
+Reinitialize the slider transform calculations. Useful when the slider container dimensions change.
+
+```typescript
+refresh(): void
+```
+
+**Example:**
+
+```javascript
+slider.refresh();
+```
+
+**Practical Usage:**
+
+<CodeGroup>
+```javascript After Window Resize
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    slider.refresh();
+  }, 250);
+});
+```
+
+```javascript After Container Resize
+const container = document.querySelector('.slider-wrapper');
+const resizeObserver = new ResizeObserver(() => {
+  slider.refresh();
+});
+resizeObserver.observe(container);
+```
+
+```javascript After Layout Change
+// Toggle sidebar
+document.querySelector('.toggle-sidebar').addEventListener('click', () => {
+  document.body.classList.toggle('sidebar-collapsed');
+  // Container width changed, refresh slider
+  setTimeout(() => slider.refresh(), 300);
+});
+```
+</CodeGroup>
+
+---
+
+### destroy()
+
+Completely destroy the slider instance and remove all event listeners.
+
+```typescript
+destroy(): void
+```
+
+**Example:**
+
+```javascript
+slider.destroy();
+```
+
+**What happens:**
+- Removes all event listeners
+- Removes generated controls, nav, and autoplay buttons
+- Removes inline styles from slides
+- Restores original HTML structure
+- Frees up memory
+
+**Practical Usage:**
+
+<CodeGroup>
+```javascript Cleanup on Navigation
+// Single Page Application cleanup
+function leavePage() {
+  if (slider) {
+    slider.destroy();
+    slider = null;
+  }
+}
+```
+
+```javascript Conditional Slider
+let slider = null;
+
+function initSliderIfNeeded() {
+  if (window.innerWidth < 768) {
+    if (!slider) {
+      slider = tns({ container: '.my-slider' });
+    }
+  } else {
+    if (slider) {
+      slider.destroy();
+      slider = null;
+    }
+  }
+}
+
+window.addEventListener('resize', initSliderIfNeeded);
+```
+
+```javascript Before Reinitializing
+function updateSliderConfig(newOptions) {
+  slider.destroy();
+  slider = tns(newOptions);
+}
+```
+</CodeGroup>
+
+---
+
+### rebuild()
+
+Rebuild the slider after destroying it. Returns a new slider instance with the same options.
+
+```typescript
+rebuild(): TinySliderInstance
+```
+
+**Returns:** A new `TinySliderInstance` with the original configuration.
+
+**Example:**
+
+```javascript
+slider = slider.rebuild();
+```
+
+**Practical Usage:**
+
+<CodeGroup>
+```javascript Reset Slider
+function resetSlider() {
+  // Rebuilding resets to initial state
+  slider = slider.rebuild();
+}
+```
+
+```javascript After Dynamic Slide Changes
+// Add new slides to DOM
+const newSlide = document.createElement('div');
+newSlide.innerHTML = '<img src="new-image.jpg">';
+document.querySelector('.my-slider').appendChild(newSlide);
+
+// Rebuild to include new slide
+slider = slider.rebuild();
+```
+
+```javascript Refresh with Same Options
+// Instead of destroy() then tns(options)
+slider = slider.rebuild();
+```
+</CodeGroup>
+
+---
+
+## Instance Properties
+
+### version
+
+Tiny-slider version number.
+
+```typescript
+version: number
+```
+
+**Example:**
+
+```javascript
+console.log('Tiny-slider version:', slider.version);
+// Output: 2.9.4
+```
+
+---
+
+### isOn
+
+Boolean indicating if the slider is active.
+
+```typescript
+isOn: boolean
+```
+
+**Example:**
+
+```javascript
+if (slider.isOn) {
+  console.log('Slider is active');
+} else {
+  console.log('Slider is frozen or disabled');
+}
+```
+
+---
+
+### events
+
+Event controller object for subscribing to and unsubscribing from slider events.
+
+```typescript
+events: {
+  on(event: SilderEvent, cb: (info: TinySliderInfo) => any): void;
+  off(event: SilderEvent, cb: (info: TinySliderInfo) => any): void;
+}
+```
+
+See [Events](/api/events) for complete event documentation.
+
+**Example:**
+
+```javascript
+function onSlideChange(info) {
+  console.log('Slide changed to:', info.index);
+}
+
+// Subscribe
+slider.events.on('indexChanged', onSlideChange);
+
+// Unsubscribe
+slider.events.off('indexChanged', onSlideChange);
+```
+
+---
+
+## Method Chaining
+
+Methods that don't return values can be chained (though not all methods support this pattern):
+
+```javascript
+// These don't return values, so chaining isn't supported
+slider.goTo('next');
+slider.play();
+
+// But you can call methods in sequence
+slider.goTo(0);
+slider.play();
+```
+
+## Complete Instance Interface
+
+```typescript
+interface TinySliderInstance {
+  // Properties
+  version: number;
+  isOn: boolean;
+  events: {
+    on(event: SilderEvent, cb: (info: TinySliderInfo) => any): void;
+    off(event: SilderEvent, cb: (info: TinySliderInfo) => any): void;
+  };
+  
+  // Methods
+  getInfo(): TinySliderInfo;
+  goTo(target: number | 'next' | 'prev' | 'first' | 'last'): void;
+  play(): void;
+  pause(): void;
+  updateSliderHeight(): void;
+  refresh(): void;
+  destroy(): void;
+  rebuild(): TinySliderInstance;
+}
+```
+
+## Usage Examples
+
+<CodeGroup>
+```javascript Basic Control
+const slider = tns({
+  container: '.my-slider',
+  items: 3,
+  autoplay: true
+});
+
+// Control buttons
+document.getElementById('prev').onclick = () => slider.goTo('prev');
+document.getElementById('next').onclick = () => slider.goTo('next');
+document.getElementById('play').onclick = () => slider.play();
+document.getElementById('pause').onclick = () => slider.pause();
+```
+
+```javascript Custom Counter
+const slider = tns({
+  container: '.my-slider',
+  items: 1
+});
+
+function updateCounter() {
+  const info = slider.getInfo();
+  document.querySelector('.counter').textContent = 
+    `${info.index + 1} / ${info.slideCount}`;
+}
+
+slider.events.on('indexChanged', updateCounter);
+updateCounter(); // Initial call
+```
+
+```javascript Dynamic Content
+const slider = tns({
+  container: '.my-slider',
+  autoHeight: true
+});
+
+// Load content dynamically
+async function loadSlideContent(slideIndex) {
+  const response = await fetch(`/api/slide/${slideIndex}`);
+  const html = await response.text();
+  
+  const info = slider.getInfo();
+  info.slideItems[slideIndex].innerHTML = html;
+  
+  slider.updateSliderHeight();
+}
+```
+
+```javascript Responsive Slider
+let slider = null;
+
+function initSlider() {
+  if (window.innerWidth < 768 && !slider) {
+    slider = tns({
+      container: '.my-slider',
+      items: 1,
+      controls: true
+    });
+  } else if (window.innerWidth >= 768 && slider) {
+    slider.destroy();
+    slider = null;
+  }
+}
+
+window.addEventListener('resize', initSlider);
+initSlider();
+```
+</CodeGroup>

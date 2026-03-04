@@ -1,0 +1,343 @@
+---
+title: 'Slider Modes'
+description: 'Understanding carousel and gallery modes in tiny-slider'
+---
+
+# Slider Modes
+
+Tiny-slider supports two primary display modes that control how slides transition and animate. Each mode is optimized for different use cases and visual effects.
+
+## Overview
+
+The `mode` option determines the fundamental animation behavior of your slider:
+
+- **Carousel mode**: Slides move horizontally or vertically with smooth transitions
+- **Gallery mode**: Uses fade animations and changes all visible slides at once
+
+<CodeGroup>
+```javascript Carousel Mode
+const slider = tns({
+  container: '.my-slider',
+  mode: 'carousel',  // Default
+  items: 3,
+  slideBy: 1
+});
+```
+
+```javascript Gallery Mode
+const slider = tns({
+  container: '.my-slider',
+  mode: 'gallery',
+  items: 1,
+  animateIn: 'tns-fadeIn',
+  animateOut: 'tns-fadeOut'
+});
+```
+</CodeGroup>
+
+## Carousel Mode
+
+Carousel is the default mode where slides move to the side in a continuous flow.
+
+### Key Features
+
+<CardGroup cols={2}>
+  <Card title="Loop & Rewind" icon="arrows-rotate">
+    Seamless looping or rewind to opposite edge
+  </Card>
+  <Card title="Slide By" icon="forward">
+    Control how many slides advance per click
+  </Card>
+  <Card title="Edge Padding" icon="ruler-horizontal">
+    Add space on the outside edges
+  </Card>
+  <Card title="Center Mode" icon="align-center">
+    Center the active slide in the viewport
+  </Card>
+</CardGroup>
+
+### Configuration Options
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  mode: 'carousel',
+  
+  // Movement options
+  loop: true,           // Seamless infinite loop
+  rewind: false,        // Jump to opposite edge (alternative to loop)
+  slideBy: 1,          // Number of slides to advance
+  
+  // Layout options
+  items: 3,            // Slides visible at once
+  gutter: 20,          // Space between slides (px)
+  edgePadding: 50,     // Space on outside (px)
+  center: false,       // Center active slide
+  
+  // Direction
+  axis: 'horizontal'   // or 'vertical'
+});
+```
+
+### Horizontal vs Vertical Axis
+
+Carousel mode supports both horizontal and vertical sliding:
+
+<Tabs>
+  <Tab title="Horizontal">
+    ```javascript
+    const slider = tns({
+      container: '.my-slider',
+      mode: 'carousel',
+      axis: 'horizontal',  // Default
+      items: 3,
+      gutter: 20
+    });
+    ```
+    
+    <Info>Horizontal is the default axis and provides the classic left-to-right carousel experience.</Info>
+  </Tab>
+  
+  <Tab title="Vertical">
+    ```javascript
+    const slider = tns({
+      container: '.my-slider',
+      mode: 'carousel',
+      axis: 'vertical',
+      items: 3,
+      gutter: 20
+    });
+    ```
+    
+    <Note>Vertical carousels work well for timeline displays or vertical content feeds.</Note>
+  </Tab>
+</Tabs>
+
+### Loop vs Rewind
+
+<Accordion title="Loop Behavior">
+  **Loop** creates a seamless infinite experience by cloning slides:
+  
+  ```javascript
+  const slider = tns({
+    container: '.my-slider',
+    mode: 'carousel',
+    loop: true,      // Seamless continuous movement
+    rewind: false
+  });
+  ```
+  
+  When enabled, the slider clones slides to create the illusion of infinite scrolling. Perfect for continuous browsing experiences.
+</Accordion>
+
+<Accordion title="Rewind Behavior">
+  **Rewind** jumps to the opposite edge when reaching the end:
+  
+  ```javascript
+  const slider = tns({
+    container: '.my-slider',
+    mode: 'carousel',
+    loop: false,
+    rewind: true     // Jump to opposite edge
+  });
+  ```
+  
+  When you reach the last slide and click next, it jumps back to the first slide. Useful when you want clear boundaries.
+</Accordion>
+
+<Warning>
+  You cannot use `loop` and `rewind` together. Set `loop: true` for seamless infinite scrolling, or `rewind: true` for jump-back behavior.
+</Warning>
+
+## Gallery Mode
+
+Gallery mode uses fade animations and is optimized for displaying one item at a time with smooth transitions.
+
+### Key Features
+
+- **Fade animations**: Smooth cross-fade between slides
+- **All slides change**: Unlike carousel, all visible slides transition together
+- **Customizable animation classes**: Control the in/out animations
+- **Fixed positioning**: Slides are positioned absolutely for fade effects
+
+### Configuration
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  mode: 'gallery',
+  
+  // Animation classes
+  animateIn: 'tns-fadeIn',      // Default fade in animation
+  animateOut: 'tns-fadeOut',    // Default fade out animation
+  animateNormal: 'tns-normal',  // Default state
+  animateDelay: false,          // Delay between animations (ms)
+  
+  // Display
+  items: 1,                     // Typically 1 for galleries
+  speed: 300                    // Transition speed (ms)
+});
+```
+
+### Custom Animations
+
+You can use custom CSS animation classes:
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  mode: 'gallery',
+  animateIn: 'slideInRight',
+  animateOut: 'slideOutLeft',
+  animateDelay: 100,  // 100ms delay between slides
+  speed: 400
+});
+```
+
+```css
+/* Define your custom animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.slideInRight {
+  animation: slideInRight 0.4s ease-out;
+}
+
+.slideOutLeft {
+  animation: slideOutLeft 0.4s ease-out;
+}
+```
+
+<Info>
+  Gallery mode automatically sets `axis: 'horizontal'` and `slideBy: 'page'`. These options cannot be changed in gallery mode.
+</Info>
+
+## Mode Comparison
+
+| Feature | Carousel | Gallery |
+|---------|----------|----------|
+| Animation | Slide/transform | Fade/custom |
+| Multiple visible slides | ✓ | ✓ |
+| Loop support | ✓ | ✓ |
+| Rewind support | ✓ | ✗ |
+| Slide by | Configurable | Always 'page' |
+| Edge padding | ✓ | ✗ |
+| Vertical axis | ✓ | ✗ |
+| Center mode | ✓ | ✗ |
+| Custom animations | ✗ | ✓ |
+
+## When to Use Each Mode
+
+<CardGroup cols={2}>
+  <Card title="Use Carousel For" icon="carousel">
+    - Product showcases with multiple visible items
+    - Image galleries with thumbnails
+    - Content feeds with continuous scrolling
+    - Vertical timelines
+    - Any layout requiring edge padding or gutters
+  </Card>
+  
+  <Card title="Use Gallery For" icon="images">
+    - Full-screen image sliders
+    - Single-item showcases with fade effects
+    - Before/after comparisons
+    - Hero banners with fade transitions
+    - Testimonials with smooth transitions
+  </Card>
+</CardGroup>
+
+## Practical Examples
+
+### Multi-Item Carousel
+
+```javascript
+// Perfect for product showcases
+const productSlider = tns({
+  container: '.product-carousel',
+  mode: 'carousel',
+  items: 4,
+  slideBy: 2,
+  gutter: 20,
+  edgePadding: 30,
+  loop: true,
+  responsive: {
+    640: { items: 2 },
+    900: { items: 3 },
+    1200: { items: 4 }
+  }
+});
+```
+
+### Full-Screen Gallery
+
+```javascript
+// Perfect for hero sections or photo galleries
+const heroSlider = tns({
+  container: '.hero-gallery',
+  mode: 'gallery',
+  items: 1,
+  animateIn: 'tns-fadeIn',
+  animateOut: 'tns-fadeOut',
+  speed: 600,
+  autoplay: true,
+  autoplayTimeout: 5000,
+  autoplayHoverPause: true,
+  controls: false,
+  nav: true
+});
+```
+
+### Vertical News Feed
+
+```javascript
+// Perfect for news tickers or vertical content
+const newsFeed = tns({
+  container: '.news-feed',
+  mode: 'carousel',
+  axis: 'vertical',
+  items: 3,
+  slideBy: 1,
+  gutter: 10,
+  autoplay: true,
+  autoplayTimeout: 3000,
+  autoplayDirection: 'forward',
+  controls: true,
+  nav: false
+});
+```
+
+## Switching Modes
+
+<Warning>
+  The mode cannot be changed after initialization. To switch modes, you must destroy the current slider and create a new one:
+</Warning>
+
+```javascript
+// Destroy existing slider
+slider.destroy();
+
+// Reinitialize with new mode
+slider = tns({
+  container: '.my-slider',
+  mode: 'gallery'  // Changed from carousel
+});
+```

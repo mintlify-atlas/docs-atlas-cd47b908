@@ -1,0 +1,638 @@
+---
+title: 'Event System'
+description: 'Listen and respond to slider events in tiny-slider'
+---
+
+# Event System
+
+Tiny-slider provides a comprehensive event system that allows you to hook into slider lifecycle and user interactions. This enables you to build dynamic, responsive experiences that react to slider state changes.
+
+## Overview
+
+Events are emitted at key moments during slider operation, such as when slides change, transitions complete, or users interact with the slider. You can subscribe to these events to execute custom logic.
+
+### Basic Event Subscription
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Subscribe to an event
+slider.events.on('indexChanged', function(info) {
+  console.log('Slide changed to index:', info.index);
+});
+```
+
+## Available Events
+
+Tiny-slider emits the following events:
+
+<Accordion title="Slide Change Events">
+  - `indexChanged` - Fired when the slide index changes
+  - `transitionStart` - Fired when a transition animation begins
+  - `transitionEnd` - Fired when a transition animation completes
+</Accordion>
+
+<Accordion title="Touch/Drag Events">
+  - `touchStart` - Fired when touch begins
+  - `touchMove` - Fired when touch moves
+  - `touchEnd` - Fired when touch ends
+  - `dragStart` - Fired when mouse drag begins
+  - `dragMove` - Fired when mouse drag moves
+  - `dragEnd` - Fired when mouse drag ends
+</Accordion>
+
+<Accordion title="Responsive Events">
+  - `newBreakpointStart` - Fired when breakpoint starts changing
+  - `newBreakpointEnd` - Fired when breakpoint change completes
+</Accordion>
+
+## Event Methods
+
+### Subscribing to Events
+
+Use `events.on()` to subscribe to an event:
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Define a handler function
+function handleSlideChange(info) {
+  console.log('Current index:', info.index);
+  console.log('Display index:', info.displayIndex);
+}
+
+// Subscribe to the event
+slider.events.on('indexChanged', handleSlideChange);
+```
+
+### Unsubscribing from Events
+
+Use `events.off()` to unsubscribe:
+
+```javascript
+// Unsubscribe from event
+slider.events.off('indexChanged', handleSlideChange);
+```
+
+<Warning>
+  To unsubscribe, you must pass the exact same function reference that was used to subscribe. Anonymous functions cannot be unsubscribed.
+</Warning>
+
+```javascript
+// ✗ Cannot unsubscribe - anonymous function
+slider.events.on('indexChanged', function(info) {
+  console.log(info.index);
+});
+
+// ✓ Can unsubscribe - named function
+const handler = function(info) {
+  console.log(info.index);
+};
+slider.events.on('indexChanged', handler);
+slider.events.off('indexChanged', handler);
+```
+
+## Event Info Object
+
+All event handlers receive an info object with detailed slider state:
+
+```javascript
+slider.events.on('indexChanged', function(info) {
+  // Access slider information
+  console.log(info);
+});
+```
+
+### Info Object Properties
+
+<CodeGroup>
+```javascript Slide Information
+{
+  index: 3,              // Current slide index
+  indexCached: 2,        // Previous slide index
+  displayIndex: 4,       // Display index (starts from 1)
+  slideCount: 10,        // Original slide count
+  slideCountNew: 14,     // Total including clones
+  cloneCount: 2          // Number of cloned slides
+}
+```
+
+```javascript Display Information
+{
+  items: 3,              // Visible slides
+  slideBy: 1,            // Slides per navigation
+  container: <Element>,  // Slider container element
+  slideItems: <Array>,   // Array of slide elements
+  navCurrent: 1,         // Current nav dot index
+  navCurrentCached: 0,   // Previous nav dot index
+  pages: [0, 3, 6, 9]    // Visible nav indexes
+}
+```
+
+```javascript Control Information
+{
+  hasControls: true,           // Controls exist
+  controlsContainer: <Element>, // Controls container
+  prevButton: <Element>,       // Previous button
+  nextButton: <Element>,       // Next button
+  navContainer: <Element>,     // Nav container
+  navItems: <Array>            // Nav dot elements
+}
+```
+
+```javascript Event Information
+{
+  event: <Event>        // Original DOM event (if available)
+}
+```
+</CodeGroup>
+
+## Event Types in Detail
+
+### Index Changed
+
+Fired whenever the slide index changes, whether from user interaction, autoplay, or programmatic control.
+
+```javascript
+slider.events.on('indexChanged', function(info) {
+  // Update custom UI
+  const currentSlide = info.displayIndex;
+  const totalSlides = info.slideCount;
+  document.querySelector('.slide-counter').textContent = 
+    `${currentSlide} / ${totalSlides}`;
+  
+  // Track analytics
+  analytics.track('Slide Viewed', {
+    slideIndex: info.index,
+    slideId: info.slideItems[info.index].id
+  });
+});
+```
+
+### Transition Events
+
+Track animation lifecycle:
+
+<Tabs>
+  <Tab title="Transition Start">
+    ```javascript
+    slider.events.on('transitionStart', function(info) {
+      console.log('Animation starting...');
+      console.log('Moving to index:', info.index);
+      console.log('From index:', info.indexCached);
+      
+      // Show loading indicator
+      document.querySelector('.loader').style.display = 'block';
+      
+      // Disable buttons during transition
+      document.querySelectorAll('.custom-nav button')
+        .forEach(btn => btn.disabled = true);
+    });
+    ```
+  </Tab>
+  
+  <Tab title="Transition End">
+    ```javascript
+    slider.events.on('transitionEnd', function(info) {
+      console.log('Animation complete!');
+      console.log('Now at index:', info.index);
+      
+      // Hide loading indicator
+      document.querySelector('.loader').style.display = 'none';
+      
+      // Re-enable buttons
+      document.querySelectorAll('.custom-nav button')
+        .forEach(btn => btn.disabled = false);
+      
+      // Lazy load nearby images
+      loadImagesNearSlide(info.index);
+    });
+    ```
+  </Tab>
+</Tabs>
+
+<Info>
+  In carousel mode, `transitionStart` fires before the slide animation begins, and `transitionEnd` fires when the animation completes. In gallery mode, these events correspond to the fade animation timing.
+</Info>
+
+### Touch and Drag Events
+
+Monitor user interaction:
+
+```javascript
+let dragDistance = 0;
+
+slider.events.on('touchStart', function(info) {
+  console.log('Touch started');
+  dragDistance = 0;
+});
+
+slider.events.on('touchMove', function(info) {
+  console.log('Touch moving...');
+  // Access the original touch event
+  if (info.event) {
+    console.log('Touch position:', info.event.touches[0].clientX);
+  }
+});
+
+slider.events.on('touchEnd', function(info) {
+  console.log('Touch ended');
+  console.log('Final index:', info.index);
+});
+```
+
+### Drag Events (Mouse)
+
+Similar to touch events but for mouse interactions:
+
+```javascript
+slider.events.on('dragStart', function(info) {
+  console.log('Drag started with mouse');
+  document.body.style.cursor = 'grabbing';
+});
+
+slider.events.on('dragMove', function(info) {
+  // Track drag movement
+  if (info.event) {
+    console.log('Mouse position:', info.event.clientX);
+  }
+});
+
+slider.events.on('dragEnd', function(info) {
+  console.log('Drag ended');
+  document.body.style.cursor = 'grab';
+});
+```
+
+### Breakpoint Events
+
+Respond to responsive breakpoint changes:
+
+```javascript
+slider.events.on('newBreakpointStart', function(info) {
+  console.log('Breakpoint changing...');
+  console.log('Current items:', info.items);
+});
+
+slider.events.on('newBreakpointEnd', function(info) {
+  console.log('Breakpoint changed!');
+  console.log('New items:', info.items);
+  console.log('New slideBy:', info.slideBy);
+  
+  // Update custom UI for new layout
+  updateCustomControls(info.items);
+});
+```
+
+## Practical Use Cases
+
+### Custom Slide Counter
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  nav: false
+});
+
+// Create custom counter
+const counter = document.createElement('div');
+counter.className = 'slide-counter';
+document.querySelector('.slider-wrapper').appendChild(counter);
+
+// Update counter on slide change
+function updateCounter(info) {
+  counter.textContent = `${info.displayIndex} / ${info.slideCount}`;
+}
+
+// Initialize and subscribe
+updateCounter(slider.getInfo());
+slider.events.on('indexChanged', updateCounter);
+```
+
+### Progress Bar
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1
+});
+
+const progressBar = document.querySelector('.progress-bar');
+
+slider.events.on('indexChanged', function(info) {
+  const progress = ((info.index + 1) / info.slideCount) * 100;
+  progressBar.style.width = progress + '%';
+});
+```
+
+### Sync Two Sliders
+
+```javascript
+const mainSlider = tns({
+  container: '.main-slider',
+  items: 1,
+  nav: false
+});
+
+const thumbSlider = tns({
+  container: '.thumb-slider',
+  items: 5,
+  slideBy: 1,
+  controls: false
+});
+
+// Sync thumbnail to main slider
+mainSlider.events.on('indexChanged', function(info) {
+  thumbSlider.goTo(info.index);
+});
+
+// Sync main slider to thumbnail clicks
+const thumbs = document.querySelectorAll('.thumb-slider .slide');
+thumbs.forEach((thumb, index) => {
+  thumb.addEventListener('click', () => {
+    mainSlider.goTo(index);
+  });
+});
+```
+
+### Active Slide Styling
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3,
+  center: true
+});
+
+slider.events.on('indexChanged', function(info) {
+  // Remove active class from all slides
+  info.slideItems.forEach(slide => {
+    slide.classList.remove('active');
+  });
+  
+  // Add active class to current slide
+  info.slideItems[info.index].classList.add('active');
+});
+```
+
+### Analytics Tracking
+
+```javascript
+const slider = tns({
+  container: '.product-slider',
+  items: 4,
+  autoplay: true
+});
+
+// Track slide views
+slider.events.on('indexChanged', function(info) {
+  const slideElement = info.slideItems[info.index];
+  const productId = slideElement.dataset.productId;
+  
+  // Send to analytics
+  analytics.track('Product Viewed', {
+    productId: productId,
+    slideIndex: info.index,
+    viewMethod: info.event ? 'user' : 'autoplay'
+  });
+});
+
+// Track interactions
+let interactionCount = 0;
+
+slider.events.on('touchStart', function() {
+  interactionCount++;
+});
+
+slider.events.on('dragStart', function() {
+  interactionCount++;
+});
+
+window.addEventListener('beforeunload', () => {
+  analytics.track('Slider Engagement', {
+    interactions: interactionCount
+  });
+});
+```
+
+### Lazy Loading Content
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1
+});
+
+function loadSlideContent(index) {
+  const slide = slider.getInfo().slideItems[index];
+  if (slide && !slide.dataset.loaded) {
+    // Load content for this slide
+    const contentUrl = slide.dataset.contentUrl;
+    fetch(contentUrl)
+      .then(response => response.text())
+      .then(html => {
+        slide.innerHTML = html;
+        slide.dataset.loaded = 'true';
+      });
+  }
+}
+
+// Load current and adjacent slides
+slider.events.on('indexChanged', function(info) {
+  loadSlideContent(info.index);           // Current
+  loadSlideContent(info.index + 1);       // Next
+  loadSlideContent(info.index - 1);       // Previous
+});
+
+// Load initial slide
+loadSlideContent(slider.getInfo().index);
+```
+
+### Pause Video on Slide Change
+
+```javascript
+const slider = tns({
+  container: '.video-slider',
+  items: 1,
+  autoplay: false
+});
+
+slider.events.on('indexChanged', function(info) {
+  // Pause all videos
+  info.slideItems.forEach(slide => {
+    const video = slide.querySelector('video');
+    if (video) {
+      video.pause();
+    }
+  });
+  
+  // Play video in current slide
+  const currentSlide = info.slideItems[info.index];
+  const currentVideo = currentSlide.querySelector('video');
+  if (currentVideo) {
+    currentVideo.play();
+  }
+});
+```
+
+### Prevent Navigation During Custom Process
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1
+});
+
+let isProcessing = false;
+
+slider.events.on('transitionStart', function(info) {
+  if (isProcessing) {
+    // Cancel transition
+    slider.goTo(info.indexCached);
+    return;
+  }
+});
+
+function startLongProcess() {
+  isProcessing = true;
+  
+  // Do something async
+  setTimeout(() => {
+    isProcessing = false;
+    console.log('Navigation unlocked');
+  }, 3000);
+}
+```
+
+### Keyboard Navigation Feedback
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3,
+  arrowKeys: true
+});
+
+slider.events.on('indexChanged', function(info) {
+  if (info.event && info.event.type === 'keydown') {
+    // User used keyboard
+    const direction = info.event.keyCode === 37 ? 'left' : 'right';
+    showToast(`Navigated ${direction} with keyboard`);
+  }
+});
+```
+
+## Event Timing Diagram
+
+```
+User clicks "Next" button:
+  ↓
+1. indexChanged fires
+  ↓
+2. transitionStart fires
+  ↓
+3. [Animation happens]
+  ↓
+4. transitionEnd fires
+
+User swipes on mobile:
+  ↓
+1. touchStart fires
+  ↓
+2. touchMove fires (multiple times)
+  ↓
+3. touchEnd fires
+  ↓
+4. indexChanged fires (if threshold met)
+  ↓
+5. transitionStart fires
+  ↓
+6. [Animation happens]
+  ↓
+7. transitionEnd fires
+
+Breakpoint changes:
+  ↓
+1. newBreakpointStart fires
+  ↓
+2. [Settings recalculated]
+  ↓
+3. indexChanged fires (if index adjusted)
+  ↓
+4. newBreakpointEnd fires
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Named Functions" icon="function">
+    Always use named functions for event handlers if you need to unsubscribe later.
+  </Card>
+  
+  <Card title="Clean Up Events" icon="broom">
+    Unsubscribe from events when destroying sliders or removing components to prevent memory leaks.
+  </Card>
+  
+  <Card title="Check Event Context" icon="circle-check">
+    Use `info.event` to access the original DOM event and determine the trigger source.
+  </Card>
+  
+  <Card title="Debounce Heavy Operations" icon="stopwatch">
+    Events like `touchMove` and `dragMove` fire frequently. Debounce expensive operations.
+  </Card>
+</CardGroup>
+
+<Warning>
+  Don't perform heavy operations directly in event handlers. Use debouncing or throttling for performance-intensive tasks.
+</Warning>
+
+## Cleanup Example
+
+```javascript
+class SliderComponent {
+  constructor(element) {
+    this.slider = tns({
+      container: element,
+      items: 3
+    });
+    
+    // Bind handlers
+    this.handleIndexChange = this.handleIndexChange.bind(this);
+    this.handleTransitionEnd = this.handleTransitionEnd.bind(this);
+    
+    // Subscribe
+    this.slider.events.on('indexChanged', this.handleIndexChange);
+    this.slider.events.on('transitionEnd', this.handleTransitionEnd);
+  }
+  
+  handleIndexChange(info) {
+    console.log('Index changed:', info.index);
+  }
+  
+  handleTransitionEnd(info) {
+    console.log('Transition complete');
+  }
+  
+  destroy() {
+    // Unsubscribe from all events
+    this.slider.events.off('indexChanged', this.handleIndexChange);
+    this.slider.events.off('transitionEnd', this.handleTransitionEnd);
+    
+    // Destroy slider
+    this.slider.destroy();
+  }
+}
+
+// Usage
+const component = new SliderComponent('.my-slider');
+
+// Later, clean up
+component.destroy();
+```

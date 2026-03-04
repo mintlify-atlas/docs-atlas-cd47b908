@@ -1,0 +1,229 @@
+---
+title: 'Layout Options'
+description: 'Configure the visual layout and structure of your slider'
+---
+
+## Overview
+
+Layout options control the fundamental structure and appearance of your slider, including mode, axis, dimensions, and spacing.
+
+## Options
+
+<ParamField path="mode" type="'carousel' | 'gallery'" default="'carousel'">
+  Controls animation behaviour.
+  
+  With `carousel` everything slides to the side, while `gallery` uses fade animations and changes all slides at once.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    mode: 'gallery'
+  });
+  ```
+</ParamField>
+
+<ParamField path="axis" type="'horizontal' | 'vertical'" default="'horizontal'">
+  The axis of the slider.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    axis: 'vertical'
+  });
+  ```
+  
+  <Note>In gallery mode, axis is always horizontal.</Note>
+</ParamField>
+
+<ParamField path="items" type="number" default="1">
+  Number of slides being displayed in the viewport.
+  
+  If slides less or equal than `items`, the slider won't be initialized.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    items: 3
+  });
+  ```
+</ParamField>
+
+<ParamField path="gutter" type="number" default="0">
+  Space between slides (in "px").
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    items: 3,
+    gutter: 20
+  });
+  ```
+</ParamField>
+
+<ParamField path="edgePadding" type="number" default="0">
+  Space on the outside (in "px").
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    edgePadding: 50
+  });
+  ```
+  
+  <Note>Not available in gallery mode.</Note>
+</ParamField>
+
+<ParamField path="fixedWidth" type="number | false" default="false">
+  Controls `width` attribute of the slides.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    fixedWidth: 300
+  });
+  ```
+  
+  <Warning>Cannot be used with `autoWidth`.</Warning>
+</ParamField>
+
+<ParamField path="autoWidth" type="boolean" default="false">
+  If `true`, the width of each slide will be its natural width as an `inline-block` box.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoWidth: true
+  });
+  ```
+  
+  <Note>
+    When using `autoWidth` with lazyload, the `width` attribute is required for every image.
+  </Note>
+</ParamField>
+
+<ParamField path="viewportMax" type="number | false" default="false">
+  Maximum viewport width for `fixedWidth`/`autoWidth`.
+  
+  Previously called `fixedWidthViewportWidth`.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    fixedWidth: 300,
+    viewportMax: 900
+  });
+  ```
+</ParamField>
+
+<ParamField path="slideBy" type="number | 'page'" default="1">
+  Number of slides going on one "click".
+  
+  ```javascript
+  // Slide by 2 items
+  tns({
+    container: '.my-slider',
+    items: 3,
+    slideBy: 2
+  });
+  
+  // Slide by page
+  tns({
+    container: '.my-slider',
+    items: 3,
+    slideBy: 'page'
+  });
+  ```
+  
+  <Note>In gallery mode, slideBy is always 'page'.</Note>
+</ParamField>
+
+<ParamField path="center" type="boolean" default="false">
+  Center the active slide in the viewport.
+  
+  Available since v2.9.2.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    items: 3,
+    center: true
+  });
+  ```
+  
+  <Note>Only works in carousel mode with horizontal axis.</Note>
+</ParamField>
+
+<ParamField path="autoHeight" type="boolean" default="false">
+  Height of slider container changes according to each slide's height.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoHeight: true
+  });
+  ```
+  
+  <Info>
+    You can manually adjust slider height using the `updateSliderHeight()` method when autoHeight is true.
+  </Info>
+</ParamField>
+
+## Responsive Configuration
+
+All layout options except `mode` and `axis` can be adjusted at different breakpoints:
+
+```javascript
+tns({
+  container: '.my-slider',
+  items: 1,
+  gutter: 10,
+  edgePadding: 0,
+  responsive: {
+    640: {
+      items: 2,
+      gutter: 20,
+      edgePadding: 20
+    },
+    900: {
+      items: 3,
+      gutter: 30
+    }
+  }
+});
+```
+
+## Common Patterns
+
+### Fixed Width Slider
+
+```javascript
+tns({
+  container: '.my-slider',
+  fixedWidth: 300,
+  gutter: 10,
+  edgePadding: 20,
+  viewportMax: 1200
+});
+```
+
+### Auto Width with Center Mode
+
+```javascript
+tns({
+  container: '.my-slider',
+  autoWidth: true,
+  center: true,
+  gutter: 15
+});
+```
+
+### Vertical Gallery
+
+```javascript
+tns({
+  container: '.my-slider',
+  mode: 'gallery',
+  // Note: axis is always horizontal in gallery mode
+  autoHeight: true
+});
+```

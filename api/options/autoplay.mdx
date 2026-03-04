@@ -1,0 +1,382 @@
+---
+title: 'Autoplay Options'
+description: 'Configure automatic slide transitions and autoplay behavior'
+---
+
+## Overview
+
+Autoplay options control the automatic progression of slides, including timing, direction, and user interaction behavior.
+
+## Options
+
+<ParamField path="autoplay" type="boolean" default="false">
+  Toggles the automatic change of slides.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoplay: true
+  });
+  ```
+  
+  <Info>
+    Use the `play()` and `pause()` methods to programmatically control autoplay.
+  </Info>
+</ParamField>
+
+<ParamField path="autoplayPosition" type="'top' | 'bottom'" default="'top'">
+  Controls autoplay button position.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoplay: true,
+    autoplayPosition: 'bottom'
+  });
+  ```
+</ParamField>
+
+<ParamField path="autoplayTimeout" type="number" default="5000">
+  Time between 2 autoplay slides change (in "ms").
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoplay: true,
+    autoplayTimeout: 3000 // 3 seconds
+  });
+  ```
+</ParamField>
+
+<ParamField path="autoplayDirection" type="'forward' | 'backward'" default="'forward'">
+  Direction of slide movement (ascending/descending the slide index).
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoplay: true,
+    autoplayDirection: 'backward'
+  });
+  ```
+</ParamField>
+
+<ParamField path="autoplayText" type="string[]" default="['start', 'stop']">
+  Text or markup in the autoplay start/stop button.
+  
+  ```javascript
+  // Simple text
+  tns({
+    container: '.my-slider',
+    autoplay: true,
+    autoplayText: ['Play', 'Pause']
+  });
+  
+  // HTML markup
+  tns({
+    container: '.my-slider',
+    autoplay: true,
+    autoplayText: [
+      '<i class="fa fa-play"></i>',
+      '<i class="fa fa-pause"></i>'
+    ]
+  });
+  ```
+</ParamField>
+
+<ParamField path="autoplayHoverPause" type="boolean" default="false">
+  Stops sliding on mouseover.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoplay: true,
+    autoplayHoverPause: true
+  });
+  ```
+  
+  <Info>
+    This improves user experience by allowing users to pause and read content.
+  </Info>
+</ParamField>
+
+<ParamField path="autoplayButton" type="HTMLElement | string | false" default="false">
+  The customized autoplay start/stop button or selector.
+  
+  ```html
+  <button id="custom-autoplay">Toggle Autoplay</button>
+  <div class="my-slider">
+    <!-- slides -->
+  </div>
+  ```
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoplay: true,
+    autoplayButton: '#custom-autoplay'
+  });
+  ```
+</ParamField>
+
+<ParamField path="autoplayButtonOutput" type="boolean" default="true">
+  Output autoplayButton markup when autoplay is true but a customized autoplayButton is not provided.
+  
+  Set to `false` to hide the autoplay button completely.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoplay: true,
+    autoplayButtonOutput: false // No button will be created
+  });
+  ```
+</ParamField>
+
+<ParamField path="autoplayResetOnVisibility" type="boolean" default="true">
+  Pauses the sliding when the page is invisible and resumes it when the page becomes visible again.
+  
+  Uses the [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API).
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    autoplay: true,
+    autoplayResetOnVisibility: true
+  });
+  ```
+  
+  <Info>
+    This saves resources when users switch tabs or minimize the browser.
+  </Info>
+</ParamField>
+
+## Configuration Examples
+
+### Basic Autoplay
+
+```javascript
+tns({
+  container: '.my-slider',
+  items: 1,
+  autoplay: true,
+  autoplayTimeout: 5000,
+  autoplayHoverPause: true
+});
+```
+
+### Autoplay with Custom Controls
+
+```html
+<div class="my-slider">
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+</div>
+<button id="play-pause" class="autoplay-btn">
+  <span class="play-icon">▶</span>
+  <span class="pause-icon" style="display:none;">⏸</span>
+</button>
+```
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  autoplay: true,
+  autoplayButton: '#play-pause',
+  autoplayButtonOutput: false
+});
+
+// Custom toggle logic
+document.getElementById('play-pause').addEventListener('click', function() {
+  var playIcon = this.querySelector('.play-icon');
+  var pauseIcon = this.querySelector('.pause-icon');
+  
+  if (playIcon.style.display !== 'none') {
+    playIcon.style.display = 'none';
+    pauseIcon.style.display = 'inline';
+  } else {
+    playIcon.style.display = 'inline';
+    pauseIcon.style.display = 'none';
+  }
+});
+```
+
+### Reverse Direction Autoplay
+
+```javascript
+tns({
+  container: '.my-slider',
+  autoplay: true,
+  autoplayDirection: 'backward',
+  autoplayTimeout: 4000
+});
+```
+
+### Programmatic Control
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  autoplay: false, // Start paused
+  autoplayButtonOutput: false
+});
+
+// Start autoplay on user action
+document.getElementById('start-btn').addEventListener('click', function() {
+  slider.play();
+});
+
+// Pause autoplay
+document.getElementById('pause-btn').addEventListener('click', function() {
+  slider.pause();
+});
+```
+
+### Autoplay with Hover Pause
+
+```javascript
+tns({
+  container: '.my-slider',
+  items: 3,
+  slideBy: 1,
+  autoplay: true,
+  autoplayTimeout: 3000,
+  autoplayHoverPause: true,
+  autoplayResetOnVisibility: true,
+  autoplayText: ['▶', '⏸'],
+  autoplayButtonOutput: true
+});
+```
+
+## Styling the Autoplay Button
+
+```css
+/* Default autoplay button */
+[data-action] {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  background: #3399CC;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+[data-action]:hover {
+  background: #2277AA;
+}
+
+/* Hide the text, show only when screen reader */
+[data-action] .tns-visually-hidden {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+```
+
+## Responsive Configuration
+
+Autoplay can be enabled/disabled at different breakpoints:
+
+```javascript
+tns({
+  container: '.my-slider',
+  autoplay: false,
+  autoplayTimeout: 5000,
+  responsive: {
+    640: {
+      autoplay: true,
+      autoplayHoverPause: true
+    },
+    900: {
+      autoplayTimeout: 7000
+    }
+  }
+});
+```
+
+## Best Practices
+
+### 1. Always Provide Controls
+
+Always give users a way to pause autoplay:
+
+```javascript
+tns({
+  container: '.my-slider',
+  autoplay: true,
+  autoplayButtonOutput: true, // Show pause/play button
+  autoplayHoverPause: true    // Pause on hover
+});
+```
+
+### 2. Use Appropriate Timing
+
+Give users enough time to read content:
+
+```javascript
+tns({
+  container: '.my-slider',
+  autoplay: true,
+  autoplayTimeout: 8000 // 8 seconds for text-heavy slides
+});
+```
+
+### 3. Respect User Preferences
+
+Pause when the tab is not visible:
+
+```javascript
+tns({
+  container: '.my-slider',
+  autoplay: true,
+  autoplayResetOnVisibility: true // Respects Page Visibility API
+});
+```
+
+### 4. Accessibility Considerations
+
+The autoplay button includes hidden text for screen readers:
+
+```html
+<!-- Generated markup -->
+<button type="button" data-action="stop">
+  <span class="tns-visually-hidden">stop animation</span>
+  stop
+</button>
+```
+
+### 5. Performance Optimization
+
+Disable autoplay when not needed:
+
+```javascript
+tns({
+  container: '.my-slider',
+  autoplay: true,
+  autoplayButtonOutput: false, // No button needed
+  autoplayResetOnVisibility: true // Save resources when hidden
+});
+```
+
+## Events
+
+You can listen to autoplay-related events:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  autoplay: true
+});
+
+slider.events.on('transitionStart', function(info) {
+  console.log('Slide transition started');
+});
+
+slider.events.on('transitionEnd', function(info) {
+  console.log('Now showing slide', info.displayIndex);
+});
+```

@@ -1,80 +1,555 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Create your first Tiny Slider in minutes
 ---
 
-## Get started in three steps
+This guide will walk you through creating a basic slider from scratch. By the end, you'll have a fully functional, responsive slider with navigation controls.
 
-Get your documentation site running locally and make your first customization.
+## Complete Example
 
-### Step 1: Set up your local environment
+<Steps>
+  <Step title="Create the HTML structure">
+    First, create a container element with slides inside:
+    
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>My Tiny Slider</title>
+      
+      <!-- Tiny Slider CSS -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+      
+      <style>
+        .my-slider {
+          background: #f5f5f5;
+        }
+        .my-slider div {
+          padding: 50px;
+          text-align: center;
+          background: #fff;
+          border: 1px solid #ddd;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="my-slider">
+        <div>Slide 1</div>
+        <div>Slide 2</div>
+        <div>Slide 3</div>
+        <div>Slide 4</div>
+        <div>Slide 5</div>
+      </div>
+      
+      <!-- Scripts will go here -->
+    </body>
+    </html>
+    ```
+    
+    <Info>
+      You can use either `<div>` elements or `<ul>` with `<li>` items for your slides. Both work equally well.
+    </Info>
+  </Step>
+  
+  <Step title="Include the JavaScript">
+    Add the Tiny Slider script before the closing `</body>` tag:
+    
+    ```html
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+    ```
+  </Step>
+  
+  <Step title="Initialize the slider">
+    Call the `tns()` function with your configuration:
+    
+    ```html
+    <script>
+      var slider = tns({
+        container: '.my-slider',
+        items: 3,
+        slideBy: 'page',
+        autoplay: true
+      });
+    </script>
+    ```
+  </Step>
+</Steps>
+
+## Full Working Example
+
+Here's the complete code combined:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Tiny Slider</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 0 20px;
+    }
+    .my-slider div {
+      padding: 80px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>My First Tiny Slider</h1>
+  
+  <div class="my-slider">
+    <div>Slide 1</div>
+    <div>Slide 2</div>
+    <div>Slide 3</div>
+    <div>Slide 4</div>
+    <div>Slide 5</div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+  <script>
+    var slider = tns({
+      container: '.my-slider',
+      items: 3,
+      slideBy: 'page',
+      autoplay: true,
+      speed: 400,
+      autoplayButtonOutput: false,
+      mouseDrag: true,
+      nav: false,
+      controlsText: ['←', '→']
+    });
+  </script>
+</body>
+</html>
+```
+
+## Import Methods
+
+Depending on your project setup, you can initialize Tiny Slider in different ways:
+
+<Tabs>
+  <Tab title="CDN (Global Variable)">
+    When using the CDN version, `tns` is available globally:
+    
+    ```html
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+    <script>
+      var slider = tns({
+        container: '.my-slider',
+        items: 3,
+        slideBy: 'page',
+        autoplay: true
+      });
+    </script>
+    ```
+  </Tab>
+  
+  <Tab title="ES6 Module (Webpack/Rollup)">
+    Import `tns` in your JavaScript file when using a bundler:
+    
+    ```javascript
+    // app.js
+    import { tns } from 'tiny-slider/src/tiny-slider';
+    
+    const slider = tns({
+      container: '.my-slider',
+      items: 3,
+      slideBy: 'page',
+      autoplay: true
+    });
+    ```
+    
+    Don't forget to import the CSS in your main file or HTML:
+    
+    ```javascript
+    import 'tiny-slider/dist/tiny-slider.css';
+    ```
+  </Tab>
+  
+  <Tab title="Native ES6 Module">
+    Modern browsers support ES6 modules directly (v2.8.2+):
+    
+    ```html
+    <script type="module">
+      import { tns } from './node_modules/tiny-slider/src/tiny-slider.js';
+      
+      const slider = tns({
+        container: '.my-slider',
+        items: 3,
+        slideBy: 'page',
+        autoplay: true
+      });
+    </script>
+    ```
+  </Tab>
+</Tabs>
+
+## Common Configuration Options
+
+Here are the most commonly used options from the source code:
+
+### Basic Options
+
+```javascript
+var slider = tns({
+  // Container element (required)
+  container: '.my-slider',
+  
+  // Number of slides visible at once
+  items: 3,
+  
+  // How many slides to move at a time
+  slideBy: 1, // or 'page' to slide by the number of visible items
+  
+  // Space between slides (in pixels)
+  gutter: 20,
+  
+  // Space on the outside (in pixels)
+  edgePadding: 0,
+  
+  // Animation speed (in milliseconds)
+  speed: 300
+});
+```
+
+### Navigation & Controls
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  
+  // Show prev/next buttons
+  controls: true,
+  
+  // Customize button text
+  controlsText: ['Previous', 'Next'],
+  
+  // Show navigation dots
+  nav: true,
+  
+  // Enable keyboard arrow keys
+  arrowKeys: true
+});
+```
+
+### Autoplay
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  
+  // Enable autoplay
+  autoplay: true,
+  
+  // Time between slides (in milliseconds)
+  autoplayTimeout: 5000,
+  
+  // Direction: 'forward' or 'backward'
+  autoplayDirection: 'forward',
+  
+  // Pause on hover
+  autoplayHoverPause: true,
+  
+  // Show autoplay button
+  autoplayButtonOutput: true,
+  
+  // Customize button text
+  autoplayText: ['Start', 'Stop']
+});
+```
+
+### Responsive Configuration
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 1,
+  gutter: 0,
+  
+  // Responsive breakpoints
+  responsive: {
+    640: {
+      edgePadding: 20,
+      gutter: 20,
+      items: 2
+    },
+    700: {
+      gutter: 30
+    },
+    900: {
+      items: 3
+    }
+  }
+});
+```
+
+<Info>
+  Breakpoints behave like CSS `min-width` media queries. Undefined options inherit from smaller breakpoints.
+</Info>
+
+### Touch & Drag
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  
+  // Enable touch for mobile
+  touch: true,
+  
+  // Enable mouse drag for desktop
+  mouseDrag: true,
+  
+  // Swipe angle threshold (in degrees)
+  swipeAngle: 15
+});
+```
+
+## Real-World Example: Image Gallery
+
+Here's a practical example with images:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Gallery</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  
+  <style>
+    .image-gallery {
+      max-width: 1000px;
+      margin: 50px auto;
+    }
+    .image-gallery img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="image-gallery">
+    <div><img src="https://picsum.photos/800/400?random=1" alt="Slide 1"></div>
+    <div><img src="https://picsum.photos/800/400?random=2" alt="Slide 2"></div>
+    <div><img src="https://picsum.photos/800/400?random=3" alt="Slide 3"></div>
+    <div><img src="https://picsum.photos/800/400?random=4" alt="Slide 4"></div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+  <script>
+    var slider = tns({
+      container: '.image-gallery',
+      items: 1,
+      slideBy: 'page',
+      autoplay: true,
+      autoplayButtonOutput: false,
+      autoplayTimeout: 3000,
+      speed: 600,
+      controls: true,
+      nav: true,
+      mouseDrag: true,
+      loop: true,
+      responsive: {
+        768: {
+          items: 2,
+          gutter: 20
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+```
+
+## Accessing Slider Information
+
+You can get information about the slider state:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Get slider info
+var info = slider.getInfo();
+console.log('Current index:', info.index);
+console.log('Total slides:', info.slideCount);
+console.log('Visible items:', info.items);
+```
+
+The `getInfo()` method returns an object with:
+
+- `container`: The slider container element
+- `slideItems`: Array of all slide elements
+- `index`: Current slide index (zero-based)
+- `displayIndex`: Display index (starts from 1)
+- `items`: Number of visible items
+- `slideCount`: Total number of slides
+- `controls`: Whether controls are enabled
+- `navContainer`: Navigation container element
+- And more...
+
+## Controlling the Slider
+
+You can programmatically control the slider:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Go to a specific slide
+slider.goTo(2); // Go to slide 3 (zero-based index)
+slider.goTo('prev'); // Go to previous slide
+slider.goTo('next'); // Go to next slide
+slider.goTo('first'); // Go to first slide
+slider.goTo('last'); // Go to last slide
+
+// Control autoplay
+slider.play(); // Start autoplay
+slider.pause(); // Pause autoplay
+
+// Other methods
+slider.updateSliderHeight(); // Update height when autoHeight is true
+slider.refresh(); // Refresh slider
+slider.destroy(); // Destroy the slider
+slider = slider.rebuild(); // Rebuild after destroying
+```
+
+## Listening to Events
+
+You can hook into slider events:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Define a callback function
+function onSlideChange(info) {
+  console.log('Slide changed to index:', info.index);
+  console.log('Display index:', info.displayIndex);
+}
+
+// Subscribe to events
+slider.events.on('indexChanged', onSlideChange);
+slider.events.on('transitionStart', function(info) {
+  console.log('Transition started');
+});
+slider.events.on('transitionEnd', function(info) {
+  console.log('Transition ended');
+});
+
+// Unsubscribe from an event
+slider.events.off('indexChanged', onSlideChange);
+```
+
+Available events:
+- `indexChanged`: When the slide index changes
+- `transitionStart`: When a transition starts
+- `transitionEnd`: When a transition ends
+- `touchStart`, `touchMove`, `touchEnd`: Touch events
+- `dragStart`, `dragMove`, `dragEnd`: Drag events
+- `newBreakpointStart`, `newBreakpointEnd`: Responsive breakpoint changes
+
+## Troubleshooting
 
 <AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+  <Accordion title="Slider not displaying">
+    Make sure you:
+    1. Included the CSS file
+    2. Have at least 2 slides in your container
+    3. Called `tns()` after the DOM is loaded
+    4. Used the correct container selector
     
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
+    ```javascript
+    // Wait for DOM to load
+    document.addEventListener('DOMContentLoaded', function() {
+      var slider = tns({
+        container: '.my-slider',
+        items: 3
+      });
+    });
+    ```
   </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
+  
+  <Accordion title="Dynamic content not working">
+    If you're loading content via AJAX, initialize the slider after the content loads:
     
-    <Tip>Your preview updates automatically as you edit files.</Tip>
+    ```javascript
+    fetch('/api/slides')
+      .then(response => response.json())
+      .then(data => {
+        // Add slides to container
+        const container = document.querySelector('.my-slider');
+        data.forEach(slide => {
+          const div = document.createElement('div');
+          div.textContent = slide.content;
+          container.appendChild(div);
+        });
+        
+        // Initialize slider after content is loaded
+        const slider = tns({
+          container: '.my-slider',
+          items: 3
+        });
+      });
+    ```
+  </Accordion>
+  
+  <Accordion title="IE8 not working">
+    Don't forget to include the IE8 helper polyfills:
+    
+    ```html
+    <!--[if (lt IE 9)]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.helper.ie8.js"></script>
+    <![endif]-->
+    ```
   </Accordion>
 </AccordionGroup>
 
-### Step 2: Deploy your changes
+## Next Steps
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
+Now that you have a working slider, explore more advanced features:
 
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Configuration Options" icon="sliders" href="/guides/configuration">
+    Explore all available configuration options
+  </Card>
+  
+  <Card title="API Methods" icon="code" href="/api/methods">
+    Learn about all methods and events
+  </Card>
+  
+  <Card title="Examples" icon="images" href="/examples/basic-carousel">
+    Browse practical examples and use cases
+  </Card>
+  
+  <Card title="Styling Guide" icon="paintbrush" href="/guides/styling">
+    Customize the appearance of your slider
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

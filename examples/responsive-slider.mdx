@@ -1,0 +1,416 @@
+---
+title: 'Responsive Slider'
+description: 'Create responsive sliders that adapt to different screen sizes with breakpoints'
+icon: 'mobile-screen'
+---
+
+## Overview
+
+Responsive sliders automatically adjust their configuration based on viewport width. You can define different numbers of visible items, spacing, controls, and other options for various screen sizes using breakpoints.
+
+## Complete Example
+
+<CodeGroup>
+
+```html HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    .responsive-slider {
+      margin: 0 auto;
+      max-width: 1200px;
+    }
+    .slide {
+      padding: 20px;
+      background: #f0f0f0;
+      text-align: center;
+      border-radius: 8px;
+    }
+    .slide img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .slide h3 {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="responsive-slider">
+    <div class="slide">
+      <img src="product1.jpg" alt="Product 1">
+      <h3>Product 1</h3>
+      <p>$29.99</p>
+    </div>
+    <div class="slide">
+      <img src="product2.jpg" alt="Product 2">
+      <h3>Product 2</h3>
+      <p>$39.99</p>
+    </div>
+    <div class="slide">
+      <img src="product3.jpg" alt="Product 3">
+      <h3>Product 3</h3>
+      <p>$49.99</p>
+    </div>
+    <div class="slide">
+      <img src="product4.jpg" alt="Product 4">
+      <h3>Product 4</h3>
+      <p>$59.99</p>
+    </div>
+    <div class="slide">
+      <img src="product5.jpg" alt="Product 5">
+      <h3>Product 5</h3>
+      <p>$69.99</p>
+    </div>
+    <div class="slide">
+      <img src="product6.jpg" alt="Product 6">
+      <h3>Product 6</h3>
+      <p>$79.99</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+</body>
+</html>
+```
+
+```javascript JavaScript
+var slider = tns({
+  container: '.responsive-slider',
+  items: 1,
+  slideBy: 1,
+  gutter: 10,
+  controls: true,
+  nav: true,
+  mouseDrag: true,
+  responsive: {
+    640: {
+      items: 2,
+      gutter: 20,
+      edgePadding: 10
+    },
+    768: {
+      items: 3,
+      gutter: 30,
+      edgePadding: 20
+    },
+    1024: {
+      items: 4,
+      gutter: 40,
+      slideBy: 2
+    }
+  }
+});
+```
+
+```markdown Result
+The slider adapts to screen size:
+- Mobile (< 640px): 1 item, 10px gutter
+- Small tablets (≥ 640px): 2 items, 20px gutter, 10px edge padding
+- Tablets (≥ 768px): 3 items, 30px gutter, 20px edge padding
+- Desktop (≥ 1024px): 4 items, 40px gutter, slides by 2 items
+```
+
+</CodeGroup>
+
+## Understanding Breakpoints
+
+Breakpoints work like `min-width` media queries in CSS:
+
+```javascript
+responsive: {
+  640: {        // When viewport width >= 640px
+    items: 2
+  },
+  768: {        // When viewport width >= 768px
+    items: 3
+  },
+  1024: {       // When viewport width >= 1024px
+    items: 4
+  }
+}
+```
+
+<Note>
+Breakpoints inherit from previous smaller breakpoints. Undefined options carry over from the base configuration or previous breakpoint.
+</Note>
+
+## Available Responsive Options
+
+The following options can be defined in responsive breakpoints:
+
+- `startIndex` - Starting slide index
+- `items` - Number of visible items
+- `slideBy` - Number of items to slide
+- `speed` - Transition speed
+- `autoHeight` - Auto height adjustment
+- `fixedWidth` - Fixed width for slides
+- `edgePadding` - Outside spacing
+- `gutter` - Space between slides
+- `center` - Center active slide
+- `controls` - Show/hide controls
+- `controlsText` - Control button text
+- `nav` - Show/hide navigation dots
+- `autoplay` - Enable/disable autoplay
+- `autoplayHoverPause` - Pause on hover
+- `autoplayResetOnVisibility` - Reset on visibility
+- `autoplayText` - Autoplay button text
+- `autoplayTimeout` - Autoplay delay
+- `touch` - Touch/swipe support
+- `mouseDrag` - Mouse drag support
+- `arrowKeys` - Keyboard navigation
+- `disable` - Disable slider
+
+## Common Responsive Patterns
+
+### Mobile-First Approach
+
+Start with mobile configuration and add breakpoints for larger screens:
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,           // Mobile: 1 item
+  slideBy: 1,
+  gutter: 10,
+  controls: false,    // No controls on mobile
+  nav: true,
+  responsive: {
+    768: {
+      items: 2,       // Tablet: 2 items
+      controls: true  // Show controls on tablet+
+    },
+    1024: {
+      items: 3,       // Desktop: 3 items
+      gutter: 30
+    },
+    1440: {
+      items: 4        // Large desktop: 4 items
+    }
+  }
+});
+```
+
+### Disable on Desktop
+
+Disable slider on large screens when all items fit:
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  controls: true,
+  nav: true,
+  responsive: {
+    768: {
+      items: 2
+    },
+    1024: {
+      items: 3
+    },
+    1440: {
+      disable: true   // All items visible, no need for slider
+    }
+  }
+});
+```
+
+<Tip>
+Use `freezable: true` (default) to automatically disable the slider when all slides fit in the viewport.
+</Tip>
+
+### Progressive Enhancement
+
+Add features as screen size increases:
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  slideBy: 1,
+  speed: 300,
+  controls: false,
+  nav: true,
+  mouseDrag: false,
+  arrowKeys: false,
+  responsive: {
+    640: {
+      items: 2,
+      mouseDrag: true    // Enable drag on tablets
+    },
+    768: {
+      items: 3,
+      controls: true,    // Add controls
+      arrowKeys: true    // Enable keyboard
+    },
+    1024: {
+      items: 4,
+      slideBy: 2,        // Slide 2 at a time
+      speed: 400,        // Slower transition
+      gutter: 30
+    }
+  }
+});
+```
+
+### Autoplay Control by Screen Size
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  autoplay: true,
+  autoplayTimeout: 3000,
+  autoplayHoverPause: false,
+  responsive: {
+    768: {
+      autoplay: false    // Disable autoplay on tablets
+    },
+    1024: {
+      autoplay: true,    // Re-enable on desktop
+      autoplayTimeout: 5000,
+      autoplayHoverPause: true
+    }
+  }
+});
+```
+
+## Advanced Responsive Configuration
+
+### Fixed Width Responsive
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  fixedWidth: 300,      // Fixed 300px slides
+  gutter: 10,
+  loop: false,
+  controls: true,
+  nav: false,
+  responsive: {
+    640: {
+      fixedWidth: 250,  // Smaller on tablets
+      gutter: 20
+    },
+    1024: {
+      fixedWidth: 350,  // Larger on desktop
+      gutter: 30
+    }
+  }
+});
+```
+
+<Warning>
+`fixedWidth` can only be changed to other positive integers in responsive breakpoints. It cannot be changed to 0, negative values, or false.
+</Warning>
+
+### Center Mode Responsive
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  center: false,
+  responsive: {
+    768: {
+      items: 3,
+      center: true,      // Center on tablet+
+      edgePadding: 50
+    },
+    1024: {
+      items: 5,
+      edgePadding: 100
+    }
+  }
+});
+```
+
+## Testing Breakpoints
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  responsive: {
+    640: { items: 2 },
+    768: { items: 3 },
+    1024: { items: 4 }
+  }
+});
+
+// Listen to breakpoint changes
+slider.events.on('newBreakpointStart', function(info) {
+  console.log('Breakpoint change started', info);
+});
+
+slider.events.on('newBreakpointEnd', function(info) {
+  console.log('New breakpoint applied', info);
+  console.log('Current items:', info.items);
+});
+```
+
+## Dynamic Responsive Updates
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  responsive: {
+    768: { items: 3 }
+  }
+});
+
+// Destroy and rebuild with new responsive settings
+slider.destroy();
+slider = tns({
+  container: '.slider',
+  items: 1,
+  responsive: {
+    640: { items: 2 },
+    768: { items: 3 },
+    1024: { items: 4 },
+    1440: { items: 5 }
+  }
+});
+```
+
+## CSS Media Queries
+
+Tiny Slider uses CSS media queries when supported by the browser, providing better performance:
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  responsive: {
+    768: { items: 3 }
+  }
+});
+```
+
+This automatically generates and uses CSS media queries in supported browsers.
+
+<Note>
+Tiny Slider saves browser capability information to localStorage, so capabilities are only checked once (until browser upgrade or localStorage is cleared).
+</Note>
+
+## Related Examples
+
+<CardGroup cols={2}>
+  <Card title="Basic Carousel" icon="circle-play" href="/examples/basic-carousel">
+    Simple carousel fundamentals
+  </Card>
+  <Card title="Custom Controls" icon="gamepad" href="/examples/custom-controls">
+    Customize navigation per breakpoint
+  </Card>
+  <Card title="Lazy Loading" icon="image" href="/examples/lazy-loading">
+    Optimize responsive image loading
+  </Card>
+  <Card title="Autoplay" icon="play" href="/examples/autoplay">
+    Control autoplay by screen size
+  </Card>
+</CardGroup>

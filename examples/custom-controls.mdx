@@ -1,0 +1,738 @@
+---
+title: 'Custom Controls'
+description: 'Customize navigation buttons, dots, and autoplay controls with your own elements'
+icon: 'gamepad'
+---
+
+## Overview
+
+Tiny Slider allows you to use custom HTML elements for controls (prev/next buttons), navigation dots, and autoplay buttons. This gives you complete control over the design and placement of slider navigation.
+
+## Complete Example
+
+<CodeGroup>
+
+```html HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    .slider-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+    
+    .custom-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    .custom-btn {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    
+    .custom-btn:hover {
+      background: #5568d3;
+    }
+    
+    .custom-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    
+    .my-slider {
+      margin-bottom: 20px;
+    }
+    
+    .slide {
+      padding: 20px;
+      background: #f5f5f5;
+      text-align: center;
+      border-radius: 8px;
+    }
+    
+    .custom-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .custom-nav button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #667eea;
+      background: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    .custom-nav button.tns-nav-active {
+      background: #667eea;
+    }
+    
+    .custom-autoplay {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .autoplay-btn {
+      padding: 12px 30px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="slider-wrapper">
+    
+    <!-- Custom Controls Container -->
+    <div class="custom-controls">
+      <button id="prev-btn" class="custom-btn">← Previous</button>
+      <button id="next-btn" class="custom-btn">Next →</button>
+    </div>
+    
+    <!-- Slider -->
+    <div class="my-slider">
+      <div class="slide">
+        <h3>Slide 1</h3>
+        <p>First slide content</p>
+      </div>
+      <div class="slide">
+        <h3>Slide 2</h3>
+        <p>Second slide content</p>
+      </div>
+      <div class="slide">
+        <h3>Slide 3</h3>
+        <p>Third slide content</p>
+      </div>
+      <div class="slide">
+        <h3>Slide 4</h3>
+        <p>Fourth slide content</p>
+      </div>
+      <div class="slide">
+        <h3>Slide 5</h3>
+        <p>Fifth slide content</p>
+      </div>
+    </div>
+    
+    <!-- Custom Navigation Dots -->
+    <div id="custom-nav" class="custom-nav"></div>
+    
+    <!-- Custom Autoplay Button -->
+    <div class="custom-autoplay">
+      <button id="autoplay-btn" class="autoplay-btn">Start Autoplay</button>
+    </div>
+    
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+</body>
+</html>
+```
+
+```javascript JavaScript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  slideBy: 1,
+  gutter: 20,
+  
+  // Custom prev/next buttons
+  prevButton: '#prev-btn',
+  nextButton: '#next-btn',
+  
+  // Custom navigation dots container
+  navContainer: '#custom-nav',
+  
+  // Custom autoplay button
+  autoplay: true,
+  autoplayTimeout: 4000,
+  autoplayButton: '#autoplay-btn',
+  autoplayText: ['Start Autoplay', 'Stop Autoplay'],
+  
+  speed: 400,
+  mouseDrag: true,
+  loop: true
+});
+```
+
+```markdown Result
+The slider uses custom elements for all controls:
+- Custom styled prev/next buttons above slider
+- Custom circular navigation dots below slider
+- Custom autoplay start/stop button
+- Tiny Slider automatically handles click events
+- Buttons automatically update disabled state
+- Active nav dot gets special styling
+- All controls positioned and styled as desired
+```
+
+</CodeGroup>
+
+## Custom Prev/Next Buttons
+
+### Individual Buttons
+
+```html
+<button id="my-prev">Previous</button>
+<div class="slider"></div>
+<button id="my-next">Next</button>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  prevButton: '#my-prev',
+  nextButton: '#my-next'
+});
+```
+
+<Note>
+When using `prevButton` and `nextButton`, Tiny Slider automatically:
+- Attaches click event listeners
+- Updates disabled state when reaching edges (if not looping)
+- Handles keyboard navigation when buttons are focused
+</Note>
+
+### Controls Container
+
+Use a container with exactly 2 child elements:
+
+```html
+<div class="slider"></div>
+
+<div id="controls-container">
+  <button>Prev</button>
+  <button>Next</button>
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  controlsContainer: '#controls-container'
+});
+```
+
+<Warning>
+The `controlsContainer` must have **exactly 2 child elements**. The first is used as the previous button, the second as the next button. If using `controlsContainer`, the `prevButton` and `nextButton` options are ignored.
+</Warning>
+
+### Icon Buttons
+
+```html
+<style>
+  .control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: #667eea;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+
+<button id="prev" class="control-btn">‹</button>
+<div class="slider"></div>
+<button id="next" class="control-btn">›</button>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  prevButton: '#prev',
+  nextButton: '#next'
+});
+```
+
+## Custom Navigation Dots
+
+### Basic Custom Nav
+
+```html
+<div class="slider"></div>
+
+<!-- Empty container for nav dots -->
+<div id="custom-dots"></div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  navContainer: '#custom-dots'
+});
+```
+
+Tiny Slider automatically generates navigation buttons inside the container.
+
+<Note>
+The `navContainer` must exist and have **at least as many child elements as there are slides**. Tiny Slider will use existing children or create new ones as needed.
+</Note>
+
+### Pre-Styled Nav Dots
+
+```html
+<div class="slider">
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+</div>
+
+<div id="custom-nav">
+  <button class="dot"></button>
+  <button class="dot"></button>
+  <button class="dot"></button>
+</div>
+```
+
+```css
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ddd;
+  border: none;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.dot.tns-nav-active {
+  background: #667eea;
+}
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  navContainer: '#custom-nav'
+});
+```
+
+### Thumbnail Navigation
+
+```html
+<div class="gallery"></div>
+
+<div id="thumbnails" class="thumbnails">
+  <button><img src="thumb1.jpg" alt=""></button>
+  <button><img src="thumb2.jpg" alt=""></button>
+  <button><img src="thumb3.jpg" alt=""></button>
+  <button><img src="thumb4.jpg" alt=""></button>
+</div>
+```
+
+```css
+.thumbnails {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.thumbnails button {
+  border: 3px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+}
+
+.thumbnails button img {
+  width: 100px;
+  height: 75px;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbnails button.tns-nav-active {
+  border-color: #667eea;
+}
+```
+
+```javascript
+var slider = tns({
+  container: '.gallery',
+  mode: 'gallery',
+  items: 1,
+  navContainer: '#thumbnails',
+  navAsThumbnails: true
+});
+```
+
+<Tip>
+Use `navAsThumbnails: true` when navigation items are thumbnails. This keeps them always visible even when multiple items are displayed.
+</Tip>
+
+## Custom Autoplay Button
+
+### Basic Autoplay Button
+
+```html
+<button id="play-pause">Play</button>
+<div class="slider"></div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  autoplay: true,
+  autoplayButton: '#play-pause',
+  autoplayText: ['Play', 'Pause']
+});
+```
+
+The button text automatically toggles between play and pause states.
+
+### Icon Autoplay Button
+
+```html
+<style>
+  .play-pause-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    background: #10b981;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+  }
+</style>
+
+<button id="autoplay" class="play-pause-btn">▶</button>
+<div class="slider"></div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  autoplay: true,
+  autoplayButton: '#autoplay',
+  autoplayText: ['▶', '❚❚']
+});
+```
+
+### Hide Default Autoplay Button
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  autoplay: true,
+  autoplayButtonOutput: false  // Don't create default button
+});
+```
+
+Then control autoplay programmatically:
+
+```javascript
+document.getElementById('my-play-btn').addEventListener('click', function() {
+  slider.play();
+});
+
+document.getElementById('my-pause-btn').addEventListener('click', function() {
+  slider.pause();
+});
+```
+
+## Complete Custom Controls Example
+
+```html
+<style>
+  .slider-container {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .control-overlay {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    padding: 0 20px;
+    z-index: 10;
+  }
+  
+  .arrow-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .arrow-btn:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  
+  .bottom-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 0 20px;
+  }
+  
+  .dots {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .dots button {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background: #ccc;
+    cursor: pointer;
+  }
+  
+  .dots button.tns-nav-active {
+    width: 24px;
+    border-radius: 4px;
+    background: #667eea;
+  }
+  
+  .play-pause {
+    padding: 8px 20px;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+
+<div class="slider-container">
+  <!-- Overlay Controls -->
+  <div class="control-overlay">
+    <button id="prev" class="arrow-btn">‹</button>
+    <button id="next" class="arrow-btn">›</button>
+  </div>
+  
+  <!-- Slider -->
+  <div class="my-slider">
+    <div><img src="1.jpg" alt=""></div>
+    <div><img src="2.jpg" alt=""></div>
+    <div><img src="3.jpg" alt=""></div>
+    <div><img src="4.jpg" alt=""></div>
+  </div>
+  
+  <!-- Bottom Controls -->
+  <div class="bottom-controls">
+    <div id="dots" class="dots"></div>
+    <button id="autoplay" class="play-pause">Play</button>
+  </div>
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 1,
+  prevButton: '#prev',
+  nextButton: '#next',
+  navContainer: '#dots',
+  autoplay: true,
+  autoplayButton: '#autoplay',
+  autoplayText: ['▶ Play', '❚❚ Pause'],
+  autoplayHoverPause: true,
+  speed: 600,
+  loop: true
+});
+```
+
+## Programmatic Control
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  controls: false,  // Disable default controls
+  nav: false        // Disable default nav
+});
+
+// Custom control logic
+document.getElementById('btn-first').addEventListener('click', function() {
+  slider.goTo('first');
+});
+
+document.getElementById('btn-prev').addEventListener('click', function() {
+  slider.goTo('prev');
+});
+
+document.getElementById('btn-next').addEventListener('click', function() {
+  slider.goTo('next');
+});
+
+document.getElementById('btn-last').addEventListener('click', function() {
+  slider.goTo('last');
+});
+
+// Go to specific slide
+document.getElementById('btn-slide-3').addEventListener('click', function() {
+  slider.goTo(2);  // 0-based index
+});
+```
+
+## Update Controls Based on State
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  loop: false,
+  rewind: false
+});
+
+var prevBtn = document.getElementById('my-prev');
+var nextBtn = document.getElementById('my-next');
+var counter = document.getElementById('counter');
+
+function updateControls(info) {
+  // Update counter
+  counter.textContent = (info.displayIndex) + ' / ' + info.slideCount;
+  
+  // Disable/enable buttons
+  prevBtn.disabled = info.index === 0;
+  nextBtn.disabled = info.index === info.slideCount - 1;
+}
+
+// Initial update
+updateControls(slider.getInfo());
+
+// Update on slide change
+slider.events.on('indexChanged', updateControls);
+
+// Custom button handlers
+prevBtn.addEventListener('click', function() {
+  slider.goTo('prev');
+});
+
+nextBtn.addEventListener('click', function() {
+  slider.goTo('next');
+});
+```
+
+## Custom Controls with Keyboard Support
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  controls: false,
+  arrowKeys: false
+});
+
+// Custom controls with keyboard support
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') {
+    slider.goTo('prev');
+  } else if (e.key === 'ArrowRight') {
+    slider.goTo('next');
+  } else if (e.key === 'Home') {
+    slider.goTo('first');
+  } else if (e.key === 'End') {
+    slider.goTo('last');
+  }
+});
+```
+
+## Responsive Custom Controls
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  prevButton: '#prev',
+  nextButton: '#next',
+  navContainer: '#dots',
+  responsive: {
+    768: {
+      items: 3,
+      // Hide dots on desktop (too many)
+      nav: false
+    }
+  }
+});
+
+// Hide/show custom controls based on screen size
+window.addEventListener('resize', function() {
+  var dotsContainer = document.getElementById('dots');
+  if (window.innerWidth >= 768) {
+    dotsContainer.style.display = 'none';
+  } else {
+    dotsContainer.style.display = 'flex';
+  }
+});
+```
+
+## Best Practices
+
+<Tip>
+**Custom Controls Tips:**
+- Let Tiny Slider handle click events (use `prevButton`, `nextButton`, etc.)
+- Style the `.tns-nav-active` class for active navigation dots
+- Use semantic HTML (buttons, not divs)
+- Ensure controls are keyboard accessible
+- Test on touch devices
+- Provide clear visual feedback for active/disabled states
+</Tip>
+
+<Warning>
+**Common Mistakes:**
+- Forgetting that `controlsContainer` needs exactly 2 children
+- Not providing enough children in `navContainer`
+- Trying to use both `controlsContainer` and `prevButton`/`nextButton`
+- Styling issues with `.tns-nav-active` class
+</Warning>
+
+## Related Examples
+
+<CardGroup cols={2}>
+  <Card title="Basic Carousel" icon="circle-play" href="/examples/basic-carousel">
+    Learn default controls first
+  </Card>
+  <Card title="Autoplay" icon="play" href="/examples/autoplay">
+    Autoplay with custom buttons
+  </Card>
+  <Card title="Gallery Mode" icon="images" href="/examples/gallery-mode">
+    Custom controls for galleries
+  </Card>
+  <Card title="Responsive Slider" icon="mobile-screen" href="/examples/responsive-slider">
+    Responsive custom controls
+  </Card>
+</CardGroup>

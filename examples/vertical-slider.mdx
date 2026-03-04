@@ -1,0 +1,449 @@
+---
+title: 'Vertical Slider'
+description: 'Create sliders that move vertically instead of horizontally'
+icon: 'up-down'
+---
+
+## Overview
+
+Vertical sliders move slides up and down instead of left to right. This orientation is useful for sidebars, vertical timelines, testimonials, or any design where vertical scrolling is preferred.
+
+## Complete Example
+
+<CodeGroup>
+
+```html HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    .vertical-slider-container {
+      max-width: 400px;
+      height: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .vertical-slider {
+      height: 100%;
+    }
+    .vertical-slide {
+      height: 180px;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border-radius: 10px;
+    }
+    .vertical-slide h3 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+    }
+    .vertical-slide p {
+      margin: 0;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="vertical-slider-container">
+    <div class="vertical-slider">
+      <div class="vertical-slide">
+        <h3>Slide 1</h3>
+        <p>First vertical slide</p>
+      </div>
+      <div class="vertical-slide">
+        <h3>Slide 2</h3>
+        <p>Second vertical slide</p>
+      </div>
+      <div class="vertical-slide">
+        <h3>Slide 3</h3>
+        <p>Third vertical slide</p>
+      </div>
+      <div class="vertical-slide">
+        <h3>Slide 4</h3>
+        <p>Fourth vertical slide</p>
+      </div>
+      <div class="vertical-slide">
+        <h3>Slide 5</h3>
+        <p>Fifth vertical slide</p>
+      </div>
+      <div class="vertical-slide">
+        <h3>Slide 6</h3>
+        <p>Sixth vertical slide</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+</body>
+</html>
+```
+
+```javascript JavaScript
+var slider = tns({
+  container: '.vertical-slider',
+  axis: 'vertical',
+  items: 3,
+  slideBy: 1,
+  gutter: 20,
+  controls: true,
+  controlsText: ['↑', '↓'],
+  nav: true,
+  navPosition: 'bottom',
+  mouseDrag: true,
+  speed: 400,
+  loop: true
+});
+```
+
+```markdown Result
+The vertical slider displays:
+- 3 slides visible at once in vertical stack
+- Slides move up/down with smooth transitions
+- Up/Down control buttons (↑ ↓)
+- Navigation dots at bottom
+- 20px spacing between slides
+- Mouse drag support for vertical scrolling
+- Infinite vertical looping
+```
+
+</CodeGroup>
+
+## Key Options Explained
+
+### axis
+```javascript
+axis: 'vertical'
+```
+Switches the slider from horizontal to vertical orientation. Default is `'horizontal'`. This is the essential option for vertical sliders.
+
+### Container Height
+
+<Warning>
+For vertical sliders, you **must** define a height for the slider container. Without a height, the vertical slider won't display correctly.
+</Warning>
+
+```css
+.vertical-slider {
+  height: 600px;  /* Required for vertical sliders */
+}
+```
+
+### Control Buttons
+
+```javascript
+controlsText: ['↑', '↓']
+```
+
+Use appropriate symbols for vertical navigation. Common choices:
+- `['↑', '↓']` - Arrow symbols
+- `['▲', '▼']` - Triangle symbols  
+- `['UP', 'DOWN']` - Text labels
+- `['⬆', '⬇']` - Bold arrows
+
+## Vertical Gallery Mode
+
+Combine vertical axis with gallery mode for fade transitions:
+
+```javascript
+var verticalGallery = tns({
+  container: '.vertical-gallery',
+  mode: 'gallery',
+  axis: 'vertical',
+  items: 1,
+  controls: true,
+  controlsText: ['⬆', '⬇'],
+  nav: true,
+  speed: 500,
+  animateIn: 'tns-fadeIn',
+  animateOut: 'tns-fadeOut'
+});
+```
+
+## Vertical Timeline
+
+Create a vertical timeline slider:
+
+```html
+<style>
+  .timeline-slider {
+    height: 500px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .timeline-item {
+    height: 150px;
+    padding: 20px;
+    background: white;
+    border-left: 4px solid #667eea;
+    position: relative;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 20px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #667eea;
+    border: 3px solid white;
+  }
+  .timeline-date {
+    color: #667eea;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .timeline-title {
+    font-size: 18px;
+    margin: 5px 0;
+  }
+</style>
+
+<div class="timeline-slider">
+  <div class="timeline-item">
+    <div class="timeline-date">2024</div>
+    <div class="timeline-title">Product Launch</div>
+    <p>We launched our revolutionary new product.</p>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-date">2023</div>
+    <div class="timeline-title">Series B Funding</div>
+    <p>Raised $50M in Series B funding.</p>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-date">2022</div>
+    <div class="timeline-title">First Million Users</div>
+    <p>Reached 1 million active users.</p>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-date">2021</div>
+    <div class="timeline-title">Company Founded</div>
+    <p>Started with a vision to change the world.</p>
+  </div>
+</div>
+```
+
+```javascript
+var timeline = tns({
+  container: '.timeline-slider',
+  axis: 'vertical',
+  items: 3,
+  slideBy: 1,
+  gutter: 30,
+  controls: true,
+  controlsText: ['▲', '▼'],
+  nav: false,
+  mouseDrag: true,
+  speed: 600,
+  loop: false,
+  rewind: true
+});
+```
+
+## Vertical with Autoplay
+
+```javascript
+var slider = tns({
+  container: '.vertical-slider',
+  axis: 'vertical',
+  items: 3,
+  gutter: 15,
+  autoplay: true,
+  autoplayTimeout: 3000,
+  autoplayDirection: 'forward',
+  autoplayHoverPause: true,
+  autoplayButtonOutput: true,
+  autoplayText: ['▶', '❚❚'],
+  controls: false,
+  nav: true
+});
+```
+
+<Tip>
+For vertical autoplay, slides will move upward with `autoplayDirection: 'forward'` and downward with `'backward'`.
+</Tip>
+
+## Responsive Vertical Slider
+
+Switch between horizontal and vertical based on screen size:
+
+```javascript
+var slider = tns({
+  container: '.adaptive-slider',
+  axis: 'horizontal',
+  items: 3,
+  slideBy: 1,
+  controls: true,
+  controlsText: ['←', '→'],
+  nav: true,
+  responsive: {
+    768: {
+      axis: 'vertical',
+      items: 4,
+      controlsText: ['↑', '↓']
+    }
+  }
+});
+```
+
+<Note>
+When switching axis in responsive mode, ensure your CSS handles both orientations properly, especially container heights and widths.
+</Note>
+
+## Vertical Sidebar Slider
+
+Perfect for sidebar content:
+
+```html
+<style>
+  .sidebar {
+    width: 300px;
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    top: 0;
+    background: #f5f5f5;
+    padding: 20px;
+  }
+  .sidebar-slider {
+    height: calc(100vh - 100px);
+  }
+  .sidebar-slide {
+    height: 200px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+</style>
+
+<div class="sidebar">
+  <h2>Featured</h2>
+  <div class="sidebar-slider">
+    <div class="sidebar-slide">
+      <h3>Article 1</h3>
+      <p>Description of first article...</p>
+    </div>
+    <div class="sidebar-slide">
+      <h3>Article 2</h3>
+      <p>Description of second article...</p>
+    </div>
+    <div class="sidebar-slide">
+      <h3>Article 3</h3>
+      <p>Description of third article...</p>
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+var sidebarSlider = tns({
+  container: '.sidebar-slider',
+  axis: 'vertical',
+  items: 2,
+  slideBy: 1,
+  gutter: 20,
+  controls: true,
+  controlsPosition: 'bottom',
+  controlsText: ['↑', '↓'],
+  nav: false,
+  mouseDrag: true,
+  loop: true,
+  speed: 400
+});
+```
+
+## Edge Padding in Vertical Sliders
+
+```javascript
+var slider = tns({
+  container: '.vertical-slider',
+  axis: 'vertical',
+  items: 3,
+  edgePadding: 50,  // 50px padding at top and bottom
+  gutter: 20,
+  controls: true,
+  nav: true
+});
+```
+
+In vertical mode, `edgePadding` adds space at the top and bottom of the slider.
+
+## Touch and Drag
+
+```javascript
+var slider = tns({
+  container: '.vertical-slider',
+  axis: 'vertical',
+  items: 3,
+  touch: true,           // Touch/swipe support (default: true)
+  mouseDrag: true,       // Mouse drag support (default: false)
+  swipeAngle: 15,        // Angle threshold for vertical swipe
+  preventScrollOnTouch: 'auto'  // Prevent page scroll on touch
+});
+```
+
+<Warning>
+Be careful with `preventScrollOnTouch` on vertical sliders as it can interfere with page scrolling. Use `'auto'` to let the slider determine when to prevent scrolling based on touch direction.
+</Warning>
+
+## Vertical Features Support
+
+All main features work with vertical orientation:
+
+✅ **Supported:**
+- Loop mode
+- Rewind mode
+- Multiple items
+- Gutter spacing
+- Edge padding
+- Responsive options
+- Autoplay
+- Lazy loading
+- Touch/drag
+- Arrow keys (up/down)
+- Custom events
+
+<Note>
+Arrow key navigation automatically adapts: up arrow goes to previous slide, down arrow goes to next slide when `axis: 'vertical'`.
+</Note>
+
+## Keyboard Navigation
+
+```javascript
+var slider = tns({
+  container: '.vertical-slider',
+  axis: 'vertical',
+  items: 3,
+  arrowKeys: true,  // Up/Down arrow keys
+  controls: true,
+  nav: true
+});
+```
+
+With `arrowKeys: true`:
+- **Up Arrow** → Previous slide
+- **Down Arrow** → Next slide
+
+## Related Examples
+
+<CardGroup cols={2}>
+  <Card title="Basic Carousel" icon="circle-play" href="/examples/basic-carousel">
+    Horizontal carousel basics
+  </Card>
+  <Card title="Gallery Mode" icon="images" href="/examples/gallery-mode">
+    Vertical gallery with fade effects
+  </Card>
+  <Card title="Autoplay" icon="play" href="/examples/autoplay">
+    Add automatic vertical scrolling
+  </Card>
+  <Card title="Custom Controls" icon="gamepad" href="/examples/custom-controls">
+    Customize vertical navigation
+  </Card>
+</CardGroup>

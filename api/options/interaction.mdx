@@ -1,0 +1,411 @@
+---
+title: 'Interaction Options'
+description: 'Configure touch, drag, and user interaction behavior'
+---
+
+## Overview
+
+Interaction options control how users can interact with the slider through touch gestures, mouse dragging, and other input methods.
+
+## Options
+
+<ParamField path="touch" type="boolean" default="true">
+  Activates input detection for touch devices.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    touch: true
+  });
+  ```
+  
+  <Info>
+    Touch is enabled by default for better mobile experience.
+  </Info>
+</ParamField>
+
+<ParamField path="mouseDrag" type="boolean" default="false">
+  Changing slides by dragging them with mouse.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    mouseDrag: true
+  });
+  ```
+  
+  <Note>
+    This is disabled by default. Enable it for desktop drag interaction.
+  </Note>
+</ParamField>
+
+<ParamField path="swipeAngle" type="number | boolean" default="15">
+  Swipe or drag will not be triggered if the angle is not inside the range when set.
+  
+  Set to `false` to disable angle detection.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    swipeAngle: 30 // Wider angle tolerance
+  });
+  
+  // Disable angle detection
+  tns({
+    container: '.my-slider',
+    swipeAngle: false
+  });
+  ```
+  
+  <Info>
+    This helps prevent accidental swipes when scrolling vertically on mobile.
+  </Info>
+</ParamField>
+
+<ParamField path="preventActionWhenRunning" type="boolean" default="false">
+  Prevent next transition while slider is transforming.
+  
+  Available since v2.9.1.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    preventActionWhenRunning: true
+  });
+  ```
+  
+  <Info>
+    Enable this to prevent interaction spam and ensure smooth transitions.
+  </Info>
+</ParamField>
+
+<ParamField path="preventScrollOnTouch" type="'auto' | 'force' | false" default="false">
+  Prevent page from scrolling on `touchmove`.
+  
+  - `'auto'`: The slider will first check if the touch direction matches the slider axis, then decide whether to prevent page scrolling
+  - `'force'`: The slider will always prevent page scrolling
+  - `false`: Don't prevent page scrolling
+  
+  Available since v2.9.1.
+  
+  ```javascript
+  // Auto-detect scroll direction
+  tns({
+    container: '.my-slider',
+    preventScrollOnTouch: 'auto'
+  });
+  
+  // Always prevent scroll
+  tns({
+    container: '.my-slider',
+    preventScrollOnTouch: 'force'
+  });
+  ```
+  
+  <Warning>
+    Use `'force'` carefully as it may interfere with vertical scrolling on the page.
+  </Warning>
+</ParamField>
+
+## Touch and Drag Behavior
+
+### Basic Touch Configuration
+
+Default mobile-friendly setup:
+
+```javascript
+tns({
+  container: '.my-slider',
+  touch: true,
+  mouseDrag: false,
+  swipeAngle: 15
+});
+```
+
+### Desktop Drag Support
+
+Enable dragging on desktop:
+
+```javascript
+tns({
+  container: '.my-slider',
+  touch: true,
+  mouseDrag: true,
+  swipeAngle: 15,
+  preventActionWhenRunning: true
+});
+```
+
+### Vertical Slider Configuration
+
+For vertical sliders, adjust swipe angle:
+
+```javascript
+tns({
+  container: '.my-slider',
+  axis: 'vertical',
+  touch: true,
+  swipeAngle: false, // Or a wider angle like 30
+  preventScrollOnTouch: 'auto'
+});
+```
+
+## Mobile Considerations
+
+### Optimal Mobile Settings
+
+```javascript
+tns({
+  container: '.my-slider',
+  // Touch interactions
+  touch: true,
+  mouseDrag: false,
+  swipeAngle: 15,
+  
+  // Prevent interference
+  preventScrollOnTouch: 'auto',
+  preventActionWhenRunning: true,
+  
+  // Mobile-friendly navigation
+  controls: false,
+  nav: true,
+  navPosition: 'bottom'
+});
+```
+
+### Responsive Touch Behavior
+
+```javascript
+tns({
+  container: '.my-slider',
+  touch: true,
+  mouseDrag: false,
+  responsive: {
+    640: {
+      mouseDrag: true, // Enable drag on tablets
+      controls: true
+    },
+    1024: {
+      touch: true,
+      mouseDrag: true // Full interaction on desktop
+    }
+  }
+});
+```
+
+### Preventing Scroll Conflicts
+
+For horizontal sliders in scrollable pages:
+
+```javascript
+tns({
+  container: '.my-slider',
+  axis: 'horizontal',
+  touch: true,
+  preventScrollOnTouch: 'auto', // Smart detection
+  swipeAngle: 15
+});
+```
+
+For vertical sliders:
+
+```javascript
+tns({
+  container: '.my-slider',
+  axis: 'vertical',
+  touch: true,
+  preventScrollOnTouch: 'force', // Prevent vertical scroll interference
+  swipeAngle: false
+});
+```
+
+## Advanced Examples
+
+### High-Performance Configuration
+
+Prevent rapid interactions:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  touch: true,
+  mouseDrag: true,
+  preventActionWhenRunning: true,
+  speed: 400
+});
+```
+
+### Full-Page Slider
+
+Take over scroll completely:
+
+```javascript
+tns({
+  container: '.fullpage-slider',
+  axis: 'vertical',
+  touch: true,
+  mouseDrag: true,
+  preventScrollOnTouch: 'force',
+  swipeAngle: false,
+  controls: false,
+  nav: true
+});
+```
+
+### Nested Sliders
+
+Configure parent and child differently:
+
+```javascript
+// Parent slider (vertical)
+var parent = tns({
+  container: '.parent-slider',
+  mode: 'gallery',
+  axis: 'vertical',
+  touch: true,
+  swipeAngle: false,
+  nested: 'outer'
+});
+
+// Child slider (horizontal)
+var child = tns({
+  container: '.child-slider',
+  axis: 'horizontal',
+  touch: true,
+  swipeAngle: 15,
+  preventScrollOnTouch: 'auto',
+  nested: 'inner'
+});
+```
+
+## Custom Gesture Handling
+
+While tiny-slider handles most touch interactions automatically, you can listen to drag events:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  touch: true,
+  mouseDrag: true
+});
+
+slider.events.on('dragStart', function(info) {
+  console.log('Drag started');
+});
+
+slider.events.on('dragMove', function(info) {
+  console.log('Dragging...');
+});
+
+slider.events.on('dragEnd', function(info) {
+  console.log('Drag ended');
+});
+```
+
+## Responsive Configuration
+
+Adjust interaction behavior at different breakpoints:
+
+```javascript
+tns({
+  container: '.my-slider',
+  touch: true,
+  mouseDrag: false,
+  swipeAngle: 15,
+  responsive: {
+    0: {
+      touch: true,
+      mouseDrag: false,
+      preventScrollOnTouch: 'auto'
+    },
+    768: {
+      touch: true,
+      mouseDrag: true
+    },
+    1024: {
+      touch: true,
+      mouseDrag: true,
+      preventActionWhenRunning: true
+    }
+  }
+});
+```
+
+## Best Practices
+
+### 1. Mobile-First Approach
+
+Always enable touch for mobile devices:
+
+```javascript
+tns({
+  container: '.my-slider',
+  touch: true,
+  swipeAngle: 15
+});
+```
+
+### 2. Smart Scroll Prevention
+
+Use `'auto'` for most cases:
+
+```javascript
+tns({
+  container: '.my-slider',
+  preventScrollOnTouch: 'auto'
+});
+```
+
+### 3. Prevent Interaction Spam
+
+Enable action prevention during transitions:
+
+```javascript
+tns({
+  container: '.my-slider',
+  preventActionWhenRunning: true
+});
+```
+
+### 4. Test on Real Devices
+
+Touch behavior can differ between devices. Always test on:
+- iOS devices (iPhone, iPad)
+- Android devices (various manufacturers)
+- Tablets with touch screens
+- Desktop with touch displays
+
+### 5. Consider User Context
+
+```javascript
+// Image gallery - draggable everywhere
+tns({
+  container: '.gallery',
+  touch: true,
+  mouseDrag: true
+});
+
+// Text-heavy slides - careful with drag to allow text selection
+tns({
+  container: '.content-slider',
+  touch: true,
+  mouseDrag: false, // Prevent interfering with text selection
+  controls: true
+});
+```
+
+## Accessibility
+
+When enabling touch/drag, ensure alternative navigation methods:
+
+```javascript
+tns({
+  container: '.my-slider',
+  touch: true,
+  mouseDrag: true,
+  // Provide alternative controls
+  controls: true,
+  nav: true,
+  arrowKeys: true
+});
+```

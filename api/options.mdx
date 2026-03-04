@@ -1,0 +1,471 @@
+---
+title: "Options"
+description: "Complete reference of all configuration options for tiny-slider"
+---
+
+## Overview
+
+Tiny-slider provides a comprehensive set of options to customize slider behavior. Options are passed to the `tns()` function during initialization.
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3,
+  slideBy: 'page',
+  autoplay: true
+});
+```
+
+## Option Categories
+
+- [Container & Layout](#container--layout)
+- [Display & Items](#display--items)
+- [Navigation Controls](#navigation-controls)
+- [Navigation Dots](#navigation-dots)
+- [Autoplay](#autoplay)
+- [Animation & Mode](#animation--mode)
+- [Interaction](#interaction)
+- [Responsive](#responsive)
+- [Advanced](#advanced)
+
+## Container & Layout
+
+<ParamField path="container" type="HTMLElement | Element | string" default=".slider">
+  The slider container element or selector.
+  
+  ```javascript
+  container: '.my-slider'
+  // or
+  container: document.querySelector('.my-slider')
+  ```
+</ParamField>
+
+<ParamField path="mode" type="'carousel' | 'gallery'" default="carousel">
+  Controls animation behavior:
+  - `carousel`: Slides move to the side
+  - `gallery`: Uses fade animations, changes all slides at once
+</ParamField>
+
+<ParamField path="axis" type="'horizontal' | 'vertical'" default="horizontal">
+  The axis of the slider.
+</ParamField>
+
+<ParamField path="edgePadding" type="number" default="0">
+  Space on the outside (in pixels).
+  
+  ```javascript
+  edgePadding: 20
+  ```
+</ParamField>
+
+<ParamField path="center" type="boolean" default="false">
+  Center the active slide in the viewport.
+  
+  <Note>Available from v2.9.2+</Note>
+</ParamField>
+
+## Display & Items
+
+<ParamField path="items" type="number" default="1">
+  Number of slides being displayed in the viewport.
+  
+  <Warning>If slides ≤ items, the slider won't be initialized.</Warning>
+  
+  ```javascript
+  items: 3
+  ```
+</ParamField>
+
+<ParamField path="gutter" type="number" default="0">
+  Space between slides (in pixels).
+  
+  ```javascript
+  gutter: 10
+  ```
+</ParamField>
+
+<ParamField path="fixedWidth" type="number | false" default="false">
+  Controls width attribute of the slides. When set, each slide will have this fixed width in pixels.
+  
+  ```javascript
+  fixedWidth: 300
+  ```
+</ParamField>
+
+<ParamField path="autoWidth" type="boolean" default="false">
+  Sets the width of slides to auto. If true, the width of each slide will be its natural width as an inline-block box.
+  
+  ```javascript
+  autoWidth: true
+  ```
+</ParamField>
+
+<ParamField path="autoHeight" type="boolean" default="false">
+  Height of slider container changes according to each slide's height.
+  
+  ```javascript
+  autoHeight: true
+  ```
+</ParamField>
+
+## Navigation Controls
+
+<ParamField path="controls" type="boolean" default="true">
+  Controls the display and functionalities of controls components (prev/next buttons). If true, display the controls and add all functionalities.
+</ParamField>
+
+<ParamField path="controlsText" type="string[]" default="['prev', 'next']">
+  Text or markup in the prev/next buttons.
+  
+  ```javascript
+  controlsText: ['←', '→']
+  ```
+</ParamField>
+
+<ParamField path="controlsContainer" type="HTMLElement | Element | string | false" default="false">
+  The container element/selector around the prev/next buttons.
+  
+  <Warning>controlsContainer must have at least 2 child elements.</Warning>
+</ParamField>
+
+<ParamField path="prevButton" type="HTMLElement | string | false" default="false">
+  Customized previous button.
+  
+  <Note>This option will be ignored if controlsContainer is a Node element or a CSS selector.</Note>
+</ParamField>
+
+<ParamField path="nextButton" type="HTMLElement | string | false" default="false">
+  Customized next button.
+  
+  <Note>This option will be ignored if controlsContainer is a Node element or a CSS selector.</Note>
+</ParamField>
+
+## Navigation Dots
+
+<ParamField path="nav" type="boolean" default="true">
+  Controls the display and functionalities of nav components (dots). If true, display the nav and add all functionalities.
+</ParamField>
+
+<ParamField path="navPosition" type="'top' | 'bottom'" default="top">
+  Controls nav position.
+</ParamField>
+
+<ParamField path="navContainer" type="HTMLElement | Element | string | false" default="false">
+  The container element/selector around the dots.
+  
+  <Warning>navContainer must have at least same number of children as the slides.</Warning>
+</ParamField>
+
+<ParamField path="navAsThumbnails" type="boolean" default="false">
+  Indicate if the dots are thumbnails. If true, they will always be visible even when more than 1 slide displayed in the viewport.
+</ParamField>
+
+## Autoplay
+
+<ParamField path="autoplay" type="boolean" default="false">
+  Toggles the automatic change of slides.
+</ParamField>
+
+<ParamField path="autoplayTimeout" type="number" default="5000">
+  Time between 2 autoplay slides change (in milliseconds).
+  
+  ```javascript
+  autoplayTimeout: 3000 // 3 seconds
+  ```
+</ParamField>
+
+<ParamField path="autoplayDirection" type="'forward' | 'backward'" default="forward">
+  Direction of slide movement (ascending/descending the slide index).
+</ParamField>
+
+<ParamField path="autoplayText" type="string[]" default="['start', 'stop']">
+  Text or markup in the autoplay start/stop button.
+  
+  ```javascript
+  autoplayText: ['▶', '⏸']
+  ```
+</ParamField>
+
+<ParamField path="autoplayHoverPause" type="boolean" default="false">
+  Stops sliding on mouseover.
+</ParamField>
+
+<ParamField path="autoplayButton" type="HTMLElement | string | false" default="false">
+  The customized autoplay start/stop button or selector.
+</ParamField>
+
+<ParamField path="autoplayButtonOutput" type="boolean" default="true">
+  Output autoplayButton markup when autoplay is true but a customized autoplayButton is not provided.
+</ParamField>
+
+<ParamField path="autoplayResetOnVisibility" type="boolean" default="true">
+  Pauses the sliding when the page is invisible and resumes it when the page becomes visible again (Page Visibility API).
+</ParamField>
+
+## Animation & Mode
+
+<ParamField path="speed" type="number" default="300">
+  Speed of the slide animation (in milliseconds).
+  
+  ```javascript
+  speed: 500
+  ```
+</ParamField>
+
+<ParamField path="animateIn" type="string" default="tns-fadeIn">
+  Name of intro animation class (for gallery mode).
+</ParamField>
+
+<ParamField path="animateOut" type="string" default="tns-fadeOut">
+  Name of outro animation class (for gallery mode).
+</ParamField>
+
+<ParamField path="animateNormal" type="string" default="tns-normal">
+  Name of default animation class.
+</ParamField>
+
+<ParamField path="animateDelay" type="number | false" default="false">
+  Time between each gallery animation (in milliseconds).
+</ParamField>
+
+<ParamField path="loop" type="boolean" default="true">
+  Moves throughout all the slides seamlessly.
+</ParamField>
+
+<ParamField path="rewind" type="boolean" default="false">
+  Moves to the opposite edge when reaching the first or last slide.
+</ParamField>
+
+<ParamField path="slideBy" type="number | 'page'" default="1">
+  Number of slides going on one "click".
+  
+  ```javascript
+  slideBy: 1        // Move one slide at a time
+  slideBy: 'page'   // Move one page at a time
+  ```
+</ParamField>
+
+<ParamField path="startIndex" type="number" default="0">
+  The initial index of the slider.
+  
+  ```javascript
+  startIndex: 2 // Start at third slide
+  ```
+</ParamField>
+
+## Interaction
+
+<ParamField path="touch" type="boolean" default="true">
+  Activates input detection for touch devices.
+</ParamField>
+
+<ParamField path="mouseDrag" type="boolean" default="false">
+  Changing slides by dragging them with mouse.
+</ParamField>
+
+<ParamField path="arrowKeys" type="boolean" default="false">
+  Allows using arrow keys to switch slides.
+</ParamField>
+
+<ParamField path="swipeAngle" type="number | boolean" default="15">
+  Swipe or drag will not be triggered if the angle is not inside the range when set.
+  
+  ```javascript
+  swipeAngle: 15  // Degrees
+  ```
+</ParamField>
+
+<ParamField path="preventActionWhenRunning" type="boolean" default="false">
+  Prevent next transition while slider is transforming.
+  
+  <Note>Available from v2.9.1+</Note>
+</ParamField>
+
+<ParamField path="preventScrollOnTouch" type="'auto' | 'force' | false" default="false">
+  Prevent page from scrolling on touchmove:
+  - `auto`: Check if touch direction matches slider axis first
+  - `force`: Always prevent page scrolling
+  - `false`: Don't prevent scrolling
+  
+  <Note>Available from v2.9.1+</Note>
+</ParamField>
+
+## Responsive
+
+<ParamField path="responsive" type="ResponsiveOptions | false" default="false">
+  Defines options for different viewport widths. Breakpoints behave like `(min-width: breakpoint)` in CSS.
+  
+  ```javascript
+  responsive: {
+    640: {
+      edgePadding: 20,
+      gutter: 20,
+      items: 2
+    },
+    900: {
+      items: 3
+    }
+  }
+  ```
+  
+  See [Responsive Options](#responsive-options-interface) for available options.
+</ParamField>
+
+## Advanced
+
+<ParamField path="lazyload" type="boolean" default="false">
+  Enables lazyloading images that are currently not viewed, thus saving bandwidth.
+  
+  Requires:
+  - Class matching `lazyloadSelector` on images
+  - `data-src` attribute with real image src
+  - `width` attribute for `autoWidth` slider
+</ParamField>
+
+<ParamField path="lazyloadSelector" type="string" default=".tns-lazy-img">
+  The CSS selector for lazyload images.
+  
+  <Note>Available from v2.9.1+</Note>
+</ParamField>
+
+<ParamField path="nested" type="'inner' | 'outer' | false" default="false">
+  Define the relationship between nested sliders.
+  
+  <Warning>Make sure you run the inner slider first, otherwise the height of the inner slider container will be wrong.</Warning>
+</ParamField>
+
+<ParamField path="freezable" type="boolean" default="true">
+  Indicate whether the slider will be frozen (controls, nav, autoplay and other functions will stop work) when all slides can be displayed in one page.
+</ParamField>
+
+<ParamField path="disable" type="boolean" default="false">
+  Disable slider.
+</ParamField>
+
+<ParamField path="useLocalStorage" type="boolean" default="true">
+  Save browser capability variables to localStorage and without detecting them every time the slider runs.
+</ParamField>
+
+<ParamField path="nonce" type="string | false" default="false">
+  Nonce attribute for inline style tag to allow slider usage without unsafe-inline Content Security Policy source.
+</ParamField>
+
+<ParamField path="onInit" type="() => void | false" default="false">
+  Callback to be run on initialization.
+  
+  ```javascript
+  onInit: () => {
+    console.log('Slider initialized!');
+  }
+  ```
+</ParamField>
+
+## Responsive Options Interface
+
+The following options can be redefined in the `responsive` field:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `startIndex` | number | Initial slide index |
+| `items` | number | Number of visible slides |
+| `slideBy` | number \| 'page' | Slides to move per action |
+| `speed` | number | Animation speed |
+| `autoHeight` | boolean | Dynamic container height |
+| `fixedWidth` | number \| false | Fixed slide width |
+| `edgePadding` | number | Outside spacing |
+| `gutter` | number | Space between slides |
+| `center` | boolean | Center active slide |
+| `controls` | boolean | Show/hide controls |
+| `controlsText` | string[] | Control button text |
+| `nav` | boolean | Show/hide nav dots |
+| `autoplay` | boolean | Enable/disable autoplay |
+| `autoplayHoverPause` | boolean | Pause on hover |
+| `autoplayResetOnVisibility` | boolean | Reset on visibility change |
+| `autoplayText` | string[] | Autoplay button text |
+| `autoplayTimeout` | number | Time between slides |
+| `touch` | boolean | Touch input detection |
+| `mouseDrag` | boolean | Mouse drag support |
+| `arrowKeys` | boolean | Arrow key navigation |
+| `disable` | boolean | Disable slider |
+
+### Responsive Behavior
+
+<Note>
+  The breakpoints behave like `(min-width: breakpoint)` in CSS, so an undefined option will be inherited from previous small breakpoints.
+</Note>
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 1,          // Default: 1 item
+  gutter: 0,
+  responsive: {
+    640: {
+      items: 2,        // >= 640px: 2 items
+      gutter: 20       // >= 640px: 20px gutter
+    },
+    768: {
+      gutter: 30       // >= 768px: still 2 items, but 30px gutter
+    },
+    1024: {
+      items: 3         // >= 1024px: 3 items, 30px gutter (inherited)
+    }
+  }
+});
+```
+
+## Complete Options Table
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `container` | HTMLElement \| Element \| string | `.slider` | Slider container |
+| `mode` | `carousel` \| `gallery` | `carousel` | Animation mode |
+| `axis` | `horizontal` \| `vertical` | `horizontal` | Slider axis |
+| `items` | number | `1` | Visible slides |
+| `gutter` | number | `0` | Space between slides (px) |
+| `edgePadding` | number | `0` | Outside space (px) |
+| `fixedWidth` | number \| false | `false` | Fixed slide width |
+| `autoWidth` | boolean | `false` | Auto slide width |
+| `autoHeight` | boolean | `false` | Dynamic height |
+| `center` | boolean | `false` | Center active slide |
+| `controls` | boolean | `true` | Show controls |
+| `controlsText` | string[] | `['prev', 'next']` | Control text |
+| `controlsContainer` | HTMLElement \| string \| false | `false` | Custom controls container |
+| `prevButton` | HTMLElement \| string \| false | `false` | Custom prev button |
+| `nextButton` | HTMLElement \| string \| false | `false` | Custom next button |
+| `nav` | boolean | `true` | Show navigation dots |
+| `navPosition` | `top` \| `bottom` | `top` | Nav position |
+| `navContainer` | HTMLElement \| string \| false | `false` | Custom nav container |
+| `navAsThumbnails` | boolean | `false` | Use thumbnails |
+| `arrowKeys` | boolean | `false` | Arrow key navigation |
+| `speed` | number | `300` | Animation speed (ms) |
+| `autoplay` | boolean | `false` | Auto slide change |
+| `autoplayTimeout` | number | `5000` | Autoplay interval (ms) |
+| `autoplayDirection` | `forward` \| `backward` | `forward` | Autoplay direction |
+| `autoplayText` | string[] | `['start', 'stop']` | Autoplay button text |
+| `autoplayHoverPause` | boolean | `false` | Pause on hover |
+| `autoplayButton` | HTMLElement \| string \| false | `false` | Custom autoplay button |
+| `autoplayButtonOutput` | boolean | `true` | Output autoplay button |
+| `autoplayResetOnVisibility` | boolean | `true` | Reset on visibility |
+| `animateIn` | string | `tns-fadeIn` | Intro animation class |
+| `animateOut` | string | `tns-fadeOut` | Outro animation class |
+| `animateNormal` | string | `tns-normal` | Default animation class |
+| `animateDelay` | number \| false | `false` | Gallery animation delay (ms) |
+| `loop` | boolean | `true` | Seamless loop |
+| `rewind` | boolean | `false` | Rewind at edges |
+| `slideBy` | number \| `page` | `1` | Slides per action |
+| `startIndex` | number | `0` | Initial slide |
+| `responsive` | ResponsiveOptions \| false | `false` | Responsive config |
+| `lazyload` | boolean | `false` | Enable lazy loading |
+| `lazyloadSelector` | string | `.tns-lazy-img` | Lazy load selector |
+| `touch` | boolean | `true` | Touch detection |
+| `mouseDrag` | boolean | `false` | Mouse drag support |
+| `swipeAngle` | number \| boolean | `15` | Swipe angle threshold |
+| `preventActionWhenRunning` | boolean | `false` | Prevent actions during transition |
+| `preventScrollOnTouch` | `auto` \| `force` \| false | `false` | Prevent page scroll |
+| `nested` | `inner` \| `outer` \| false | `false` | Nested slider mode |
+| `freezable` | boolean | `true` | Freeze when all visible |
+| `disable` | boolean | `false` | Disable slider |
+| `useLocalStorage` | boolean | `true` | Cache capabilities |
+| `nonce` | string \| false | `false` | CSP nonce |
+| `onInit` | Function \| false | `false` | Init callback |

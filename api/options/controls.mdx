@@ -1,0 +1,289 @@
+---
+title: 'Controls Options'
+description: 'Configure prev/next buttons and navigation controls'
+---
+
+## Overview
+
+Controls options manage the display and behavior of prev/next buttons that allow users to navigate through slides.
+
+## Options
+
+<ParamField path="controls" type="boolean" default="true">
+  Controls the display and functionalities of controls components (prev/next buttons).
+  
+  If `true`, display the controls and add all functionalities.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    controls: true
+  });
+  ```
+  
+  <Info>
+    For better accessibility, when a prev/next button is focused, user will be able to control the slider using left/right arrow keys.
+  </Info>
+</ParamField>
+
+<ParamField path="controlsPosition" type="'top' | 'bottom'" default="'top'">
+  Controls `controls` position.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    controls: true,
+    controlsPosition: 'bottom'
+  });
+  ```
+</ParamField>
+
+<ParamField path="controlsText" type="string[]" default="['prev', 'next']">
+  Text or markup in the prev/next buttons.
+  
+  ```javascript
+  // Simple text
+  tns({
+    container: '.my-slider',
+    controlsText: ['Previous', 'Next']
+  });
+  
+  // HTML markup
+  tns({
+    container: '.my-slider',
+    controlsText: [
+      '<i class="fa fa-angle-left"></i>',
+      '<i class="fa fa-angle-right"></i>'
+    ]
+  });
+  ```
+</ParamField>
+
+<ParamField path="controlsContainer" type="HTMLElement | string | false" default="false">
+  The container element/selector around the prev/next buttons.
+  
+  `controlsContainer` must have at least 2 child elements.
+  
+  ```html
+  <div class="controls">
+    <button class="prev">Previous</button>
+    <button class="next">Next</button>
+  </div>
+  <div class="my-slider">
+    <!-- slides -->
+  </div>
+  ```
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    controlsContainer: '.controls'
+  });
+  ```
+  
+  <Warning>
+    When using `controlsContainer`, the `prevButton` and `nextButton` options will be ignored.
+  </Warning>
+</ParamField>
+
+<ParamField path="prevButton" type="HTMLElement | string | false" default="false">
+  Customized previous button.
+  
+  This option will be ignored if `controlsContainer` is a Node element or a CSS selector.
+  
+  ```html
+  <button class="my-prev-btn">Prev</button>
+  <div class="my-slider">
+    <!-- slides -->
+  </div>
+  ```
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    prevButton: '.my-prev-btn'
+  });
+  ```
+</ParamField>
+
+<ParamField path="nextButton" type="HTMLElement | string | false" default="false">
+  Customized next button.
+  
+  This option will be ignored if `controlsContainer` is a Node element or a CSS selector.
+  
+  ```html
+  <button class="my-next-btn">Next</button>
+  <div class="my-slider">
+    <!-- slides -->
+  </div>
+  ```
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    nextButton: '.my-next-btn'
+  });
+  ```
+</ParamField>
+
+## Customization Examples
+
+### Custom Control Buttons
+
+Use separate custom buttons for prev/next:
+
+```html
+<div class="slider-wrapper">
+  <button id="customize-prev" class="btn-prev">
+    <svg><!-- prev icon --></svg>
+  </button>
+  
+  <div class="my-slider">
+    <div>Slide 1</div>
+    <div>Slide 2</div>
+    <div>Slide 3</div>
+  </div>
+  
+  <button id="customize-next" class="btn-next">
+    <svg><!-- next icon --></svg>
+  </button>
+</div>
+```
+
+```javascript
+tns({
+  container: '.my-slider',
+  prevButton: '#customize-prev',
+  nextButton: '#customize-next',
+  controls: false // Don't generate default controls
+});
+```
+
+### Custom Controls Container
+
+Use a container with both buttons:
+
+```html
+<div class="custom-controls">
+  <button data-controls="prev">Previous</button>
+  <span class="divider">|</span>
+  <button data-controls="next">Next</button>
+</div>
+
+<div class="my-slider">
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+</div>
+```
+
+```javascript
+tns({
+  container: '.my-slider',
+  controlsContainer: '.custom-controls'
+});
+```
+
+### Icon-Based Controls
+
+```javascript
+tns({
+  container: '.my-slider',
+  controlsText: [
+    '<svg width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>',
+    '<svg width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>'
+  ]
+});
+```
+
+### Disabling Controls on Mobile
+
+```javascript
+tns({
+  container: '.my-slider',
+  controls: true,
+  responsive: {
+    0: {
+      controls: false
+    },
+    768: {
+      controls: true
+    }
+  }
+});
+```
+
+## Styling Controls
+
+Default controls can be styled using these classes:
+
+```css
+/* Controls container */
+.tns-controls {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.tns-controls [aria-controls] {
+  font-size: 15px;
+  margin: 0 5px;
+  padding: 0 1em;
+  height: 2.5em;
+  color: #000;
+  background: #66CCFF;
+  border-radius: 3px;
+  border: 0;
+}
+
+.tns-controls [aria-controls]:hover {
+  background: #3399CC;
+  cursor: pointer;
+}
+
+.tns-controls [aria-controls]:disabled {
+  background: #ddd;
+  cursor: not-allowed;
+}
+```
+
+## Accessibility
+
+Tiny Slider automatically adds appropriate ARIA attributes to controls:
+
+- `aria-controls` points to the slider container
+- `tabindex="-1"` on buttons (except when focused)
+- `disabled` attribute when at the first/last slide (non-loop mode)
+
+```html
+<!-- Generated markup -->
+<div class="tns-controls" aria-label="Carousel Navigation" tabindex="0">
+  <button type="button" 
+          data-controls="prev" 
+          tabindex="-1" 
+          aria-controls="tns1">
+    prev
+  </button>
+  <button type="button" 
+          data-controls="next" 
+          tabindex="-1" 
+          aria-controls="tns1">
+    next
+  </button>
+</div>
+```
+
+## Responsive Configuration
+
+Controls can be enabled/disabled at different breakpoints:
+
+```javascript
+tns({
+  container: '.my-slider',
+  controls: false,
+  responsive: {
+    640: {
+      controls: true
+    }
+  }
+});
+```

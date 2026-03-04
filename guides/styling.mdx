@@ -1,0 +1,742 @@
+---
+title: 'Styling Guide'
+description: 'Customize the appearance of Tiny Slider with CSS and SCSS'
+---
+
+## Overview
+
+Tiny Slider provides a flexible styling system with both compiled CSS and SCSS source files. This guide covers CSS inclusion, customization options, and how to style controls, navigation, and other components.
+
+## CSS File Inclusion
+
+### CDN (Quickest)
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+```
+
+### IE8 Polyfills
+
+If you need to support Internet Explorer 8:
+
+```html
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+<!--[if (lt IE 9)]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.helper.ie8.js"></script>
+<![endif]-->
+```
+
+### Local Installation
+
+```bash
+npm install tiny-slider
+```
+
+Then import in your project:
+
+```javascript
+import 'tiny-slider/dist/tiny-slider.css';
+```
+
+## Core CSS Classes
+
+### Container Classes
+
+Tiny Slider automatically adds these classes to the slider container:
+
+```scss
+// Outer wrapper
+.tns-outer {
+  padding: 0 !important;
+}
+
+// Main slider container
+.tns-slider {
+  transition: all 0s;
+}
+
+// Mode classes
+.tns-carousel { /* Carousel mode */ }
+.tns-gallery { /* Gallery mode */ }
+
+// Direction classes  
+.tns-horizontal { /* Horizontal slider */ }
+.tns-vertical { /* Vertical slider */ }
+
+// Layout classes
+.tns-subpixel { /* Uses inline-block layout */ }
+.tns-no-subpixel { /* Uses float layout */ }
+.tns-calc { /* Browser supports calc() */ }
+.tns-no-calc { /* No calc() support */ }
+.tns-autowidth { /* Auto width mode */ }
+```
+
+### Slide Classes
+
+```scss
+// Base slide item
+.tns-item {
+  box-sizing: border-box;
+}
+
+// Active visible slide
+.tns-slide-active { }
+
+// Cloned slides (for loop)
+.tns-slide-cloned { }
+
+// Gallery animation classes
+.tns-fadeIn {
+  opacity: 1;
+  filter: alpha(opacity=100);
+  z-index: 0;
+}
+
+.tns-fadeOut {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  z-index: -1;
+}
+
+.tns-normal {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  z-index: -1;
+}
+
+// Transitioning slide
+.tns-moving {
+  transition: all 0.25s;
+}
+```
+
+### Utility Classes
+
+```scss
+// Overflow hidden wrapper
+.tns-ovh {
+  overflow: hidden;
+}
+
+// Auto height transition
+.tns-ah {
+  transition: height 0s;
+}
+
+// Hidden for screen readers
+.tns-visually-hidden {
+  position: absolute;
+  left: -10000em;
+}
+
+// Transparent (hidden)
+.tns-transparent {
+  opacity: 0;
+  visibility: hidden;
+}
+```
+
+## Customizing Appearance
+
+### Basic Slider Styling
+
+```css
+/* Container styling */
+.my-slider {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Individual slides */
+.my-slider .tns-item {
+  padding: 10px;
+}
+
+.my-slider .tns-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+```
+
+### Slide Transitions
+
+```css
+/* Custom transition speed */
+.tns-slider {
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Slide items in carousel mode */
+.tns-carousel .tns-item {
+  transition: opacity 0.3s;
+}
+
+/* Gallery mode custom animations */
+.tns-gallery > .tns-item {
+  transition: transform 0s, opacity 0s;
+}
+
+.tns-gallery > .tns-moving {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+```
+
+## SCSS Variables
+
+The source SCSS file (`tiny-slider.scss`) includes variables for browser capability detection:
+
+```scss
+// Browser detection helper dimensions
+$width: 310px;
+$height: 10px;
+$count: 70;
+$perpage: 3;
+
+.tns-t {
+  &-subp2 {
+    margin: 0 auto;
+    width: $width;
+    position: relative;
+    height: $height;
+    overflow: hidden;
+  }
+  
+  &-ct {
+    width: (100% * $count / $perpage);
+    width: calc(100% * #{$count} / #{$perpage});
+    position: absolute;
+    right: 0;
+    
+    > div {
+      width: (100% / $count);
+      width: calc(100% / #{$count});
+      height: $height;
+      float: left;
+    }
+  }
+}
+```
+
+<Note>
+  These variables are used internally for feature detection and typically don't need modification.
+</Note>
+
+## Custom Controls Styling
+
+### Default Controls
+
+```css
+/* Controls container */
+.tns-controls {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* Control buttons */
+.tns-controls button {
+  padding: 10px 20px;
+  margin: 0 5px;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.tns-controls button:hover {
+  background: #555;
+}
+
+.tns-controls button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Data attribute selectors */
+[data-controls="prev"] {
+  /* Previous button specific styles */
+}
+
+[data-controls="next"] {
+  /* Next button specific styles */
+}
+```
+
+### Custom Control Markup
+
+```html
+<!-- Custom controls container -->
+<div class="custom-controls">
+  <button class="prev-btn">Previous</button>
+  <button class="next-btn">Next</button>
+</div>
+
+<div class="my-slider">
+  <!-- slides -->
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  prevButton: '.prev-btn',
+  nextButton: '.next-btn'
+});
+```
+
+```css
+.custom-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.custom-controls button {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.custom-controls button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+```
+
+## Custom Navigation Styling
+
+### Default Nav Dots
+
+```css
+/* Nav container */
+.tns-nav {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* Individual dots */
+.tns-nav button {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  margin: 0 5px;
+  border-radius: 50%;
+  background: #ddd;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tns-nav button:hover {
+  background: #999;
+  transform: scale(1.2);
+}
+
+/* Active dot */
+.tns-nav .tns-nav-active {
+  background: #333;
+  transform: scale(1.3);
+}
+```
+
+### Thumbnail Navigation
+
+```css
+/* Thumbnail nav */
+.tns-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.tns-nav button {
+  width: 80px;
+  height: 60px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  background-size: cover;
+  background-position: center;
+}
+
+.tns-nav button:hover {
+  border-color: #999;
+}
+
+.tns-nav .tns-nav-active {
+  border-color: #333;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+```
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  navAsThumbnails: true
+});
+```
+
+### Custom Nav Container
+
+```html
+<div class="my-slider">
+  <!-- slides -->
+</div>
+
+<div class="custom-nav">
+  <button data-nav="0">Slide 1</button>
+  <button data-nav="1">Slide 2</button>
+  <button data-nav="2">Slide 3</button>
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  navContainer: '.custom-nav'
+});
+```
+
+## Autoplay Button Styling
+
+```css
+/* Autoplay button */
+[data-action] {
+  padding: 10px 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+[data-action]:hover {
+  background: #45a049;
+}
+
+/* Different states */
+[data-action="stop"] {
+  background: #f44336;
+}
+
+[data-action="start"] {
+  background: #4CAF50;
+}
+```
+
+## Lazyload Styling
+
+```css
+/* Lazyloading images */
+.tns-lazy-img {
+  transition: opacity 0.6s;
+  opacity: 0.6;
+}
+
+.tns-lazy-img.tns-complete {
+  opacity: 1;
+}
+
+/* Loading state */
+.tns-lazy-img.loading {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Failed state */
+.tns-lazy-img.failed {
+  opacity: 0.3;
+  position: relative;
+}
+
+.tns-lazy-img.failed::after {
+  content: '✕';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: #f44336;
+}
+```
+
+## Live Region Styling
+
+```css
+/* Accessible live region (typically visually hidden) */
+.tns-liveregion {
+  position: absolute;
+  left: -10000em;
+  /* If you want to display it for debugging: */
+  /* position: relative; */
+  /* left: 0; */
+  /* padding: 10px; */
+  /* background: #f0f0f0; */
+}
+```
+
+## Dark Mode Considerations
+
+```css
+/* Automatic dark mode with prefers-color-scheme */
+@media (prefers-color-scheme: dark) {
+  .tns-outer {
+    background: #1a1a1a;
+  }
+  
+  .tns-controls button {
+    background: #f0f0f0;
+    color: #1a1a1a;
+  }
+  
+  .tns-controls button:hover {
+    background: #ffffff;
+  }
+  
+  .tns-controls button:disabled {
+    background: #444;
+    color: #888;
+  }
+  
+  .tns-nav button {
+    background: #444;
+  }
+  
+  .tns-nav .tns-nav-active {
+    background: #f0f0f0;
+  }
+}
+
+/* Manual dark mode with class */
+.dark-mode .tns-outer {
+  background: #1a1a1a;
+  color: #f0f0f0;
+}
+
+.dark-mode .tns-controls button {
+  background: #2a2a2a;
+  color: #f0f0f0;
+  border: 1px solid #444;
+}
+```
+
+## Responsive Styling
+
+```css
+/* Mobile-first approach */
+.my-slider .tns-item {
+  padding: 10px;
+}
+
+.tns-controls button {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .my-slider .tns-item {
+    padding: 15px;
+  }
+  
+  .tns-controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .my-slider .tns-item {
+    padding: 20px;
+  }
+  
+  .tns-controls button {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+}
+```
+
+## Complete Example
+
+<Accordion title="Full Styled Slider Example">
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    .slider-container {
+      max-width: 1200px;
+      margin: 50px auto;
+      padding: 0 20px;
+    }
+    
+    .my-slider .tns-item {
+      padding: 10px;
+    }
+    
+    .my-slider img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    
+    .tns-controls {
+      text-align: center;
+      margin-top: 30px;
+    }
+    
+    .tns-controls button {
+      padding: 12px 30px;
+      margin: 0 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .tns-controls button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .tns-controls button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .tns-nav {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .tns-nav button {
+      width: 12px;
+      height: 12px;
+      padding: 0;
+      margin: 0 6px;
+      border-radius: 50%;
+      background: #ddd;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .tns-nav .tns-nav-active {
+      background: #667eea;
+      transform: scale(1.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="slider-container">
+    <div class="my-slider">
+      <div><img src="slide1.jpg" alt="Slide 1"></div>
+      <div><img src="slide2.jpg" alt="Slide 2"></div>
+      <div><img src="slide3.jpg" alt="Slide 3"></div>
+    </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+  <script>
+    var slider = tns({
+      container: '.my-slider',
+      items: 1,
+      slideBy: 'page',
+      autoplay: true,
+      autoplayButtonOutput: false,
+      speed: 400,
+      responsive: {
+        640: {
+          items: 2,
+          gutter: 20
+        },
+        900: {
+          items: 3,
+          gutter: 20
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+```
+
+</Accordion>
+
+## Best Practices
+
+<Steps>
+  <Step title="Use CSS Specificity Wisely">
+    Target Tiny Slider classes with appropriate specificity to avoid conflicts:
+    
+    ```css
+    /* Good */
+    .my-slider .tns-item { }
+    
+    /* Avoid overly specific */
+    .wrapper .container .my-slider .tns-outer .tns-item { }
+    ```
+  </Step>
+  
+  <Step title="Respect Core Functionality">
+    Don't override critical positioning and transform properties that Tiny Slider uses internally.
+  </Step>
+  
+  <Step title="Test Across Browsers">
+    Ensure your custom styles work with the various layout modes (subpixel, no-subpixel, calc, no-calc).
+  </Step>
+  
+  <Step title="Consider Accessibility">
+    Maintain sufficient color contrast and ensure focus states are visible.
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/guides/configuration">
+    Configure slider behavior
+  </Card>
+  <Card title="Methods" icon="code" href="/guides/methods">
+    Control slider programmatically
+  </Card>
+  <Card title="Accessibility" icon="universal-access" href="/guides/accessibility">
+    Make your slider accessible
+  </Card>
+  <Card title="Examples" icon="image" href="/examples">
+    View styling examples
+  </Card>
+</CardGroup>

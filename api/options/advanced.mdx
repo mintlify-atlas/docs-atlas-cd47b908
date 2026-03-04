@@ -1,0 +1,534 @@
+---
+title: 'Advanced Options'
+description: 'Advanced configuration options for performance, animations, and special behaviors'
+---
+
+## Overview
+
+Advanced options provide fine-grained control over slider behavior, including looping, animations, lazy loading, and performance optimizations.
+
+## Loop and Rewind
+
+<ParamField path="loop" type="boolean" default="true">
+  Moves throughout all the slides seamlessly.
+  
+  Creates cloned slides at the beginning and end for infinite scrolling effect.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    loop: true
+  });
+  ```
+  
+  <Note>Loop is true by default in carousel mode, false in gallery mode.</Note>
+</ParamField>
+
+<ParamField path="rewind" type="boolean" default="false">
+  Moves to the opposite edge when reaching the first or last slide.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    loop: false,
+    rewind: true
+  });
+  ```
+  
+  <Info>When rewind is true, loop is automatically set to false.</Info>
+</ParamField>
+
+## Animation Options
+
+<ParamField path="animateIn" type="string" default="'tns-fadeIn'">
+  Name of intro animation class (for gallery mode).
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    mode: 'gallery',
+    animateIn: 'fadeIn'
+  });
+  ```
+</ParamField>
+
+<ParamField path="animateOut" type="string" default="'tns-fadeOut'">
+  Name of outro animation class (for gallery mode).
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    mode: 'gallery',
+    animateOut: 'fadeOut'
+  });
+  ```
+</ParamField>
+
+<ParamField path="animateNormal" type="string" default="'tns-normal'">
+  Name of default animation class (for gallery mode).
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    mode: 'gallery',
+    animateNormal: 'tns-normal'
+  });
+  ```
+</ParamField>
+
+<ParamField path="animateDelay" type="number | false" default="false">
+  Time between each gallery animation (in "ms").
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    mode: 'gallery',
+    animateDelay: 1000
+  });
+  ```
+</ParamField>
+
+## Lazy Loading
+
+<ParamField path="lazyload" type="boolean" default="false">
+  Enables lazyloading images that are currently not viewed, thus saving bandwidth.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    lazyload: true
+  });
+  ```
+  
+  <Warning>
+    - Class `.tns-lazy-img` must be set on every image you want to lazyload (or use custom `lazyloadSelector`)
+    - `data-src` attribute with the real image src is required
+    - `width` attribute is required for `autoWidth` sliders
+  </Warning>
+</ParamField>
+
+<ParamField path="lazyloadSelector" type="string" default="'.tns-lazy-img'">
+  The CSS selector for lazyload images.
+  
+  Available since v2.9.1.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    lazyload: true,
+    lazyloadSelector: '.lazy'
+  });
+  ```
+</ParamField>
+
+## Nested Sliders
+
+<ParamField path="nested" type="'inner' | 'outer' | false" default="false">
+  Define the relationship between nested sliders.
+  
+  ```javascript
+  // Outer slider
+  var outer = tns({
+    container: '.outer-slider',
+    nested: 'outer'
+  });
+  
+  // Inner slider (run this first!)
+  var inner = tns({
+    container: '.inner-slider',
+    nested: 'inner'
+  });
+  ```
+  
+  <Warning>
+    Make sure you run the inner slider first, otherwise the height of the inner slider container will be wrong.
+  </Warning>
+</ParamField>
+
+## Performance Options
+
+<ParamField path="freezable" type="boolean" default="true">
+  Indicate whether the slider will be frozen (controls, nav, autoplay and other functions will stop work) when all slides can be displayed in one page.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    items: 3,
+    freezable: true
+  });
+  ```
+  
+  <Info>
+    When there are 3 or fewer slides and items is 3, the slider will be frozen automatically.
+  </Info>
+</ParamField>
+
+<ParamField path="disable" type="boolean" default="false">
+  Disable slider.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    disable: false,
+    responsive: {
+      0: {
+        disable: true // Disable on mobile
+      },
+      768: {
+        disable: false // Enable on tablet+
+      }
+    }
+  });
+  ```
+</ParamField>
+
+<ParamField path="startIndex" type="number" default="0">
+  The initial index of the slider.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    startIndex: 2 // Start at third slide
+  });
+  ```
+</ParamField>
+
+<ParamField path="onInit" type="Function | false" default="false">
+  Callback to be run on initialization.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    onInit: function(info) {
+      console.log('Slider initialized');
+      console.log('Current slide:', info.index);
+    }
+  });
+  ```
+</ParamField>
+
+<ParamField path="useLocalStorage" type="boolean" default="true">
+  Save browser capability variables to localStorage and without detecting them every time the slider runs.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    useLocalStorage: true
+  });
+  ```
+  
+  <Info>
+    This improves performance by caching browser feature detection results.
+  </Info>
+</ParamField>
+
+<ParamField path="nonce" type="string | false" default="false">
+  Nonce attribute for inline style tag to allow slider usage without `unsafe-inline` Content Security Policy source.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    nonce: 'your-nonce-value'
+  });
+  ```
+</ParamField>
+
+<ParamField path="responsive" type="object | false" default="false">
+  Defines options for different viewport widths.
+  
+  ```javascript
+  tns({
+    container: '.my-slider',
+    items: 1,
+    responsive: {
+      640: {
+        items: 2
+      },
+      900: {
+        items: 3
+      }
+    }
+  });
+  ```
+  
+  <Info>
+    Breakpoints behave like `(min-width: breakpoint)` in CSS. Undefined options inherit from smaller breakpoints.
+  </Info>
+</ParamField>
+
+## Advanced Examples
+
+### Lazy Loading Images
+
+```html
+<div class="my-slider">
+  <div>
+    <img class="tns-lazy-img" 
+         src="placeholder.jpg" 
+         data-src="image1.jpg" 
+         alt="Image 1">
+  </div>
+  <div>
+    <img class="tns-lazy-img" 
+         src="placeholder.jpg" 
+         data-src="image2.jpg" 
+         alt="Image 2">
+  </div>
+</div>
+```
+
+```javascript
+tns({
+  container: '.my-slider',
+  lazyload: true,
+  items: 1,
+  slideBy: 1
+});
+```
+
+### Custom Lazy Load Selector
+
+```html
+<div class="my-slider">
+  <div>
+    <img class="lazy" 
+         src="placeholder.jpg" 
+         data-src="image1.jpg">
+  </div>
+</div>
+```
+
+```javascript
+tns({
+  container: '.my-slider',
+  lazyload: true,
+  lazyloadSelector: '.lazy'
+});
+```
+
+### Gallery Mode with Custom Animations
+
+```css
+.fadeIn {
+  animation: fadeIn 0.5s;
+}
+
+.fadeOut {
+  animation: fadeOut 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.9); }
+}
+```
+
+```javascript
+tns({
+  container: '.my-slider',
+  mode: 'gallery',
+  animateIn: 'fadeIn',
+  animateOut: 'fadeOut',
+  animateDelay: 500,
+  speed: 500
+});
+```
+
+### Nested Sliders Example
+
+```html
+<div class="outer-slider">
+  <div>
+    <div class="inner-slider">
+      <div>Inner Slide 1</div>
+      <div>Inner Slide 2</div>
+    </div>
+  </div>
+  <div>Outer Slide 2</div>
+</div>
+```
+
+```javascript
+// IMPORTANT: Initialize inner slider first
+var inner = tns({
+  container: '.inner-slider',
+  nested: 'inner',
+  controls: false
+});
+
+var outer = tns({
+  container: '.outer-slider',
+  nested: 'outer'
+});
+```
+
+### Initialization Callback
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  onInit: function(info) {
+    console.log('Slider initialized!');
+    console.log('Total slides:', info.slideCount);
+    console.log('Current index:', info.index);
+    console.log('Items per view:', info.items);
+    
+    // Custom initialization logic
+    document.querySelector('.slide-counter').textContent = 
+      info.displayIndex + ' / ' + info.slideCount;
+  }
+});
+```
+
+### Responsive Disable/Enable
+
+```javascript
+tns({
+  container: '.my-slider',
+  items: 1,
+  disable: false,
+  responsive: {
+    0: {
+      disable: true // Show as regular div on mobile
+    },
+    640: {
+      disable: false // Enable slider on tablet
+    }
+  }
+});
+```
+
+### Content Security Policy (CSP)
+
+```javascript
+// Generate nonce on server
+const nonce = generateNonce();
+
+// Add to CSP header
+// Content-Security-Policy: style-src 'nonce-abc123'
+
+tns({
+  container: '.my-slider',
+  nonce: 'abc123' // Match server-generated nonce
+});
+```
+
+## Performance Tips
+
+### 1. Enable Local Storage
+
+```javascript
+tns({
+  container: '.my-slider',
+  useLocalStorage: true // Cache browser capabilities
+});
+```
+
+### 2. Use Lazy Loading for Images
+
+```javascript
+tns({
+  container: '.my-slider',
+  lazyload: true,
+  items: 3
+});
+```
+
+### 3. Freeze When Not Needed
+
+```javascript
+tns({
+  container: '.my-slider',
+  items: 3,
+  freezable: true // Auto-disable when all slides fit
+});
+```
+
+### 4. Disable on Mobile if Not Needed
+
+```javascript
+tns({
+  container: '.my-slider',
+  responsive: {
+    0: {
+      disable: true // No slider overhead on mobile
+    },
+    768: {
+      disable: false
+    }
+  }
+});
+```
+
+### 5. Optimize Responsive Breakpoints
+
+```javascript
+tns({
+  container: '.my-slider',
+  items: 1,
+  responsive: {
+    // Only define what changes
+    640: { items: 2 },
+    1024: { items: 3 }
+  }
+});
+```
+
+## Complex Responsive Configuration
+
+```javascript
+tns({
+  container: '.my-slider',
+  mode: 'carousel',
+  items: 1,
+  slideBy: 1,
+  autoplay: false,
+  controls: true,
+  nav: true,
+  responsive: {
+    0: {
+      items: 1,
+      gutter: 0,
+      controls: false,
+      nav: true,
+      autoplay: false
+    },
+    640: {
+      items: 2,
+      gutter: 20,
+      controls: true,
+      nav: true
+    },
+    900: {
+      items: 3,
+      gutter: 30,
+      autoplay: true,
+      autoplayTimeout: 5000,
+      autoplayHoverPause: true
+    },
+    1200: {
+      items: 4,
+      gutter: 40
+    }
+  }
+});
+```
+
+## Optimization Checklist
+
+- ✅ Use `lazyload` for image-heavy sliders
+- ✅ Enable `useLocalStorage` for better performance
+- ✅ Set `freezable: true` to auto-disable when not needed
+- ✅ Use `disable` option on mobile if slider isn't necessary
+- ✅ Implement `onInit` callback for custom initialization logic
+- ✅ Use `nonce` attribute for strict CSP environments
+- ✅ Configure `startIndex` to begin at a specific slide
+- ✅ Test nested sliders thoroughly (inner before outer)
+- ✅ Use responsive breakpoints efficiently
+- ✅ Consider `preventActionWhenRunning` to prevent spam

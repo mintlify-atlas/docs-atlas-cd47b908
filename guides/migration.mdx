@@ -1,0 +1,632 @@
+---
+title: 'Migration Guide'
+description: 'Migrate from v1 to v2 and understand breaking changes'
+---
+
+## Overview
+
+Tiny Slider v2 introduces significant improvements and optimizations. This guide helps you migrate from v1 to v2 and understand the breaking changes.
+
+<Info>
+  Current version: **v2.9.4**
+  
+  Previous versions: [v1](https://github.com/ganlanyuan/tiny-slider/tree/v1), [v0](https://github.com/ganlanyuan/tiny-slider/tree/v0)
+</Info>
+
+## What's New in v2
+
+### Performance Improvements
+
+<Steps>
+  <Step title="Percentage-based Widths">
+    Uses `%` instead of `px` for slide widths
+    
+    **Benefit:** No recalculation needed on window resize
+    
+    ```css
+    /* v1: Fixed pixel widths */
+    .slide { width: 300px; }
+    
+    /* v2: Percentage widths */
+    .slide { width: 33.33%; }
+    ```
+  </Step>
+  
+  <Step title="CSS Media Queries">
+    Leverages native CSS media queries when supported
+    
+    **Benefit:** Better performance and browser optimization
+  </Step>
+  
+  <Step title="LocalStorage Caching">
+    Browser capabilities saved to localStorage
+    
+    **Benefit:** No redundant feature detection on subsequent page loads
+    
+    ```javascript
+    // Cached capabilities
+    // - tC: calc() support
+    // - tPL: Percentage Layout support
+    // - tMQ: Media Query support
+    // - tTf: Transform support
+    // - t3D: 3D Transform support
+    // - tTDu/tTDe: Transition Duration/Delay
+    // - tADu/tADe: Animation Duration/Delay
+    // - tTE/tAE: Transition/Animation End events
+    ```
+  </Step>
+</Steps>
+
+### New Features
+
+#### Enhanced Responsive Options (v2.1.0+)
+
+More options available in the `responsive` object:
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 1,
+  responsive: {
+    640: {
+      items: 2,
+      gutter: 20,
+      edgePadding: 20,
+      controls: true,
+      nav: true,
+      autoplay: true
+      // Many more options now supported!
+    }
+  }
+});
+```
+
+#### Center Option (v2.9.2+)
+
+```javascript
+var slider = tns({
+  container: '.my-slider',
+  items: 3,
+  center: true  // New: Center active slide
+});
+```
+
+## Breaking Changes
+
+### 1. Controls and Nav Position
+
+<Warning>
+  **Breaking Change:** Controls and navigation are now inserted **before** the slider instead of after.
+</Warning>
+
+#### HTML Structure Change
+
+```html
+<!-- v1: Controls/nav after slider -->
+<div class="slider-wrapper">
+  <div class="my-slider">
+    <!-- slides -->
+  </div>
+  <!-- Controls inserted here (after) -->
+  <!-- Nav inserted here (after) -->
+</div>
+
+<!-- v2: Controls/nav before slider -->
+<div class="slider-wrapper">
+  <!-- Controls inserted here (before) -->
+  <!-- Nav inserted here (before) -->
+  <div class="my-slider">
+    <!-- slides -->
+  </div>
+</div>
+```
+
+#### CSS Update Required
+
+```css
+/* v1: Positioning for after slider */
+.my-slider + .tns-controls {
+  margin-top: 20px;
+}
+
+/* v2: Update for before slider */
+.tns-controls {
+  margin-bottom: 20px;  /* Changed from margin-top */
+}
+
+.tns-controls + .tns-outer {
+  margin-top: 0;
+}
+```
+
+#### Flexbox Layout Update
+
+```css
+/* v1 */
+.slider-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* v2: Controls now come first */
+.slider-wrapper {
+  display: flex;
+  flex-direction: column-reverse;  /* Or reorder children */
+}
+
+/* Alternative: Use order property */
+.tns-controls { order: 2; }
+.tns-outer { order: 1; }
+```
+
+<Accordion title="Visual Comparison">
+
+```html
+<!-- v1 Structure -->
+<wrapper>
+  <slider/>
+  <controls/>
+  <nav/>
+</wrapper>
+
+<!-- v2 Structure -->
+<wrapper>
+  <controls/>
+  <nav/>
+  <slider/>
+</wrapper>
+```
+
+</Accordion>
+
+### 2. Autoplay Button Position
+
+<Warning>
+  **Breaking Change:** The autoplay button is no longer part of the nav container (v2.1.0+).
+</Warning>
+
+#### Structure Change
+
+```html
+<!-- v1: Autoplay button inside nav -->
+<div class="tns-nav">
+  <button data-nav="0"></button>
+  <button data-nav="1"></button>
+  <button data-action="start">Start</button>  <!-- Inside nav -->
+</div>
+
+<!-- v2: Autoplay button separate -->
+<button data-action="start">Start</button>  <!-- Separate -->
+<div class="tns-nav">
+  <button data-nav="0"></button>
+  <button data-nav="1"></button>
+</div>
+```
+
+#### CSS Update
+
+```css
+/* v1: Target within nav */
+.tns-nav [data-action] {
+  margin-left: 10px;
+}
+
+/* v2: Target independently */
+[data-action] {
+  display: block;
+  margin: 10px 0;
+}
+
+/* Position autoplay button */
+[data-action] {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+```
+
+### 3. Selector Changes in SCSS
+
+<Warning>
+  **Breaking Change:** CSS selectors have changed in `tiny-slider.scss`. Update your custom styles accordingly.
+</Warning>
+
+#### Key Selector Changes
+
+```scss
+// v1 selectors (approximate)
+.slider { }
+.slider__item { }
+
+// v2 selectors (from tiny-slider.scss)
+.tns-outer { }
+.tns-slider { }
+.tns-item { }
+.tns-slide-active { }
+.tns-slide-cloned { }
+```
+
+#### Update Your CSS
+
+```css
+/* v1: Old selectors */
+.slider { }
+.slider .item { }
+.slider .item.active { }
+
+/* v2: New selectors */
+.tns-slider { }
+.tns-slider .tns-item { }
+.tns-slider .tns-slide-active { }
+```
+
+#### Import Updated SCSS
+
+If you're using SCSS:
+
+```scss
+// v1
+@import 'path/to/v1/tiny-slider';
+
+// v2: Update path and check for selector changes
+@import 'path/to/v2/tiny-slider';
+
+// Override with your custom styles
+.tns-slider {
+  // Your customizations
+}
+```
+
+## Migration Checklist
+
+<Steps>
+  <Step title="Update Package">
+    ```bash
+    # npm
+    npm install tiny-slider@latest
+    
+    # bower
+    bower install tiny-slider
+    
+    # CDN
+    # Update to latest version
+    # https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css
+    # https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js
+    ```
+  </Step>
+  
+  <Step title="Update Controls/Nav Styles">
+    Adjust CSS for the new position of controls and navigation (now before slider).
+    
+    ```css
+    /* Update margins, positioning, and flex order */
+    .tns-controls {
+      margin-bottom: 20px;  /* Was margin-top */
+    }
+    ```
+  </Step>
+  
+  <Step title="Update Autoplay Button Styles">
+    Move autoplay button styles out of nav context.
+    
+    ```css
+    /* Remove .tns-nav prefix if present */
+    [data-action] {
+      /* Standalone button styles */
+    }
+    ```
+  </Step>
+  
+  <Step title="Update Selector References">
+    Search and replace old selectors in your CSS and JavaScript.
+    
+    ```javascript
+    // v1
+    document.querySelector('.slider .item');
+    
+    // v2
+    document.querySelector('.tns-slider .tns-item');
+    ```
+  </Step>
+  
+  <Step title="Test Responsive Behavior">
+    Verify responsive options still work correctly with the new system.
+  </Step>
+  
+  <Step title="Check LocalStorage">
+    Clear localStorage if testing, as v2 uses it for caching.
+    
+    ```javascript
+    // Clear tiny-slider cache
+    localStorage.removeItem('tnsApp');
+    localStorage.removeItem('tC');
+    localStorage.removeItem('tPL');
+    // ... etc
+    ```
+  </Step>
+</Steps>
+
+## Step-by-Step Migration Example
+
+### Before (v1)
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="tiny-slider-v1.css">
+  <style>
+    .slider { max-width: 900px; margin: 0 auto; }
+    .slider .item { padding: 10px; }
+    .slider + .controls { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="slider">
+    <div class="item">Slide 1</div>
+    <div class="item">Slide 2</div>
+    <div class="item">Slide 3</div>
+  </div>
+  
+  <script src="tiny-slider-v1.js"></script>
+  <script>
+    var slider = tns({
+      container: '.slider',
+      items: 3
+    });
+  </script>
+</body>
+</html>
+```
+
+### After (v2)
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    /* Update: tns-slider instead of slider */
+    .my-slider { max-width: 900px; margin: 0 auto; }
+    
+    /* Update: tns-item instead of item */
+    .my-slider .tns-item { padding: 10px; }
+    
+    /* Update: controls now BEFORE slider */
+    .tns-controls { 
+      margin-bottom: 20px;  /* Changed from margin-top */
+      text-align: center;
+    }
+    
+    /* Update: nav also before slider */
+    .tns-nav { 
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    /* Update: autoplay button is separate */
+    [data-action] {
+      display: block;
+      margin: 10px auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="my-slider">
+    <div>Slide 1</div>
+    <div>Slide 2</div>
+    <div>Slide 3</div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+  <script>
+    var slider = tns({
+      container: '.my-slider',
+      items: 3
+    });
+  </script>
+</body>
+</html>
+```
+
+## Common Migration Issues
+
+### Issue 1: Controls Not Visible
+
+<Accordion title="Solution">
+
+**Problem:** Controls appear in unexpected location or are hidden.
+
+**Solution:** Update positioning CSS
+
+```css
+/* Fix absolute positioning */
+.slider-wrapper {
+  position: relative;
+}
+
+.tns-controls {
+  position: absolute;
+  top: 50%;  /* Adjust as needed */
+  width: 100%;
+  /* Remove bottom: 0 if you had it */
+}
+
+.tns-controls button[data-controls="prev"] {
+  left: 10px;
+}
+
+.tns-controls button[data-controls="next"] {
+  right: 10px;
+}
+```
+
+</Accordion>
+
+### Issue 2: JavaScript Selector Errors
+
+<Accordion title="Solution">
+
+**Problem:** Custom JavaScript can't find slider elements.
+
+**Solution:** Update selectors
+
+```javascript
+// v1
+var slides = document.querySelectorAll('.slider .item');
+var activeSlide = document.querySelector('.slider .item.active');
+
+// v2: Use getInfo() method instead
+var slider = tns({ container: '.my-slider' });
+var info = slider.getInfo();
+var slides = info.slideItems;
+var activeIndex = info.index;
+var activeSlide = slides[activeIndex];
+```
+
+</Accordion>
+
+### Issue 3: Flexbox Layout Broken
+
+<Accordion title="Solution">
+
+**Problem:** Flex layout doesn't account for controls-first order.
+
+**Solution:** Use flex order or reverse direction
+
+```css
+/* Option 1: Flex order */
+.slider-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.tns-controls { order: 2; }
+.tns-nav { order: 3; }
+.tns-outer { order: 1; }
+
+/* Option 2: Reverse direction */
+.slider-wrapper {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+/* Option 3: Grid layout */
+.slider-wrapper {
+  display: grid;
+  grid-template-areas:
+    "slider"
+    "controls"
+    "nav";
+}
+
+.tns-outer { grid-area: slider; }
+.tns-controls { grid-area: controls; }
+.tns-nav { grid-area: nav; }
+```
+
+</Accordion>
+
+### Issue 4: Custom Nav Styling Broken
+
+<Accordion title="Solution">
+
+**Problem:** Nav styles targeting autoplay button no longer work.
+
+**Solution:** Separate autoplay button styles
+
+```css
+/* v1: Autoplay button in nav */
+.tns-nav button:last-child {
+  /* This was the autoplay button */
+}
+
+/* v2: Target separately */
+[data-action] {
+  /* Autoplay button styles */
+}
+
+.tns-nav button {
+  /* Nav dot styles (no autoplay button here) */
+}
+```
+
+</Accordion>
+
+## Testing After Migration
+
+<Steps>
+  <Step title="Visual Inspection">
+    - Controls and navigation are positioned correctly
+    - Autoplay button appears in expected location
+    - Slides display properly at all breakpoints
+  </Step>
+  
+  <Step title="Functional Testing">
+    - Click controls to navigate
+    - Click navigation dots
+    - Test keyboard navigation (if enabled)
+    - Verify autoplay and pause
+  </Step>
+  
+  <Step title="Responsive Testing">
+    - Test all breakpoints defined in responsive options
+    - Verify layout doesn't break at any size
+  </Step>
+  
+  <Step title="Browser Testing">
+    - Test in target browsers
+    - Verify localStorage caching works
+    - Check console for errors
+  </Step>
+</Steps>
+
+## Getting Help
+
+If you encounter migration issues:
+
+<CardGroup cols={2}>
+  <Card title="GitHub Issues" icon="github" href="https://github.com/ganlanyuan/tiny-slider/issues">
+    Report bugs and ask questions
+  </Card>
+  <Card title="Changelog" icon="list" href="https://github.com/ganlanyuan/tiny-slider/releases">
+    Review all version changes
+  </Card>
+  <Card title="Demos" icon="image" href="http://ganlanyuan.github.io/tiny-slider/demo">
+    See v2 in action
+  </Card>
+  <Card title="Source Code" icon="code" href="https://github.com/ganlanyuan/tiny-slider">
+    Examine implementation details
+  </Card>
+</CardGroup>
+
+## Version Comparison
+
+| Feature | v1 | v2 |
+|---------|----|----||
+| Slide Width Units | `px` | `%` |
+| CSS Media Queries | Limited | Full support |
+| LocalStorage Caching | No | Yes |
+| Controls Position | After slider | Before slider |
+| Autoplay Button | In nav | Separate |
+| Responsive Options | Basic | Extended |
+| Center Option | No | Yes (v2.9.2+) |
+| Performance | Good | Excellent |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/guides/configuration">
+    Learn v2 configuration options
+  </Card>
+  <Card title="API Reference" icon="book" href="/api/options">
+    Complete v2 API documentation
+  </Card>
+  <Card title="Examples" icon="image" href="/examples/basic-carousel">
+    View v2 implementation examples
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get started with v2
+  </Card>
+</CardGroup>

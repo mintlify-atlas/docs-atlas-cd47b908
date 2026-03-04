@@ -1,0 +1,597 @@
+---
+title: "Events"
+description: "Subscribe to slider events and react to user interactions"
+---
+
+## Overview
+
+Tiny-slider emits events during various interactions and state changes. You can subscribe to these events using the `events.on()` method and unsubscribe with `events.off()`.
+
+```javascript
+const slider = tns({
+  container: '.my-slider',
+  items: 3
+});
+
+// Subscribe to event
+slider.events.on('indexChanged', function(info) {
+  console.log('Current slide:', info.index);
+});
+```
+
+## Event Methods
+
+### events.on()
+
+Subscribe to a slider event.
+
+```typescript
+events.on(event: SilderEvent, cb: (info: TinySliderInfo) => any): void
+```
+
+**Parameters:**
+
+<ParamField path="event" type="SilderEvent" required>
+  The event name to listen to. See [Available Events](#available-events) for the complete list.
+</ParamField>
+
+<ParamField path="cb" type="(info: TinySliderInfo) => any" required>
+  Callback function invoked when the event fires. Receives [TinySliderInfo](/api/info-object) object as parameter.
+</ParamField>
+
+**Example:**
+
+```javascript
+function handleSlideChange(info) {
+  console.log('Slide changed to:', info.index);
+  console.log('Previous slide:', info.indexCached);
+}
+
+slider.events.on('indexChanged', handleSlideChange);
+```
+
+---
+
+### events.off()
+
+Unsubscribe from a slider event.
+
+```typescript
+events.off(event: SilderEvent, cb: (info: TinySliderInfo) => any): void
+```
+
+**Parameters:**
+
+<ParamField path="event" type="SilderEvent" required>
+  The event name to unsubscribe from.
+</ParamField>
+
+<ParamField path="cb" type="(info: TinySliderInfo) => any" required>
+  Reference to the same callback function that was used in `events.on()`.
+</ParamField>
+
+<Warning>
+  You must pass the exact same function reference to `events.off()` that you used in `events.on()`. Anonymous functions cannot be unsubscribed.
+</Warning>
+
+**Example:**
+
+```javascript
+// Define named function
+function handleSlideChange(info) {
+  console.log('Slide changed:', info.index);
+}
+
+// Subscribe
+slider.events.on('indexChanged', handleSlideChange);
+
+// Unsubscribe later
+slider.events.off('indexChanged', handleSlideChange);
+```
+
+**❌ This won't work:**
+
+```javascript
+// Anonymous function - can't unsubscribe
+slider.events.on('indexChanged', function(info) {
+  console.log(info.index);
+});
+
+// This won't remove the listener (different function reference)
+slider.events.off('indexChanged', function(info) {
+  console.log(info.index);
+});
+```
+
+---
+
+## Available Events
+
+Tiny-slider supports the following events:
+
+```typescript
+type SilderEvent = 
+  | 'indexChanged'
+  | 'transitionStart' 
+  | 'transitionEnd'
+  | 'newBreakpointStart'
+  | 'newBreakpointEnd'
+  | 'touchStart'
+  | 'touchMove'
+  | 'touchEnd'
+  | 'dragStart'
+  | 'dragMove'
+  | 'dragEnd';
+```
+
+### indexChanged
+
+Fired when the slide index changes (after animation completes).
+
+**Use cases:** Update UI, track analytics, load content
+
+<CodeGroup>
+```javascript Update Counter
+slider.events.on('indexChanged', function(info) {
+  const current = info.index + 1;
+  const total = info.slideCount;
+  document.querySelector('.counter').textContent = `${current} / ${total}`;
+});
+```
+
+```javascript Update Thumbnails
+slider.events.on('indexChanged', function(info) {
+  // Remove active class from all thumbnails
+  document.querySelectorAll('.thumbnail').forEach(thumb => {
+    thumb.classList.remove('active');
+  });
+  
+  // Add active class to current thumbnail
+  const currentThumb = document.querySelector(`.thumbnail[data-index="${info.index}"]`);
+  if (currentThumb) {
+    currentThumb.classList.add('active');
+  }
+});
+```
+
+```javascript Analytics Tracking
+slider.events.on('indexChanged', function(info) {
+  analytics.track('Slide Viewed', {
+    slideIndex: info.index,
+    slideId: info.slideItems[info.index].dataset.id
+  });
+});
+```
+
+```javascript Lazy Load Next Slides
+slider.events.on('indexChanged', function(info) {
+  // Preload next 2 slides
+  const nextIndexes = [info.index + 1, info.index + 2];
+  
+  nextIndexes.forEach(index => {
+    if (index < info.slideCount) {
+      const slide = info.slideItems[index];
+      const img = slide.querySelector('img[data-src]');
+      if (img && !img.src) {
+        img.src = img.dataset.src;
+      }
+    }
+  });
+});
+```
+</CodeGroup>
+
+---
+
+### transitionStart
+
+Fired when slide transition animation starts.
+
+**Use cases:** Show loading state, disable interactions during animation
+
+<CodeGroup>
+```javascript Disable Interactions
+let isAnimating = false;
+
+slider.events.on('transitionStart', function(info) {
+  isAnimating = true;
+  document.querySelector('.my-slider').classList.add('animating');
+});
+
+slider.events.on('transitionEnd', function(info) {
+  isAnimating = false;
+  document.querySelector('.my-slider').classList.remove('animating');
+});
+```
+
+```javascript Pause Video
+slider.events.on('transitionStart', function(info) {
+  const currentSlide = info.slideItems[info.indexCached];
+  const video = currentSlide.querySelector('video');
+  if (video && !video.paused) {
+    video.pause();
+  }
+});
+```
+
+```javascript Fade Out Content
+slider.events.on('transitionStart', function(info) {
+  const currentSlide = info.slideItems[info.indexCached];
+  const content = currentSlide.querySelector('.slide-content');
+  if (content) {
+    content.style.opacity = '0';
+  }
+});
+```
+</CodeGroup>
+
+---
+
+### transitionEnd
+
+Fired when slide transition animation completes.
+
+**Use cases:** Enable interactions, start animations, load content
+
+<CodeGroup>
+```javascript Start Animation
+slider.events.on('transitionEnd', function(info) {
+  const currentSlide = info.slideItems[info.index];
+  currentSlide.querySelector('.animate-on-active')?.classList.add('animated');
+});
+```
+
+```javascript Autoplay Video
+slider.events.on('transitionEnd', function(info) {
+  const currentSlide = info.slideItems[info.index];
+  const video = currentSlide.querySelector('video');
+  if (video) {
+    video.play();
+  }
+});
+```
+
+```javascript Load Dynamic Content
+slider.events.on('transitionEnd', function(info) {
+  const currentSlide = info.slideItems[info.index];
+  if (currentSlide.dataset.loaded !== 'true') {
+    loadSlideContent(info.index);
+    currentSlide.dataset.loaded = 'true';
+  }
+});
+```
+</CodeGroup>
+
+---
+
+### newBreakpointStart
+
+Fired when slider starts transitioning to a new responsive breakpoint.
+
+**Use cases:** Prepare UI for layout changes
+
+```javascript
+slider.events.on('newBreakpointStart', function(info) {
+  console.log('Breakpoint changing...');
+  console.log('Items per page:', info.items);
+});
+```
+
+---
+
+### newBreakpointEnd
+
+Fired when slider finishes transitioning to a new responsive breakpoint.
+
+**Use cases:** Update UI after responsive change, recalculate dimensions
+
+<CodeGroup>
+```javascript Update Layout
+slider.events.on('newBreakpointEnd', function(info) {
+  console.log('New breakpoint active');
+  console.log('Items per page:', info.items);
+  
+  // Update custom UI
+  updateCustomNavigation(info);
+});
+```
+
+```javascript Reload Images
+slider.events.on('newBreakpointEnd', function(info) {
+  // Switch to appropriate image sizes for new layout
+  info.slideItems.forEach(slide => {
+    const img = slide.querySelector('img');
+    if (img && info.items >= 3) {
+      img.src = img.dataset.srcSmall;
+    } else {
+      img.src = img.dataset.srcLarge;
+    }
+  });
+});
+```
+</CodeGroup>
+
+---
+
+### touchStart
+
+Fired when user starts touching the slider (on touch devices).
+
+**Use cases:** Pause autoplay, prepare for drag
+
+<CodeGroup>
+```javascript Pause on Touch
+slider.events.on('touchStart', function(info) {
+  slider.pause();
+});
+```
+
+```javascript Visual Feedback
+slider.events.on('touchStart', function(info) {
+  document.querySelector('.my-slider').classList.add('touching');
+});
+
+slider.events.on('touchEnd', function(info) {
+  document.querySelector('.my-slider').classList.remove('touching');
+});
+```
+</CodeGroup>
+
+---
+
+### touchMove
+
+Fired repeatedly while user is dragging the slider (on touch devices).
+
+**Use cases:** Custom drag indicators, parallax effects
+
+```javascript
+slider.events.on('touchMove', function(info) {
+  // Custom logic during drag
+  console.log('Dragging...');
+});
+```
+
+---
+
+### touchEnd
+
+Fired when user stops touching the slider (on touch devices).
+
+**Use cases:** Resume autoplay, finalize interactions
+
+```javascript
+slider.events.on('touchEnd', function(info) {
+  setTimeout(() => slider.play(), 1000);
+});
+```
+
+---
+
+### dragStart
+
+Fired when user starts dragging with mouse (when `mouseDrag: true`).
+
+**Use cases:** Same as touchStart, but for mouse interactions
+
+```javascript
+slider.events.on('dragStart', function(info) {
+  console.log('Mouse drag started');
+});
+```
+
+---
+
+### dragMove
+
+Fired repeatedly while user is dragging with mouse.
+
+**Use cases:** Custom drag effects
+
+```javascript
+slider.events.on('dragMove', function(info) {
+  console.log('Mouse dragging...');
+});
+```
+
+---
+
+### dragEnd
+
+Fired when user stops dragging with mouse.
+
+**Use cases:** Finalize drag interactions
+
+```javascript
+slider.events.on('dragEnd', function(info) {
+  console.log('Mouse drag ended');
+});
+```
+
+---
+
+## Event Callback Parameter
+
+All event callbacks receive a [TinySliderInfo](/api/info-object) object as their first parameter:
+
+```javascript
+slider.events.on('indexChanged', function(info) {
+  console.log('Event:', info.event);
+  console.log('Container:', info.container);
+  console.log('Current index:', info.index);
+  console.log('Previous index:', info.indexCached);
+  console.log('All slides:', info.slideItems);
+  console.log('Total slides:', info.slideCount);
+  console.log('Items per page:', info.items);
+  console.log('Slide by:', info.slideBy);
+  // ... see Info Object docs for complete list
+});
+```
+
+## Event Timing and Order
+
+When a slide change occurs, events fire in this order:
+
+1. **User initiates change** (click, touch, or programmatic)
+2. `transitionStart` - Animation begins
+3. **Animation occurs**
+4. `transitionEnd` - Animation completes
+5. `indexChanged` - Index is updated
+
+For touch/drag interactions:
+
+1. `touchStart` / `dragStart` - User begins dragging
+2. `touchMove` / `dragMove` - User is dragging (fires repeatedly)
+3. `touchEnd` / `dragEnd` - User releases
+4. `transitionStart` - Slide animates to final position
+5. `transitionEnd`
+6. `indexChanged`
+
+For responsive breakpoint changes:
+
+1. **Window resized**
+2. `newBreakpointStart` - Breakpoint change begins
+3. **Slider recalculates**
+4. `newBreakpointEnd` - Breakpoint change complete
+
+## Multiple Event Listeners
+
+You can attach multiple listeners to the same event:
+
+```javascript
+// First listener - update counter
+slider.events.on('indexChanged', function(info) {
+  updateCounter(info.index);
+});
+
+// Second listener - track analytics
+slider.events.on('indexChanged', function(info) {
+  trackAnalytics(info);
+});
+
+// Third listener - update thumbnails
+slider.events.on('indexChanged', function(info) {
+  updateThumbnails(info.index);
+});
+
+// All three will execute
+```
+
+## Event Patterns
+
+<CodeGroup>
+```javascript Complete Navigation System
+const slider = tns({
+  container: '.my-slider',
+  items: 1,
+  autoplay: true
+});
+
+// Update counter and progress bar
+function updateUI(info) {
+  // Counter
+  document.querySelector('.current').textContent = info.index + 1;
+  document.querySelector('.total').textContent = info.slideCount;
+  
+  // Progress bar
+  const progress = ((info.index + 1) / info.slideCount) * 100;
+  document.querySelector('.progress-bar').style.width = `${progress}%`;
+  
+  // Update thumbnails
+  document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+    thumb.classList.toggle('active', i === info.index);
+  });
+}
+
+slider.events.on('indexChanged', updateUI);
+slider.events.on('transitionEnd', updateUI);
+```
+
+```javascript Pause/Resume on Interaction
+let userInteracted = false;
+
+slider.events.on('touchStart', function(info) {
+  userInteracted = true;
+  slider.pause();
+});
+
+slider.events.on('dragStart', function(info) {
+  userInteracted = true;
+  slider.pause();
+});
+
+slider.events.on('touchEnd', function(info) {
+  if (userInteracted) {
+    setTimeout(() => {
+      slider.play();
+      userInteracted = false;
+    }, 2000);
+  }
+});
+
+slider.events.on('dragEnd', function(info) {
+  if (userInteracted) {
+    setTimeout(() => {
+      slider.play();
+      userInteracted = false;
+    }, 2000);
+  }
+});
+```
+
+```javascript Loading State Management
+slider.events.on('transitionStart', function(info) {
+  document.body.classList.add('slider-transitioning');
+});
+
+slider.events.on('transitionEnd', function(info) {
+  document.body.classList.remove('slider-transitioning');
+});
+```
+
+```javascript Conditional Content Loading
+const loadedSlides = new Set();
+
+slider.events.on('indexChanged', function(info) {
+  // Load current and next 2 slides
+  const toLoad = [
+    info.index,
+    info.index + 1,
+    info.index + 2
+  ];
+  
+  toLoad.forEach(index => {
+    if (index < info.slideCount && !loadedSlides.has(index)) {
+      loadSlideContent(index);
+      loadedSlides.add(index);
+    }
+  });
+});
+
+// Trigger for first slide
+const initialInfo = slider.getInfo();
+loadSlideContent(initialInfo.index);
+loadedSlides.add(initialInfo.index);
+```
+</CodeGroup>
+
+## Cleanup
+
+Always unsubscribe from events when destroying the slider or cleaning up:
+
+```javascript
+const handleChange = (info) => console.log(info.index);
+
+// Subscribe
+slider.events.on('indexChanged', handleChange);
+
+// Cleanup
+function cleanup() {
+  slider.events.off('indexChanged', handleChange);
+  slider.destroy();
+}
+```
+
+<Note>
+  When you call `slider.destroy()`, all event listeners are automatically removed. However, it's good practice to manually unsubscribe if you're replacing callbacks during the slider's lifetime.
+</Note>

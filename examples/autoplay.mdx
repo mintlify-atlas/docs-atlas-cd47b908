@@ -1,0 +1,497 @@
+---
+title: 'Autoplay'
+description: 'Create sliders that automatically advance with customizable timing and controls'
+icon: 'play'
+---
+
+## Overview
+
+Autoplay makes your slider automatically advance through slides at a specified interval. It's perfect for hero sections, promotional banners, testimonials, and any content that benefits from automatic progression.
+
+## Complete Example
+
+<CodeGroup>
+
+```html HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    .autoplay-slider {
+      margin: 0 auto;
+      max-width: 900px;
+    }
+    .hero-slide {
+      height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      background-size: cover;
+      background-position: center;
+    }
+    .hero-slide h2 {
+      font-size: 48px;
+      margin: 0 0 20px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .hero-slide p {
+      font-size: 24px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="autoplay-slider">
+    <div class="hero-slide" style="background-image: url('hero1.jpg')">
+      <h2>Welcome to Our Site</h2>
+      <p>Discover amazing products</p>
+    </div>
+    <div class="hero-slide" style="background-image: url('hero2.jpg')">
+      <h2>Special Offers</h2>
+      <p>Save up to 50% this week</p>
+    </div>
+    <div class="hero-slide" style="background-image: url('hero3.jpg')">
+      <h2>Free Shipping</h2>
+      <p>On orders over $50</p>
+    </div>
+    <div class="hero-slide" style="background-image: url('hero4.jpg')">
+      <h2>New Arrivals</h2>
+      <p>Check out our latest collection</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+</body>
+</html>
+```
+
+```javascript JavaScript
+var slider = tns({
+  container: '.autoplay-slider',
+  items: 1,
+  slideBy: 1,
+  autoplay: true,
+  autoplayTimeout: 5000,
+  autoplayDirection: 'forward',
+  autoplayText: ['▶', '❚❚'],
+  autoplayHoverPause: true,
+  autoplayButton: false,
+  autoplayButtonOutput: true,
+  autoplayResetOnVisibility: true,
+  controls: true,
+  controlsText: ['‹', '›'],
+  nav: true,
+  navPosition: 'bottom',
+  speed: 600,
+  loop: true
+});
+```
+
+```markdown Result
+The slider automatically advances every 5 seconds with:
+- Automatic slide progression
+- Play/Pause button (▶ ❚❚)
+- Pauses when user hovers over slider
+- Resumes when page becomes visible again
+- Forward direction (left to right)
+- 600ms transition speed
+- Manual controls still available
+- Navigation dots for direct access
+```
+
+</CodeGroup>
+
+## Key Options Explained
+
+### autoplay
+```javascript
+autoplay: true
+```
+Enables automatic slide progression. Default is `false`.
+
+### autoplayTimeout
+```javascript
+autoplayTimeout: 5000
+```
+Time between slide changes in milliseconds. Default is `5000` (5 seconds).
+
+### autoplayDirection
+```javascript
+autoplayDirection: 'forward'
+```
+Direction of autoplay:
+- `'forward'` - Moves forward through slides (default)
+- `'backward'` - Moves backward through slides
+
+### autoplayHoverPause
+```javascript
+autoplayHoverPause: true
+```
+Pauses autoplay when user hovers over the slider. Default is `false`.
+
+<Tip>
+Always enable `autoplayHoverPause: true` for better user experience. It allows users to read content without interruption.
+</Tip>
+
+### autoplayButtonOutput
+```javascript
+autoplayButtonOutput: true
+```
+Automatically creates a play/pause button. Default is `true`.
+
+### autoplayText
+```javascript
+autoplayText: ['▶', '❚❚']
+```
+Text or HTML for the play/pause button. First element is play, second is pause. Default is `['start', 'stop']`.
+
+Common choices:
+- `['▶', '❚❚']` - Play/pause symbols
+- `['▶', '⏸']` - Play/pause icons
+- `['Play', 'Pause']` - Text labels
+- `['START', 'STOP']` - Default text
+
+### autoplayResetOnVisibility
+```javascript
+autoplayResetOnVisibility: true
+```
+Pauses autoplay when page is hidden (user switches tabs) and resumes when visible again. Uses the [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API). Default is `true`.
+
+## Autoplay Control Methods
+
+### Play and Pause Programmatically
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true,
+  autoplayTimeout: 3000
+});
+
+// Pause autoplay
+slider.pause();
+
+// Resume autoplay
+slider.play();
+```
+
+### Custom Play/Pause Button
+
+```html
+<button id="customPlayPause">Pause</button>
+
+<div class="slider">
+  <!-- slides -->
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true,
+  autoplayButtonOutput: false  // Hide default button
+});
+
+var customButton = document.getElementById('customPlayPause');
+var isPlaying = true;
+
+customButton.addEventListener('click', function() {
+  if (isPlaying) {
+    slider.pause();
+    customButton.textContent = 'Play';
+  } else {
+    slider.play();
+    customButton.textContent = 'Pause';
+  }
+  isPlaying = !isPlaying;
+});
+```
+
+### Use Custom Autoplay Button Element
+
+```html
+<button id="myAutoplayButton">Pause</button>
+<div class="slider"></div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true,
+  autoplayButton: '#myAutoplayButton',
+  autoplayText: ['Resume', 'Pause']
+});
+```
+
+<Note>
+When using a custom `autoplayButton`, Tiny Slider automatically handles the click events and updates the button text based on `autoplayText`.
+</Note>
+
+## Autoplay with Gallery Mode
+
+Create an automatic slideshow:
+
+```javascript
+var slideshow = tns({
+  container: '.slideshow',
+  mode: 'gallery',
+  items: 1,
+  autoplay: true,
+  autoplayTimeout: 4000,
+  autoplayHoverPause: true,
+  autoplayButtonOutput: false,
+  controls: false,
+  nav: true,
+  speed: 800,
+  animateIn: 'tns-fadeIn',
+  animateOut: 'tns-fadeOut'
+});
+```
+
+## Progress Bar for Autoplay
+
+Create a visual progress indicator:
+
+```html
+<style>
+  .progress-container {
+    position: relative;
+  }
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: #667eea;
+    width: 0;
+    transition: width 0.1s linear;
+  }
+</style>
+
+<div class="progress-container">
+  <div class="slider"></div>
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true,
+  autoplayTimeout: 5000
+});
+
+var progressBar = document.getElementById('progressBar');
+var timeout = 5000;
+var interval = 50;
+var progress = 0;
+var timer;
+
+function updateProgress() {
+  progress += (interval / timeout) * 100;
+  if (progress >= 100) {
+    progress = 0;
+  }
+  progressBar.style.width = progress + '%';
+}
+
+timer = setInterval(updateProgress, interval);
+
+// Reset progress on slide change
+slider.events.on('indexChanged', function() {
+  progress = 0;
+  progressBar.style.width = '0%';
+});
+```
+
+## Autoplay Direction Control
+
+### Forward Direction
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true,
+  autoplayDirection: 'forward'  // Goes from first to last
+});
+```
+
+### Backward Direction
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true,
+  autoplayDirection: 'backward'  // Goes from last to first
+});
+```
+
+### Toggle Direction
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true,
+  autoplayDirection: 'forward'
+});
+
+// Toggle direction button
+document.getElementById('toggleDirection').addEventListener('click', function() {
+  slider.pause();
+  slider.destroy();
+  
+  var currentDirection = slider.getInfo().autoplayDirection;
+  var newDirection = currentDirection === 'forward' ? 'backward' : 'forward';
+  
+  slider = tns({
+    container: '.slider',
+    autoplay: true,
+    autoplayDirection: newDirection
+  });
+});
+```
+
+## Responsive Autoplay
+
+Control autoplay behavior by screen size:
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  autoplay: false,  // Disabled on mobile
+  responsive: {
+    640: {
+      autoplay: false  // Still disabled on small tablets
+    },
+    768: {
+      autoplay: true,  // Enable on tablets
+      autoplayTimeout: 4000,
+      autoplayHoverPause: true
+    },
+    1024: {
+      autoplayTimeout: 5000  // Longer timeout on desktop
+    }
+  }
+});
+```
+
+## Autoplay with Different Speeds
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  autoplay: true,
+  autoplayTimeout: 5000,  // 5 seconds between slides
+  speed: 800              // 800ms transition speed
+});
+```
+
+<Note>
+`autoplayTimeout` is the delay between slides, while `speed` is the transition duration. They are independent settings.
+</Note>
+
+## Pause on User Interaction
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true,
+  autoplayTimeout: 5000,
+  autoplayHoverPause: false
+});
+
+var info = slider.getInfo();
+
+// Pause on any user interaction
+info.container.addEventListener('click', function() {
+  slider.pause();
+});
+
+// Pause when controls are used
+slider.events.on('transitionStart', function(info) {
+  if (info.event && info.event.type === 'click') {
+    slider.pause();
+  }
+});
+```
+
+## Autoplay Best Practices
+
+<Tip>
+**Accessibility Considerations:**
+- Always provide a play/pause button
+- Enable `autoplayHoverPause: true`
+- Use reasonable timeout values (3-7 seconds)
+- Don't use very fast autoplay speeds
+- Consider disabling autoplay on mobile devices
+</Tip>
+
+<Warning>
+**Performance Tips:**
+- Avoid very short timeout values (< 2000ms)
+- Use `autoplayResetOnVisibility: true` to pause when tab is hidden
+- Consider user preferences and motion settings
+- Test autoplay on various devices
+</Warning>
+
+## Autoplay Events
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true
+});
+
+// Track autoplay state
+slider.events.on('indexChanged', function(info) {
+  console.log('Slide changed to:', info.index);
+});
+
+slider.events.on('transitionStart', function(info) {
+  console.log('Transition started');
+});
+
+slider.events.on('transitionEnd', function(info) {
+  console.log('Transition ended');
+});
+```
+
+## Stop Autoplay After User Interaction
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoplay: true,
+  autoplayTimeout: 4000
+});
+
+var hasInteracted = false;
+
+// Stop autoplay after first manual interaction
+slider.events.on('transitionStart', function(info) {
+  if (!hasInteracted && info.event) {
+    hasInteracted = true;
+    slider.pause();
+  }
+});
+```
+
+## Related Examples
+
+<CardGroup cols={2}>
+  <Card title="Gallery Mode" icon="images" href="/examples/gallery-mode">
+    Autoplay with fade animations
+  </Card>
+  <Card title="Vertical Slider" icon="up-down" href="/examples/vertical-slider">
+    Vertical autoplay direction
+  </Card>
+  <Card title="Responsive Slider" icon="mobile-screen" href="/examples/responsive-slider">
+    Control autoplay per breakpoint
+  </Card>
+  <Card title="Custom Controls" icon="gamepad" href="/examples/custom-controls">
+    Custom play/pause buttons
+  </Card>
+</CardGroup>

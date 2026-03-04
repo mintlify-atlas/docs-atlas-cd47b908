@@ -1,0 +1,512 @@
+---
+title: 'Lazy Loading'
+description: 'Load images on-demand as they come into view to improve performance'
+icon: 'image'
+---
+
+## Overview
+
+Lazy loading delays the loading of images until they're about to be displayed, significantly improving initial page load time and saving bandwidth. This is especially important for sliders with many images or large image files.
+
+## Complete Example
+
+<CodeGroup>
+
+```html HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    .lazy-slider {
+      margin: 0 auto;
+      max-width: 900px;
+    }
+    .slide {
+      padding: 10px;
+    }
+    .slide img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
+    .slide h3 {
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="lazy-slider">
+    <div class="slide">
+      <img class="tns-lazy-img" 
+           data-src="images/slide1.jpg" 
+           alt="Slide 1">
+      <h3>Image 1</h3>
+    </div>
+    <div class="slide">
+      <img class="tns-lazy-img" 
+           data-src="images/slide2.jpg" 
+           alt="Slide 2">
+      <h3>Image 2</h3>
+    </div>
+    <div class="slide">
+      <img class="tns-lazy-img" 
+           data-src="images/slide3.jpg" 
+           alt="Slide 3">
+      <h3>Image 3</h3>
+    </div>
+    <div class="slide">
+      <img class="tns-lazy-img" 
+           data-src="images/slide4.jpg" 
+           alt="Slide 4">
+      <h3>Image 4</h3>
+    </div>
+    <div class="slide">
+      <img class="tns-lazy-img" 
+           data-src="images/slide5.jpg" 
+           alt="Slide 5">
+      <h3>Image 5</h3>
+    </div>
+    <div class="slide">
+      <img class="tns-lazy-img" 
+           data-src="images/slide6.jpg" 
+           alt="Slide 6">
+      <h3>Image 6</h3>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+</body>
+</html>
+```
+
+```javascript JavaScript
+var slider = tns({
+  container: '.lazy-slider',
+  items: 3,
+  slideBy: 1,
+  lazyload: true,
+  lazyloadSelector: '.tns-lazy-img',
+  gutter: 20,
+  controls: true,
+  nav: true,
+  loop: true,
+  mouseDrag: true,
+  speed: 400
+});
+```
+
+```markdown Result
+The slider with lazy loading:
+- Only loads images that are currently visible or about to be visible
+- Uses data-src attribute for image sources
+- Automatically converts data-src to src when needed
+- Significantly reduces initial page load time
+- Saves bandwidth by not loading off-screen images
+- Images load smoothly as user navigates
+```
+
+</CodeGroup>
+
+## Key Options Explained
+
+### lazyload
+```javascript
+lazyload: true
+```
+Enables lazy loading functionality. Default is `false`.
+
+### lazyloadSelector
+```javascript
+lazyloadSelector: '.tns-lazy-img'
+```
+CSS selector for images to lazy load. Default is `'.tns-lazy-img'`.
+
+<Note>
+If you don't specify `lazyloadSelector`, the default class `.tns-lazy-img` must be added to every image you want to lazy load.
+</Note>
+
+## HTML Setup for Lazy Loading
+
+### Basic Structure
+```html
+<img class="tns-lazy-img" 
+     data-src="path/to/image.jpg" 
+     alt="Description">
+```
+
+### Required Attributes
+
+1. **Class for Selection** (default: `.tns-lazy-img`)
+   ```html
+   <img class="tns-lazy-img" ...>
+   ```
+
+2. **data-src Attribute** (required)
+   ```html
+   <img data-src="actual-image.jpg" ...>
+   ```
+   The real image URL goes in `data-src`, not `src`.
+
+3. **Width Attribute** (required for autoWidth)
+   ```html
+   <img class="tns-lazy-img" 
+        data-src="image.jpg" 
+        width="400" 
+        alt="">
+   ```
+
+<Warning>
+The `width` attribute is **required** for every image when using `autoWidth: true` with lazy loading. Without it, the slider cannot calculate proper dimensions.
+</Warning>
+
+## Custom Lazy Load Selector
+
+```html
+<div class="slider">
+  <div>
+    <img class="lazy-image" data-src="img1.jpg" alt="">
+  </div>
+  <div>
+    <img class="lazy-image" data-src="img2.jpg" alt="">
+  </div>
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  lazyload: true,
+  lazyloadSelector: '.lazy-image'  // Custom selector
+});
+```
+
+## Lazy Loading with Placeholder
+
+Show a placeholder while images load:
+
+```html
+<style>
+  .lazy-image {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+  
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  .lazy-image[src] {
+    animation: none;
+    background: none;
+  }
+</style>
+
+<img class="tns-lazy-img lazy-image" 
+     data-src="large-image.jpg" 
+     alt="Product image">
+```
+
+## Lazy Loading with Low-Quality Placeholder
+
+```html
+<img class="tns-lazy-img" 
+     src="thumbnail-tiny.jpg" 
+     data-src="full-quality.jpg" 
+     alt="High quality image">
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  lazyload: true
+});
+```
+
+The `src` attribute contains a tiny thumbnail that loads immediately, and `data-src` contains the full-quality image that loads when needed.
+
+## Lazy Loading with srcset
+
+For responsive images:
+
+```html
+<img class="tns-lazy-img"
+     data-src="image-800.jpg"
+     data-srcset="image-400.jpg 400w,
+                  image-800.jpg 800w,
+                  image-1200.jpg 1200w"
+     sizes="(max-width: 640px) 100vw, 33vw"
+     alt="Responsive image">
+```
+
+<Note>
+Use `data-srcset` instead of `srcset` for responsive image sources. Tiny Slider will convert `data-srcset` to `srcset` when loading the image.
+</Note>
+
+## Lazy Loading with autoWidth
+
+```html
+<div class="slider">
+  <div>
+    <img class="tns-lazy-img" 
+         data-src="img1.jpg" 
+         width="400" 
+         height="300" 
+         alt="">
+  </div>
+  <div>
+    <img class="tns-lazy-img" 
+         data-src="img2.jpg" 
+         width="600" 
+         height="400" 
+         alt="">
+  </div>
+  <div>
+    <img class="tns-lazy-img" 
+         data-src="img3.jpg" 
+         width="500" 
+         height="350" 
+         alt="">
+  </div>
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  autoWidth: true,
+  lazyload: true,
+  gutter: 10,
+  controls: true,
+  nav: true
+});
+```
+
+<Warning>
+When using `autoWidth: true`, the `width` attribute is **required** on every image for proper layout calculation.
+</Warning>
+
+## Lazy Loading Performance
+
+### How Many Images Are Loaded?
+
+Tiny Slider loads:
+- Currently visible slides
+- Immediately adjacent slides (for smooth transitions)
+- Cloned slides if `loop: true`
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,        // Shows 3 slides
+  lazyload: true,
+  loop: true
+});
+// Typically loads 5-7 images initially:
+// - 3 visible slides
+// - 1-2 slides on each side
+// - Cloned slides as needed
+```
+
+### Monitor Lazy Loading
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 3,
+  lazyload: true
+});
+
+slider.events.on('indexChanged', function(info) {
+  // Check which images are loaded
+  var images = info.slideItems;
+  Array.from(images).forEach(function(slide, index) {
+    var img = slide.querySelector('img');
+    if (img && img.src) {
+      console.log('Slide ' + index + ' image loaded:', img.src);
+    } else if (img && img.dataset.src) {
+      console.log('Slide ' + index + ' image pending:', img.dataset.src);
+    }
+  });
+});
+```
+
+## Lazy Loading with Gallery Mode
+
+```html
+<div class="gallery">
+  <div>
+    <img class="tns-lazy-img" data-src="large1.jpg" alt="">
+  </div>
+  <div>
+    <img class="tns-lazy-img" data-src="large2.jpg" alt="">
+  </div>
+  <div>
+    <img class="tns-lazy-img" data-src="large3.jpg" alt="">
+  </div>
+</div>
+```
+
+```javascript
+var gallery = tns({
+  container: '.gallery',
+  mode: 'gallery',
+  items: 1,
+  lazyload: true,
+  speed: 600,
+  controls: true,
+  nav: true
+});
+```
+
+## Preload First Image
+
+Load the first image immediately for better UX:
+
+```html
+<div class="slider">
+  <div>
+    <!-- First image: use src (loads immediately) -->
+    <img src="first-image.jpg" alt="">
+  </div>
+  <div>
+    <!-- Other images: use data-src (lazy load) -->
+    <img class="tns-lazy-img" data-src="image2.jpg" alt="">
+  </div>
+  <div>
+    <img class="tns-lazy-img" data-src="image3.jpg" alt="">
+  </div>
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1,
+  lazyload: true,
+  lazyloadSelector: '.tns-lazy-img'  // Only lazy load marked images
+});
+```
+
+## Background Image Lazy Loading
+
+Lazy load background images:
+
+```html
+<style>
+  .bg-slide {
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+  }
+</style>
+
+<div class="slider">
+  <div class="bg-slide" data-bg="bg1.jpg"></div>
+  <div class="bg-slide" data-bg="bg2.jpg"></div>
+  <div class="bg-slide" data-bg="bg3.jpg"></div>
+</div>
+```
+
+```javascript
+var slider = tns({
+  container: '.slider',
+  items: 1
+});
+
+// Manual lazy loading for backgrounds
+slider.events.on('indexChanged', function(info) {
+  var currentSlide = info.slideItems[info.index];
+  var nextSlide = info.slideItems[info.index + 1];
+  
+  [currentSlide, nextSlide].forEach(function(slide) {
+    if (slide && slide.dataset.bg && !slide.style.backgroundImage) {
+      slide.style.backgroundImage = 'url(' + slide.dataset.bg + ')';
+    }
+  });
+});
+
+// Load first background immediately
+var firstSlide = slider.getInfo().slideItems[0];
+if (firstSlide.dataset.bg) {
+  firstSlide.style.backgroundImage = 'url(' + firstSlide.dataset.bg + ')';
+}
+```
+
+## Lazy Loading Best Practices
+
+<Tip>
+**Performance Tips:**
+- Use lazy loading for sliders with 6+ images
+- Optimize image file sizes before uploading
+- Use appropriate image dimensions
+- Consider using WebP format for better compression
+- Preload the first 1-2 images for instant display
+</Tip>
+
+<Tip>
+**Accessibility:**
+- Always include `alt` attributes
+- Use descriptive alt text
+- Ensure images have proper width/height to prevent layout shift
+- Test with slow network connections
+</Tip>
+
+## Troubleshooting
+
+### Images Not Loading
+
+**Problem:** Images remain as `data-src` and never load.
+
+**Solutions:**
+1. Verify `lazyload: true` is set
+2. Check that images have the correct class (`.tns-lazy-img` by default)
+3. Ensure `data-src` contains valid image URLs
+4. For `autoWidth`, add `width` attribute to images
+
+### Layout Shift
+
+**Problem:** Page jumps when images load.
+
+**Solution:** Always specify dimensions:
+
+```html
+<img class="tns-lazy-img" 
+     data-src="image.jpg" 
+     width="800" 
+     height="600" 
+     alt="">
+```
+
+Or use CSS:
+
+```css
+.slide img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+```
+
+## Related Examples
+
+<CardGroup cols={2}>
+  <Card title="Basic Carousel" icon="circle-play" href="/examples/basic-carousel">
+    Add lazy loading to basic carousel
+  </Card>
+  <Card title="Gallery Mode" icon="images" href="/examples/gallery-mode">
+    Lazy load gallery images
+  </Card>
+  <Card title="Responsive Slider" icon="mobile-screen" href="/examples/responsive-slider">
+    Responsive images with lazy loading
+  </Card>
+  <Card title="Autoplay" icon="play" href="/examples/autoplay">
+    Combine autoplay with lazy loading
+  </Card>
+</CardGroup>

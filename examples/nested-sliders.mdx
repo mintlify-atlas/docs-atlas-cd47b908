@@ -1,0 +1,633 @@
+---
+title: 'Nested Sliders'
+description: 'Create sliders within sliders with proper inner/outer relationships'
+icon: 'layer-group'
+---
+
+## Overview
+
+Nested sliders allow you to have a slider inside another slider, creating complex layouts like product carousels within category sliders or image galleries within content sections. Tiny Slider provides the `nested` option to properly handle the relationship between parent and child sliders.
+
+<Warning>
+**Important:** Always initialize the **inner (child) slider first**, then the outer (parent) slider. Otherwise, the height of the inner slider container will be calculated incorrectly.
+</Warning>
+
+## Complete Example
+
+<CodeGroup>
+
+```html HTML
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+  <style>
+    .outer-slider {
+      margin: 0 auto;
+      max-width: 1000px;
+      padding: 20px;
+    }
+    .outer-slide {
+      padding: 30px;
+      background: #f5f5f5;
+      border-radius: 10px;
+    }
+    .outer-slide h2 {
+      margin: 0 0 20px 0;
+      text-align: center;
+    }
+    .inner-slider {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .inner-slide {
+      padding: 15px;
+      text-align: center;
+    }
+    .inner-slide img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .inner-slide h3 {
+      margin-top: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Outer Slider -->
+  <div class="outer-slider">
+    
+    <!-- Outer Slide 1 -->
+    <div class="outer-slide">
+      <h2>Electronics</h2>
+      <!-- Inner Slider 1 -->
+      <div class="inner-slider inner-slider-1">
+        <div class="inner-slide">
+          <img src="laptop1.jpg" alt="Laptop">
+          <h3>Laptop Pro</h3>
+        </div>
+        <div class="inner-slide">
+          <img src="phone1.jpg" alt="Phone">
+          <h3>Smartphone X</h3>
+        </div>
+        <div class="inner-slide">
+          <img src="tablet1.jpg" alt="Tablet">
+          <h3>Tablet Air</h3>
+        </div>
+        <div class="inner-slide">
+          <img src="watch1.jpg" alt="Watch">
+          <h3>Smart Watch</h3>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Outer Slide 2 -->
+    <div class="outer-slide">
+      <h2>Fashion</h2>
+      <!-- Inner Slider 2 -->
+      <div class="inner-slider inner-slider-2">
+        <div class="inner-slide">
+          <img src="shirt1.jpg" alt="Shirt">
+          <h3>Cotton Shirt</h3>
+        </div>
+        <div class="inner-slide">
+          <img src="jeans1.jpg" alt="Jeans">
+          <h3>Denim Jeans</h3>
+        </div>
+        <div class="inner-slide">
+          <img src="shoes1.jpg" alt="Shoes">
+          <h3>Sneakers</h3>
+        </div>
+        <div class="inner-slide">
+          <img src="jacket1.jpg" alt="Jacket">
+          <h3>Leather Jacket</h3>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Outer Slide 3 -->
+    <div class="outer-slide">
+      <h2>Home & Garden</h2>
+      <!-- Inner Slider 3 -->
+      <div class="inner-slider inner-slider-3">
+        <div class="inner-slide">
+          <img src="sofa1.jpg" alt="Sofa">
+          <h3>Modern Sofa</h3>
+        </div>
+        <div class="inner-slide">
+          <img src="lamp1.jpg" alt="Lamp">
+          <h3>Floor Lamp</h3>
+        </div>
+        <div class="inner-slide">
+          <img src="plant1.jpg" alt="Plant">
+          <h3>Indoor Plant</h3>
+        </div>
+        <div class="inner-slide">
+          <img src="rug1.jpg" alt="Rug">
+          <h3>Area Rug</h3>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.js"></script>
+</body>
+</html>
+```
+
+```javascript JavaScript
+// IMPORTANT: Initialize inner sliders FIRST
+var innerSlider1 = tns({
+  container: '.inner-slider-1',
+  items: 3,
+  slideBy: 1,
+  gutter: 15,
+  controls: true,
+  controlsText: ['‹', '›'],
+  nav: false,
+  mouseDrag: true,
+  nested: 'inner',      // Mark as inner slider
+  loop: true,
+  speed: 300
+});
+
+var innerSlider2 = tns({
+  container: '.inner-slider-2',
+  items: 3,
+  slideBy: 1,
+  gutter: 15,
+  controls: true,
+  controlsText: ['‹', '›'],
+  nav: false,
+  mouseDrag: true,
+  nested: 'inner',
+  loop: true,
+  speed: 300
+});
+
+var innerSlider3 = tns({
+  container: '.inner-slider-3',
+  items: 3,
+  slideBy: 1,
+  gutter: 15,
+  controls: true,
+  controlsText: ['‹', '›'],
+  nav: false,
+  mouseDrag: true,
+  nested: 'inner',
+  loop: true,
+  speed: 300
+});
+
+// Initialize outer slider AFTER inner sliders
+var outerSlider = tns({
+  container: '.outer-slider',
+  items: 1,
+  slideBy: 1,
+  controls: true,
+  controlsText: ['← Previous Category', 'Next Category →'],
+  controlsPosition: 'bottom',
+  nav: true,
+  navPosition: 'bottom',
+  mouseDrag: true,
+  nested: 'outer',      // Mark as outer slider
+  loop: true,
+  speed: 500
+});
+```
+
+```markdown Result
+The nested slider structure provides:
+- Outer slider showing one category at a time
+- Each category contains an inner slider with 3 products
+- Inner sliders have their own navigation controls
+- Outer slider has category navigation
+- Mouse drag works independently for inner and outer sliders
+- Touch gestures properly distinguish between levels
+- All sliders loop independently
+```
+
+</CodeGroup>
+
+## Key Concepts
+
+### nested Option
+
+```javascript
+nested: 'inner'  // For child/inner slider
+nested: 'outer'  // For parent/outer slider
+```
+
+The `nested` option defines the relationship:
+- `'inner'` - Marks slider as a child slider inside another slider
+- `'outer'` - Marks slider as a parent slider containing other sliders
+- `false` - Default, no nesting (default)
+
+### Initialization Order
+
+<Warning>
+**Critical:** Always initialize in this order:
+1. Inner sliders first
+2. Outer slider last
+
+Incorrect order will cause layout issues with inner slider heights.
+</Warning>
+
+```javascript
+// ✅ CORRECT ORDER
+var inner1 = tns({ container: '.inner-1', nested: 'inner' });
+var inner2 = tns({ container: '.inner-2', nested: 'inner' });
+var outer = tns({ container: '.outer', nested: 'outer' });
+
+// ❌ WRONG ORDER
+var outer = tns({ container: '.outer', nested: 'outer' });
+var inner1 = tns({ container: '.inner-1', nested: 'inner' });
+var inner2 = tns({ container: '.inner-2', nested: 'inner' });
+```
+
+## Simple Nested Example
+
+A minimal nested slider setup:
+
+```html
+<div class="outer">
+  <div>
+    <h2>Category 1</h2>
+    <div class="inner inner-1">
+      <div>Item 1</div>
+      <div>Item 2</div>
+      <div>Item 3</div>
+    </div>
+  </div>
+  <div>
+    <h2>Category 2</h2>
+    <div class="inner inner-2">
+      <div>Item 4</div>
+      <div>Item 5</div>
+      <div>Item 6</div>
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+// Inner sliders
+var inner1 = tns({
+  container: '.inner-1',
+  items: 2,
+  nested: 'inner'
+});
+
+var inner2 = tns({
+  container: '.inner-2',
+  items: 2,
+  nested: 'inner'
+});
+
+// Outer slider
+var outer = tns({
+  container: '.outer',
+  items: 1,
+  nested: 'outer'
+});
+```
+
+## Touch and Drag Behavior
+
+Nested sliders automatically handle touch/drag events:
+
+```javascript
+// Inner slider - responds to drag
+var inner = tns({
+  container: '.inner',
+  items: 3,
+  nested: 'inner',
+  mouseDrag: true,
+  touch: true,
+  swipeAngle: 15      // Angle threshold
+});
+
+// Outer slider - responds when drag is more horizontal
+var outer = tns({
+  container: '.outer',
+  items: 1,
+  nested: 'outer',
+  mouseDrag: true,
+  touch: true,
+  swipeAngle: 15
+});
+```
+
+The `nested` option helps the sliders determine which one should respond to drag gestures based on the drag angle and direction.
+
+## Vertical Nested Sliders
+
+Nest a horizontal slider inside a vertical one:
+
+```html
+<div class="vertical-outer" style="height: 600px;">
+  <div class="vertical-slide">
+    <h2>Section 1</h2>
+    <div class="horizontal-inner horizontal-inner-1">
+      <div>Item 1</div>
+      <div>Item 2</div>
+      <div>Item 3</div>
+    </div>
+  </div>
+  <div class="vertical-slide">
+    <h2>Section 2</h2>
+    <div class="horizontal-inner horizontal-inner-2">
+      <div>Item 4</div>
+      <div>Item 5</div>
+      <div>Item 6</div>
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+// Horizontal inner sliders
+var innerH1 = tns({
+  container: '.horizontal-inner-1',
+  axis: 'horizontal',
+  items: 3,
+  nested: 'inner',
+  mouseDrag: true
+});
+
+var innerH2 = tns({
+  container: '.horizontal-inner-2',
+  axis: 'horizontal',
+  items: 3,
+  nested: 'inner',
+  mouseDrag: true
+});
+
+// Vertical outer slider
+var outerV = tns({
+  container: '.vertical-outer',
+  axis: 'vertical',
+  items: 1,
+  nested: 'outer',
+  mouseDrag: true
+});
+```
+
+## Dynamic Inner Sliders
+
+Initialize inner sliders when outer slider changes:
+
+```javascript
+var innerSliders = {};
+
+var outer = tns({
+  container: '.outer',
+  items: 1,
+  nested: 'outer'
+});
+
+// Initialize visible inner slider
+function initInnerSlider(index) {
+  var selector = '.inner-slider-' + index;
+  
+  if (!innerSliders[index]) {
+    innerSliders[index] = tns({
+      container: selector,
+      items: 3,
+      nested: 'inner',
+      controls: true,
+      nav: false
+    });
+  }
+}
+
+// Initialize first inner slider
+initInnerSlider(0);
+
+// Initialize inner sliders as outer slider changes
+outer.events.on('indexChanged', function(info) {
+  initInnerSlider(info.index);
+});
+```
+
+## Nested Gallery Sliders
+
+```javascript
+// Inner galleries (fade mode)
+var innerGallery1 = tns({
+  container: '.inner-gallery-1',
+  mode: 'gallery',
+  items: 1,
+  nested: 'inner',
+  controls: true,
+  nav: true,
+  speed: 400
+});
+
+var innerGallery2 = tns({
+  container: '.inner-gallery-2',
+  mode: 'gallery',
+  items: 1,
+  nested: 'inner',
+  controls: true,
+  nav: true,
+  speed: 400
+});
+
+// Outer carousel
+var outerCarousel = tns({
+  container: '.outer-carousel',
+  items: 1,
+  nested: 'outer',
+  controls: true,
+  nav: true
+});
+```
+
+## Responsive Nested Sliders
+
+```javascript
+// Inner sliders - responsive items
+var inner1 = tns({
+  container: '.inner-1',
+  items: 1,
+  nested: 'inner',
+  responsive: {
+    640: { items: 2 },
+    768: { items: 3 }
+  }
+});
+
+// Outer slider - disable on large screens
+var outer = tns({
+  container: '.outer',
+  items: 1,
+  nested: 'outer',
+  responsive: {
+    1024: {
+      disable: true  // Show all categories side-by-side
+    }
+  }
+});
+```
+
+## Controlling Nested Sliders
+
+```javascript
+var inner1 = tns({
+  container: '.inner-1',
+  nested: 'inner',
+  items: 3
+});
+
+var inner2 = tns({
+  container: '.inner-2',
+  nested: 'inner',
+  items: 3
+});
+
+var outer = tns({
+  container: '.outer',
+  nested: 'outer',
+  items: 1
+});
+
+// Control outer slider
+outer.goTo(2);        // Go to third category
+
+// Control specific inner slider
+inner1.goTo(1);       // Go to second item in first category
+
+// Get info from nested sliders
+var outerInfo = outer.getInfo();
+var innerInfo = inner1.getInfo();
+
+console.log('Outer slide:', outerInfo.index);
+console.log('Inner slide:', innerInfo.index);
+```
+
+## Events in Nested Sliders
+
+```javascript
+var inner = tns({
+  container: '.inner',
+  nested: 'inner',
+  items: 3
+});
+
+var outer = tns({
+  container: '.outer',
+  nested: 'outer',
+  items: 1
+});
+
+// Listen to outer slider changes
+outer.events.on('indexChanged', function(info) {
+  console.log('Outer category changed to:', info.index);
+});
+
+// Listen to inner slider changes
+inner.events.on('indexChanged', function(info) {
+  console.log('Inner item changed to:', info.index);
+});
+```
+
+## Common Issues and Solutions
+
+### Inner Slider Height is Wrong
+
+**Problem:** Inner slider appears collapsed or has wrong height.
+
+**Solution:** Initialize inner sliders before outer slider:
+
+```javascript
+// ✅ Correct
+var inner = tns({ container: '.inner', nested: 'inner' });
+var outer = tns({ container: '.outer', nested: 'outer' });
+```
+
+### Drag Not Working Properly
+
+**Problem:** Dragging triggers both sliders or wrong slider.
+
+**Solution:** Set appropriate `swipeAngle` and ensure `nested` is configured:
+
+```javascript
+var inner = tns({
+  container: '.inner',
+  nested: 'inner',
+  swipeAngle: 15,
+  mouseDrag: true
+});
+
+var outer = tns({
+  container: '.outer',
+  nested: 'outer',
+  swipeAngle: 15,
+  mouseDrag: true
+});
+```
+
+### Performance with Many Nested Sliders
+
+**Problem:** Page is slow with many nested sliders.
+
+**Solution:** Initialize inner sliders on-demand:
+
+```javascript
+var outer = tns({ container: '.outer', nested: 'outer' });
+
+// Only initialize visible inner slider
+outer.events.on('indexChanged', function(info) {
+  var innerContainer = info.slideItems[info.index].querySelector('.inner');
+  if (innerContainer && !innerContainer.classList.contains('tns-slider')) {
+    tns({
+      container: innerContainer,
+      nested: 'inner',
+      items: 3
+    });
+  }
+});
+```
+
+## Best Practices
+
+<Tip>
+**Nested Slider Tips:**
+- Always initialize inner sliders before outer slider
+- Use unique class names or IDs for each inner slider
+- Set `nested: 'inner'` and `nested: 'outer'` appropriately
+- Test touch/drag behavior on mobile devices
+- Consider performance with many nested sliders
+- Use `swipeAngle` to control gesture recognition
+</Tip>
+
+<Warning>
+**Avoid:**
+- Three or more levels of nesting (can be confusing)
+- Initializing outer slider before inner sliders
+- Forgetting to set the `nested` option
+- Using autoplay on both nested sliders simultaneously
+</Warning>
+
+## Related Examples
+
+<CardGroup cols={2}>
+  <Card title="Basic Carousel" icon="circle-play" href="/examples/basic-carousel">
+    Learn carousel basics first
+  </Card>
+  <Card title="Responsive Slider" icon="mobile-screen" href="/examples/responsive-slider">
+    Make nested sliders responsive
+  </Card>
+  <Card title="Custom Controls" icon="gamepad" href="/examples/custom-controls">
+    Customize nested slider controls
+  </Card>
+  <Card title="Vertical Slider" icon="up-down" href="/examples/vertical-slider">
+    Combine vertical and horizontal
+  </Card>
+</CardGroup>
