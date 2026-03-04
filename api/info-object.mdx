@@ -28,25 +28,28 @@ slider.events.on('indexChanged', function(info) {
 ```typescript
 interface TinySliderInfo {
   event: Event | {};
-  cloneCount: number;
   container: HTMLElement;
-  controlsContainer?: boolean;
-  hasControls: boolean;
-  index: number;
-  indexCached: number;
-  items: number;
+  slideItems: HTMLCollection;
   navContainer?: HTMLElement;
-  navCurrentIndex?: number;
-  navCurrentIndexCached?: number;
   navItems?: HTMLCollection;
-  nextButton?: HTMLElement;
+  controlsContainer?: HTMLElement;
+  hasControls: boolean;
   prevButton?: HTMLElement;
+  nextButton?: HTMLElement;
+  items: number;
   slideBy: number;
+  cloneCount: number;
   slideCount: number;
   slideCountNew: number;
-  slideItems: HTMLCollection;
-  visibleNavIndexes?: number;
-  visibleNavIndexesCached?: number;
+  index: number;
+  indexCached: number;
+  displayIndex: number;
+  navCurrentIndex?: number;
+  navCurrentIndexCached?: number;
+  pages?: number;
+  pagesCached?: number;
+  sheet: CSSStyleSheet;
+  isOn: boolean;
 }
 ```
 
@@ -233,13 +236,13 @@ interface TinySliderInfo {
 
 ### controlsContainer
 
-<ResponseField name="controlsContainer" type="boolean | undefined">
-  Information about the controls container. Value may be boolean or undefined.
+<ResponseField name="controlsContainer" type="HTMLElement | undefined">
+  The HTMLElement that contains the prev/next control buttons, if using a custom controls container.
   
   ```javascript
   const info = slider.getInfo();
   if (info.controlsContainer) {
-    console.log('Using custom controls container');
+    console.log('Using custom controls container:', info.controlsContainer);
   }
   ```
 </ResponseField>
@@ -353,29 +356,70 @@ interface TinySliderInfo {
 
 ---
 
-### visibleNavIndexes
+### displayIndex
 
-<ResponseField name="visibleNavIndexes" type="number | undefined">
-  The number of visible navigation dots.
+<ResponseField name="displayIndex" type="number" required>
+  The current slide index for display purposes (1-based instead of 0-based).
   
   ```javascript
   const info = slider.getInfo();
-  if (info.visibleNavIndexes !== undefined) {
-    console.log('Visible nav dots:', info.visibleNavIndexes);
+  console.log('Slide ' + info.displayIndex + ' of ' + info.slideCount);
+  ```
+</ResponseField>
+
+---
+
+### pages
+
+<ResponseField name="pages" type="number | undefined">
+  The number of visible navigation pages/dots.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.pages !== undefined) {
+    console.log('Visible nav pages:', info.pages);
   }
   ```
 </ResponseField>
 
 ---
 
-### visibleNavIndexesCached
+### pagesCached
 
-<ResponseField name="visibleNavIndexesCached" type="number | undefined">
-  The previous number of visible navigation dots.
+<ResponseField name="pagesCached" type="number | undefined">
+  The previous number of visible navigation pages/dots.
   
   ```javascript
   const info = slider.getInfo();
-  console.log('Previous visible nav dots:', info.visibleNavIndexesCached);
+  console.log('Previous visible nav pages:', info.pagesCached);
+  ```
+</ResponseField>
+
+---
+
+### sheet
+
+<ResponseField name="sheet" type="CSSStyleSheet" required>
+  The CSSStyleSheet object used by the slider for dynamic styles.
+  
+  ```javascript
+  const info = slider.getInfo();
+  console.log('Stylesheet:', info.sheet);
+  ```
+</ResponseField>
+
+---
+
+### isOn
+
+<ResponseField name="isOn" type="boolean" required>
+  Indicates whether the slider is currently active/initialized.
+  
+  ```javascript
+  const info = slider.getInfo();
+  if (info.isOn) {
+    console.log('Slider is active');
+  }
   ```
 </ResponseField>
 
